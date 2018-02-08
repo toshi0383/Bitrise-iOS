@@ -1,0 +1,15 @@
+name: BitriseClient
+fileGroups:
+  - configs
+configFiles:
+  Debug: configs/Debug.xcconfig
+  Release: configs/Release.xcconfig
+targets:
+  BitriseClient:
+    platform: iOS
+    type: application
+    sources:
+      - BitriseClient
+    configFiles:
+      Debug: configs/BitriseClient-Debug.xcconfig
+      Release: configs/BitriseClient-Release.xcconfig
