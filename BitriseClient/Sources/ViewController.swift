@@ -9,7 +9,11 @@
 import Continuum
 import UIKit
 
-// TODO: doc
+
+/// By default non-root UIViews does not respond for outside bounds touches.
+/// This view performs hitTest for every children, in case one of them has any view
+/// which can respond to outside touch.
+/// You can reduce search cost by setting targetChildToHitTest property.
 final class ChildHitTestStackView: UIStackView {
 
     var targetChildToHitTest: UIView?
@@ -94,7 +98,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
 
         guard let req = store.urlRequest() else {
-            alert("ERROR: リクエストを生成できませんでした.")
+            alert("ERROR: Could not build request.")
             return
         }
 
@@ -115,7 +119,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
 
             guard (res as? HTTPURLResponse)?.statusCode == 201 else {
-                me.alert("失敗")
+                me.alert("Fail")
                 return
             }
 
@@ -127,7 +131,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 }
             }()
 
-            me.alert("成功\n\(str)")
+            me.alert("Success\n\(str)")
         }
 
         task.resume()
