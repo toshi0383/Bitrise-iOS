@@ -79,6 +79,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         super.touchesBegan(touches, with: event)
 
         gitObjectInputView.resignFirstResponder()
+        apiTokenTextfield.resignFirstResponder()
     }
 
     // MARK: IBAction
