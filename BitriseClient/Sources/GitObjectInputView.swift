@@ -85,7 +85,7 @@ final class GitObjectInputView: UIView {
 
     // Input result
     // Observed by using Continuum
-    var newInput: GitObject = .branch("")
+    let newInput = Variable<GitObject>(value: .branch(""))
 
     private let objectTypeButton: GitObjectTypeButton = {
         let button = GitObjectTypeButton()

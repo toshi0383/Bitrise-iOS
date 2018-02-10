@@ -164,6 +164,7 @@
                     </view>
                     <connections>
                         <outlet property="apiTokenTextfield" destination="1oX-LG-GSH" id="zwl-aZ-kLU"/>
+                        <outlet property="gitObjectInputView" destination="mUe-vD-YbD" id="YKp-mv-aIM"/>
                         <outlet property="tableView" destination="QZm-Oi-V7D" id="9sf-4k-y40"/>
                     </connections>
                 </viewController>

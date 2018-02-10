@@ -65,13 +65,11 @@ private final class _ActionView: UIView {
     }
 
     func highlight() {
-        alphaView.backgroundColor = .lightGray
-        alphaView.alpha = 0.5
+        alphaView.backgroundColor = UIColor(hex: 0xDDDDDD)
     }
 
     func unhighlight() {
-        alphaView.backgroundColor = .lightGray
-        alphaView.alpha = 0.3
+        alphaView.backgroundColor = UIColor(hex: 0x999999)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

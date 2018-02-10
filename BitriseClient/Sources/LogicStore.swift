@@ -6,6 +6,7 @@
 //  Copyright © 2018 toshi0383. All rights reserved.
 //
 
+import Continuum
 import Foundation
 
 enum WorkflowID: String, Enumerable {
@@ -23,15 +24,16 @@ final class LogicStore {
     var workflowID: WorkflowID?
     var apiToken: String? = Config.apiToken
 
-    private var gitObject: GitObject?
+    var gitObject: GitObject = .branch("")
 
     func urlRequest() -> URLRequest? {
 
         guard let token = apiToken else { return nil }
-        guard let gitObject = gitObject else { return nil }
         guard let workflowID = workflowID else { return nil }
 
-        guard validate(workflowID: workflowID, gitObject: gitObject) else {
+        let _gitObject = gitObject
+
+        guard validate(workflowID: workflowID, gitObject: _gitObject) else {
             return nil
         }
 
@@ -42,24 +44,11 @@ final class LogicStore {
         var req = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 5.0)
 
         let body = BuildTriggerRequest(hook_info: .init(api_token: token),
-                                       build_params: gitObject.json + ["workflow_id": workflowID.rawValue])
+                                       build_params: _gitObject.json + ["workflow_id": workflowID.rawValue])
         req.httpBody = try! JSONEncoder().encode(body)
         req.httpMethod = "POST"
 
         return req
-    }
-
-    /// Guesses if it's tag or branch.
-    func setGitObject(text: String?) {
-        if let text = text {
-            if text.split(separator: ".").count == 3 {
-                gitObject = .tag(text)
-            } else {
-                gitObject = .branch(text)
-            }
-        } else {
-            gitObject = .branch("")
-        }
     }
 
     // MARK: Utilities

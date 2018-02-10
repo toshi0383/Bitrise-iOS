@@ -6,23 +6,37 @@
 //  Copyright © 2017 toshi0383. All rights reserved.
 //
 
+import Continuum
 import UIKit
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private let workflowIDs: [WorkflowID] = WorkflowID.elements
 
-    @IBOutlet private weak var gitObjectTextfield: UITextField!
-    @IBOutlet private weak var apiTokenTextfield: UITextField!
+    @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
+        didSet {
+            gitObjectInputView.layer.zPosition = 1.0
+        }
+    }
 
+    @IBOutlet private weak var apiTokenTextfield: UITextField!
     @IBOutlet private weak var tableView: UITableView!
 
     private let store: LogicStore = .init()
 
+    private let bag = ContinuumBag()
+
     override func viewDidLoad() {
         super.viewDidLoad()
+
         tableView.reloadData()
+
         apiTokenTextfield.text = store.apiToken
+
+        let keypath: ReferenceWritableKeyPath<LogicStore, GitObject> = \.gitObject
+        center.continuum
+            .observe(gitObjectInputView.newInput, bindTo: store, keypath)
+            .disposed(by: bag)
     }
 
     // MARK: Alert
@@ -39,14 +53,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     @IBAction private func triggerButton() {
 
-        gitObjectTextfield.resignFirstResponder()
+        gitObjectInputView.resignFirstResponder()
         apiTokenTextfield.resignFirstResponder()
 
         if let text = apiTokenTextfield.text, !text.isEmpty {
             store.apiToken = text
         }
-
-        store.setGitObject(text: gitObjectTextfield.text)
 
         guard let req = store.urlRequest() else {
             alert("ERROR: リクエストを生成できませんでした.")
