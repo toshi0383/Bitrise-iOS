@@ -18,20 +18,6 @@ enum WorkflowID: String, Enumerable {
 
 final class LogicStore {
 
-    enum GitObject {
-
-        case branch(String), tag(String), commitHash(String)
-
-        var json: [String: String] {
-            switch self {
-            case .branch(let v): return ["branch": v]
-            case .tag(let v): return ["tag": v]
-            case .commitHash(let v): return ["commit": v]
-            }
-        }
-
-    }
-
     private let releaseWorkflowIDs: [WorkflowID] = [.release, .releaseWithStack]
 
     var workflowID: WorkflowID?

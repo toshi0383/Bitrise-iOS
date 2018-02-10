@@ -6,7 +6,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -55,18 +54,8 @@
                                                             <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="bPj-x8-7ea">
                                                                 <rect key="frame" x="4" y="5" width="223" height="40"/>
                                                                 <subviews>
-                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZVP-gZ-R38">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
-                                                                        <constraints>
-                                                                            <constraint firstAttribute="width" secondItem="ZVP-gZ-R38" secondAttribute="height" multiplier="1:1" id="N6i-yU-Xf4"/>
-                                                                        </constraints>
-                                                                        <state key="normal" image="git-tag"/>
-                                                                        <connections>
-                                                                            <action selector="button" destination="mUe-vD-YbD" eventType="touchUpInside" id="5bk-Ax-7Ie"/>
-                                                                        </connections>
-                                                                    </button>
                                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="master" borderStyle="roundedRect" placeholder="branch" textAlignment="natural" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="I45-LS-dad">
-                                                                        <rect key="frame" x="44" y="0.0" width="179" height="40"/>
+                                                                        <rect key="frame" x="0.0" y="0.0" width="223" height="40"/>
                                                                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
                                                                         <nil key="textColor"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="18"/>
@@ -88,7 +77,7 @@
                                                         </constraints>
                                                         <connections>
                                                             <outlet property="objectTextField" destination="I45-LS-dad" id="eRb-d6-qlK"/>
-                                                            <outlet property="objectTypeButton" destination="ZVP-gZ-R38" id="Wmx-Li-yix"/>
+                                                            <outlet property="stackView" destination="bPj-x8-7ea" id="tIk-iM-5Ai"/>
                                                         </connections>
                                                     </view>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="API token" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1oX-LG-GSH">
@@ -183,7 +172,4 @@
             <point key="canvasLocation" x="18" y="50"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="git-tag" width="151" height="151"/>
-    </resources>
 </document>

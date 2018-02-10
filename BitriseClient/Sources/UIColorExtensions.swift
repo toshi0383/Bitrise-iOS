@@ -8,5 +8,6 @@ extension UIColor {
 
         self.init(displayP3Red: red, green: green, blue: blue, alpha: alpha)
     }
-}
 
+    static let baseGreen = UIColor(hex: 0x4BBFA8)
+}
