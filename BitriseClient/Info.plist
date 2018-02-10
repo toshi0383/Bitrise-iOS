@@ -45,5 +45,7 @@
     <string>${BITRISE_APP_SLUG}</string>
 	<key>BITRISE_API_TOKEN</key>
     <string>${BITRISE_API_TOKEN}</string>
+	<key>BITRISE_WORKFLOW_IDS</key>
+    <string>${BITRISE_WORKFLOW_IDS}</string>
 </dict>
 </plist>

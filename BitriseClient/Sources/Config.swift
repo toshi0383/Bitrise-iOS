@@ -15,20 +15,19 @@ private class _InfoPlist {
         case BITRISE_APP_SLUG
         case BITRISE_API_TOKEN
     }
-
-    fileprivate enum ArrayKey: String {
-        case WORKFLOW_IDS
+    fileprivate enum OptionalStringKey: String {
+        case BITRISE_WORKFLOW_IDS
     }
 
     subscript(key: StringKey) -> String {
         return _Plist["\(key)"] as! String
     }
 
-    // TOOD
-    //subscript(key: ArrayKey) -> [AnyObject] {
-    //    return _Plist["\(key)"] as! [AnyObject]
-    //}
+    subscript(key: OptionalStringKey) -> String? {
+        return _Plist["\(key)"] as? String
+    }
 }
+
 private let InfoPlist = _InfoPlist()
 
 final class Config {
@@ -38,5 +37,15 @@ final class Config {
 
     static var apiToken: String {
         return InfoPlist[.BITRISE_API_TOKEN]
+    }
+
+    static var workflowIDs: [WorkflowID] {
+        guard let ids = InfoPlist[.BITRISE_WORKFLOW_IDS] else {
+            return []
+        }
+        return ids
+            .split(separator: " ")
+            .filter { !$0.isEmpty }
+            .map { String($0) }
     }
 }

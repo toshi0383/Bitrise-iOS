@@ -1,23 +1,32 @@
 Bitrise Client
 ---
 
-# 環境設定
-### configs/secret.xcconfig
+# How to Build
+## App Configuration
 
-下記それぞれ適切に設定してください。
+Set correct value in `configs/secret.xcconfig`.
+This is ignored by git. (listed in .gitignore)
+
+#### Required
 
 - `BITRISE_APP_SLUG`
 - `BITRISE_API_TOKEN`
 
-他にも必要なビルド設定があればこちらに設定できます。
+#### Optional
 
-### XcodeGen
-XcodeGenの最新をインストールしてください。
+- `BITRISE_WORKFLOW_IDS` ... whitespace separated
+
+## Generate xcodeproj
+
+Please install the latest XcodeGen on your own.
 ```
 mint install yonaskolb/XcodeGen
 ```
 
-以下のコマンドでxcodeprojが生成されます。
+Generate xcodeproj by running command below.
 ```
 xcodegen
 ```
+
+# License
+MIT

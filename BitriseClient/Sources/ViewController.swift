@@ -38,7 +38,7 @@ final class ChildHitTestStackView: UIStackView {
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
-    private let workflowIDs: [WorkflowID] = WorkflowID.elements
+    private let workflowIDs: [WorkflowID] = Config.workflowIDs
 
     @IBOutlet private weak var rootStackView: ChildHitTestStackView!
 
@@ -139,7 +139,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
-        cell.textLabel?.text = workflowIDs[indexPath.row].rawValue
+        cell.textLabel?.text = workflowIDs[indexPath.row]
         return cell
     }
 

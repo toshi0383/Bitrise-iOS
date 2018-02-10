@@ -9,17 +9,9 @@
 import Continuum
 import Foundation
 
-enum WorkflowID: String, Enumerable {
-    case fabricBeta = "fabric-beta"
-    case fabricBetaProduction = "fabric-beta-production"
-    case test = "test"
-    case release = "release"
-    case releaseWithStack = "release-with-stack"
-}
+typealias WorkflowID = String
 
 final class LogicStore {
-
-    private let releaseWorkflowIDs: [WorkflowID] = [.release, .releaseWithStack]
 
     var workflowID: WorkflowID?
     var apiToken: String? = Config.apiToken
@@ -37,10 +29,6 @@ final class LogicStore {
 
         let _gitObject = gitObject
 
-        guard validate(workflowID: workflowID, gitObject: _gitObject) else {
-            return nil
-        }
-
         guard let url = URL(string: "https://www.bitrise.io/app/\(Config.appSlug)/build/start.json") else {
             return nil
         }
@@ -48,26 +36,11 @@ final class LogicStore {
         var req = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 5.0)
 
         let body = BuildTriggerRequest(hook_info: .init(api_token: token),
-                                       build_params: _gitObject.json + ["workflow_id": workflowID.rawValue])
+                                       build_params: _gitObject.json + ["workflow_id": workflowID])
         req.httpBody = try! JSONEncoder().encode(body)
         req.httpMethod = "POST"
 
         return req
-    }
-
-    // MARK: Utilities
-
-    private func validate(workflowID: WorkflowID, gitObject: GitObject) -> Bool {
-        switch gitObject {
-        case .tag:
-            break
-        default:
-            if releaseWorkflowIDs.contains(workflowID) {
-                return false
-            }
-        }
-
-        return true
     }
 }
 
