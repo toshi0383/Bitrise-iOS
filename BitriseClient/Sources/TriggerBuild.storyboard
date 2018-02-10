@@ -6,6 +6,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -34,10 +35,10 @@
                                                 <variation key="heightClass=compact" hidden="YES"/>
                                             </view>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="bLt-zh-8Sn">
-                                                <rect key="frame" x="104" y="19" width="91.666666666666686" height="134"/>
+                                                <rect key="frame" x="32.333333333333343" y="19" width="235.00000000000003" height="134"/>
                                                 <subviews>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w1H-9x-NqI">
-                                                        <rect key="frame" x="27.333333333333343" y="0.0" width="37" height="39"/>
+                                                        <rect key="frame" x="99" y="0.0" width="37" height="39"/>
                                                         <constraints>
                                                             <constraint firstAttribute="height" constant="39" id="Vc4-pi-DJt"/>
                                                         </constraints>
@@ -48,14 +49,50 @@
                                                             <action selector="triggerButton" destination="KGZ-dF-ioA" eventType="touchUpInside" id="jYg-2y-Naf"/>
                                                         </connections>
                                                     </button>
-                                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="branch/tag" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="rxt-8T-5KC">
-                                                        <rect key="frame" x="0.0" y="56.666666666666671" width="91.666666666666671" height="30"/>
-                                                        <nil key="textColor"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" smartDashesType="no" smartInsertDeleteType="no" smartQuotesType="no"/>
-                                                    </textField>
+                                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mUe-vD-YbD" customClass="GitObjectInputView" customModule="BitriseClient" customModuleProvider="target">
+                                                        <rect key="frame" x="0.0" y="49" width="235" height="50"/>
+                                                        <subviews>
+                                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="bPj-x8-7ea">
+                                                                <rect key="frame" x="4" y="5" width="223" height="40"/>
+                                                                <subviews>
+                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZVP-gZ-R38">
+                                                                        <rect key="frame" x="0.0" y="0.0" width="40" height="40"/>
+                                                                        <constraints>
+                                                                            <constraint firstAttribute="width" secondItem="ZVP-gZ-R38" secondAttribute="height" multiplier="1:1" id="N6i-yU-Xf4"/>
+                                                                        </constraints>
+                                                                        <state key="normal" image="git-tag"/>
+                                                                        <connections>
+                                                                            <action selector="button" destination="mUe-vD-YbD" eventType="touchUpInside" id="5bk-Ax-7Ie"/>
+                                                                        </connections>
+                                                                    </button>
+                                                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="master" borderStyle="roundedRect" placeholder="branch" textAlignment="natural" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="I45-LS-dad">
+                                                                        <rect key="frame" x="44" y="0.0" width="179" height="40"/>
+                                                                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                        <nil key="textColor"/>
+                                                                        <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                                                        <textInputTraits key="textInputTraits"/>
+                                                                    </textField>
+                                                                </subviews>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="height" constant="40" id="Md5-P2-Sfz"/>
+                                                                </constraints>
+                                                            </stackView>
+                                                        </subviews>
+                                                        <color key="backgroundColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
+                                                        <constraints>
+                                                            <constraint firstAttribute="width" constant="235" id="N1k-iz-Z33"/>
+                                                            <constraint firstAttribute="trailing" secondItem="bPj-x8-7ea" secondAttribute="trailing" constant="8" id="bej-h0-nah"/>
+                                                            <constraint firstAttribute="height" constant="50" id="d4y-ST-pTt"/>
+                                                            <constraint firstItem="bPj-x8-7ea" firstAttribute="centerY" secondItem="mUe-vD-YbD" secondAttribute="centerY" id="svu-qe-v6S"/>
+                                                            <constraint firstItem="bPj-x8-7ea" firstAttribute="leading" secondItem="mUe-vD-YbD" secondAttribute="leading" constant="4" id="ujs-Ji-PTU"/>
+                                                        </constraints>
+                                                        <connections>
+                                                            <outlet property="objectTextField" destination="I45-LS-dad" id="eRb-d6-qlK"/>
+                                                            <outlet property="objectTypeButton" destination="ZVP-gZ-R38" id="Wmx-Li-yix"/>
+                                                        </connections>
+                                                    </view>
                                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="API token" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1oX-LG-GSH">
-                                                        <rect key="frame" x="4.6666666666666856" y="104" width="82.666666666666671" height="30"/>
+                                                        <rect key="frame" x="76.333333333333343" y="109" width="82.666666666666657" height="25"/>
                                                         <nil key="textColor"/>
                                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                         <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
@@ -114,7 +151,6 @@
                                         <exclude reference="VvY-SA-13P"/>
                                     </mask>
                                 </variation>
-                                <variation key="heightClass=compact-widthClass=regular"/>
                                 <variation key="heightClass=regular-widthClass=compact">
                                     <mask key="constraints">
                                         <exclude reference="KrE-I5-kRS"/>
@@ -139,7 +175,6 @@
                     </view>
                     <connections>
                         <outlet property="apiTokenTextfield" destination="1oX-LG-GSH" id="zwl-aZ-kLU"/>
-                        <outlet property="gitObjectTextfield" destination="rxt-8T-5KC" id="AFi-nw-V7K"/>
                         <outlet property="tableView" destination="QZm-Oi-V7D" id="9sf-4k-y40"/>
                     </connections>
                 </viewController>
@@ -148,4 +183,7 @@
             <point key="canvasLocation" x="18" y="50"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="git-tag" width="151" height="151"/>
+    </resources>
 </document>

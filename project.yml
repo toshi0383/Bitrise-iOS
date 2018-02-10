@@ -13,3 +13,11 @@ targets:
     configFiles:
       Debug: configs/BitriseClient-Debug.xcconfig
       Release: configs/BitriseClient-Release.xcconfig
+  ActionPopoverButton:
+    platform: iOS
+    type: framework
+    sources:
+      - ActionPopoverButton
+    configFiles:
+      Debug: configs/ActionPopoverButton-Debug.xcconfig
+      Release: configs/ActionPopoverButton-Release.xcconfig
