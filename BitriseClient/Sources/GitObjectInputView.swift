@@ -46,7 +46,6 @@ private final class GitObjectTypeButton: ActionPopoverButton {
 
     private func configure() {
         addSubview(imageView)
-        backgroundColor = UIColor.gitGreen
     }
 
     override func updateConstraints() {
@@ -62,14 +61,20 @@ private final class GitObjectTypeButton: ActionPopoverButton {
         ])
     }
 
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+
+        backgroundColor = UIColor.gitRed
+    }
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
-        backgroundColor = UIColor.gitGreenHighlight
+        backgroundColor = UIColor.gitRedHighlight
     }
 
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        backgroundColor = UIColor.gitGreen
+        backgroundColor = UIColor.gitRed
     }
 }
 
@@ -88,9 +93,25 @@ private func _button(_ image: UIImage) -> UIButton {
 
 final class GitObjectInputView: UIView, UITextFieldDelegate {
 
+    struct Placeholder {
+        let text: String
+
+        init(_ gitObject: GitObject) {
+            switch gitObject {
+            case .branch:
+                self.text = "branch"
+            case .tag:
+                self.text = "tag"
+            case .commitHash:
+                self.text = "commit"
+            }
+        }
+    }
+
     /// Use this method to set initial value.
     func updateUI(_ gitObject: GitObject) {
         objectTextField.text = gitObject.text
+        objectTextField.placeholder = Placeholder(gitObject).text
         objectTypeButton.imageView.image = gitObject.image
     }
 
@@ -133,6 +154,7 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
                 guard let me = self else { return }
                 me.newInput.value = gitObject.updateAssociatedValue(me.objectTextField.text ?? "")
                 me.objectTypeButton.imageView.image = gitObject.image
+                me.updatePlaceholder()
             }
         }
 
@@ -155,5 +177,12 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         newInput.value = newInput.value.updateAssociatedValue(objectTextField.text ?? "")
+        updatePlaceholder()
+    }
+
+    // MARK: Utilities
+
+    private func updatePlaceholder() {
+        objectTextField.placeholder = Placeholder(newInput.value).text
     }
 }

@@ -71,6 +71,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         notificationCenter.continuum
             .observe(gitObjectInputView.newInput, bindTo: store, keypath)
             .disposed(by: bag)
+
+        gitObjectInputView.updateUI(store.gitObject)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
