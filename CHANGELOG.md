@@ -1,4 +1,8 @@
-## 1.1 initial release
+## master
+##### New Feature
+- Improve UI/UX
+
+## 1.1
 ##### New Feature
 
 * trigger build by tag
