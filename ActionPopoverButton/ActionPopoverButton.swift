@@ -24,9 +24,11 @@ private final class _HorizontalStackView: UIStackView {
 private final class _ActionView: UIView {
 
     let alphaView: UIView = .init()
+
     var arrangedSubviews: [UIView] {
         return actions.map { $0.view }
     }
+
     let actions: [Action]
 
     required init?(coder aDecoder: NSCoder) { fatalError() }
@@ -114,10 +116,15 @@ open class ActionPopoverButton: UIView {
     public var touchedAlpha: CGFloat = 0.5
 
     private var actions: [Action] = []
+    private var _onFocusActionChanged: (() -> ())?
 
     public func addActionButton(_ view: UIView, onTapBlock: @escaping () -> ()) {
         let action = Action(view: view, onTapBlock: onTapBlock)
         actions.append(action)
+    }
+
+    public func onFocusActionChanged(_ block: @escaping () -> ()) {
+        _onFocusActionChanged = block
     }
 
     open override func didMoveToSuperview() {
@@ -206,7 +213,14 @@ open class ActionPopoverButton: UIView {
                     if let idx = unhighlightTargets.index(of: hit) {
                         unhighlightTargets.remove(at: idx)
                     }
-                    hit.alpha = 0.5
+                    if hit.alpha != 0.5 {
+                        hit.alpha = 0.5
+
+                        if let time = touchesBeganTime,
+                            Date().timeIntervalSince1970 - time > 0.1 {
+                            _onFocusActionChanged?()
+                        }
+                    }
                 }
                 unhighlightTargets.forEach { $0.alpha = 1.0 }
             } else {
@@ -247,16 +261,13 @@ open class ActionPopoverButton: UIView {
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if let hit = super.hitTest(point, with: event) {
             // It's me, then. That was easy.
-            print("hit: self")
             return hit
         }
 
         if let actionView = actionView {
 
-            print("hitTest for actionView..")
             // Is it inside the actionView, which is outside of my bounds?
             if actionView.hitTest(convert(point, to: actionView), with: event) != nil {
-                print("hit: self in outside bounds")
                 return self
             }
         }

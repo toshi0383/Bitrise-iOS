@@ -100,10 +100,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let task = URLSession.shared.dataTask(with: req) { [weak self] (data, res, err) in
 
             guard let me = self else { return }
+
+            #if DEBUG
             if let res = res as? HTTPURLResponse {
                 print(res.statusCode)
                 print(res.allHeaderFields)
             }
+            #endif
 
             if let err = err {
                 me.alert(err.localizedDescription)

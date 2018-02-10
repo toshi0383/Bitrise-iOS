@@ -16,11 +16,7 @@ final class LogicStore {
     var workflowID: WorkflowID?
     var apiToken: String? = Config.apiToken
 
-    var gitObject: GitObject = .branch("") {
-        didSet {
-            print(gitObject)
-        }
-    }
+    var gitObject: GitObject = .branch("")
 
     func urlRequest() -> URLRequest? {
 
