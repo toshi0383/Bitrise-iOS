@@ -6,6 +6,7 @@
 //
 
 import ActionPopoverButton
+import Continuum
 import UIKit
 
 private extension GitObject {

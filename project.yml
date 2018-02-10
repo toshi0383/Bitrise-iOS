@@ -15,6 +15,7 @@ targets:
       Release: configs/BitriseClient-Release.xcconfig
     dependencies:
       - target: ActionPopoverButton
+      - carthage: Continuum
   ActionPopoverButton:
     platform: iOS
     type: framework
