@@ -18,7 +18,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="gc6-aJ-0IL">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="gc6-aJ-0IL" customClass="ChildHitTestStackView" customModule="BitriseClient" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44" width="375" height="768"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="UL6-aA-4rc">
@@ -165,6 +165,7 @@
                     <connections>
                         <outlet property="apiTokenTextfield" destination="1oX-LG-GSH" id="zwl-aZ-kLU"/>
                         <outlet property="gitObjectInputView" destination="mUe-vD-YbD" id="YKp-mv-aIM"/>
+                        <outlet property="rootStackView" destination="gc6-aJ-0IL" id="jsy-Bj-TIf"/>
                         <outlet property="tableView" destination="QZm-Oi-V7D" id="9sf-4k-y40"/>
                     </connections>
                 </viewController>

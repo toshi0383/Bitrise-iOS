@@ -1,20 +1,24 @@
 import UIKit
 
 private final class _HorizontalStackView: UIStackView {
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         configure()
     }
+
     required init(coder: NSCoder) {
         super.init(coder: coder)
         configure()
     }
+
     private func configure() {
         distribution = .equalSpacing
         alignment = .center
         axis = .horizontal
         spacing = 10
     }
+
 }
 
 private final class _ActionView: UIView {
@@ -28,9 +32,13 @@ private final class _ActionView: UIView {
     required init?(coder aDecoder: NSCoder) { fatalError() }
 
     init(actions: [Action]) {
+
         self.actions = actions
+
         super.init(frame: .zero)
+
         translatesAutoresizingMaskIntoConstraints = false
+
         do {
             alphaView.layer.cornerRadius = 2
             addSubview(alphaView)
@@ -42,6 +50,7 @@ private final class _ActionView: UIView {
                 alphaView.trailingAnchor.constraint(equalTo: trailingAnchor),
             ])
         }
+
         do {
             let stackView = _HorizontalStackView(arrangedSubviews: arrangedSubviews)
             addSubview(stackView)
@@ -53,6 +62,7 @@ private final class _ActionView: UIView {
                 trailingAnchor.constraint(equalTo: stackView.trailingAnchor, constant: 8),
             ])
         }
+
         unhighlight()
     }
 
@@ -75,9 +85,11 @@ private final class _ActionView: UIView {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
     }
+
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
     }
+
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
         if let point = touches.first?.location(in: self), let hit = hitTest(point, with: event) {
@@ -115,7 +127,7 @@ open class ActionPopoverButton: UIView {
 
     private var show: Bool = false
 
-    private func updateUI(for show: Bool? = nil) {
+    private func updateUI(show: Bool? = nil) {
         let show = show ?? !self.show
         guard show != self.show else { return }
         self.show = show
@@ -169,7 +181,7 @@ open class ActionPopoverButton: UIView {
             if touchesBeganTime != nil {
                 workItem?.cancel()
                 workItem = DispatchWorkItem {
-                    self.updateUI(for: true)
+                    self.updateUI(show: true)
                 }
                 DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.3, execute: workItem!)
             } else {
@@ -180,11 +192,13 @@ open class ActionPopoverButton: UIView {
     }
     open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
+
         touchesBeganTime = Date().timeIntervalSince1970
     }
 
     open override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesMoved(touches, with: event)
+
         if let touch = touches.first {
             if let actionView = actionView, let hit = actionView.hitTest(touch.location(in: actionView), with: event) {
                 var unhighlightTargets = actionView.arrangedSubviews
@@ -197,13 +211,13 @@ open class ActionPopoverButton: UIView {
                 unhighlightTargets.forEach { $0.alpha = 1.0 }
             } else {
                 actionView?.arrangedSubviews.forEach { $0.alpha = 1.0 }
-                backgroundColor = UIColor(displayP3Red: 0.3, green: 0.8, blue: 0.0, alpha: 0.5)
             }
         }
     }
 
     open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
+
         guard let touch = touches.first else { return }
 
         if let time = touchesBeganTime {
@@ -213,10 +227,9 @@ open class ActionPopoverButton: UIView {
                     if let action = actions.first(where: { $0.view.hitTest(touch.location(in: $0.view), with: event) == $0.view }) {
                         // touchUp actionView's button
                         action.onTapBlock()
-                        updateUI(for: false)
+                        updateUI(show: false)
                     } else {
                         // touchUp self
-                        backgroundColor = UIColor(displayP3Red: 0.3, green: 0.8, blue: 0.0, alpha: 1.0)
                         updateUI()
                     }
                 }
@@ -225,7 +238,7 @@ open class ActionPopoverButton: UIView {
                 if let action = actions.first(where: { $0.view.hitTest(touch.location(in: $0.view), with: event) != nil }) {
                     action.onTapBlock()
                 }
-                updateUI(for: false)
+                updateUI(show: false)
             }
         }
         touchesBeganTime = nil
@@ -233,10 +246,19 @@ open class ActionPopoverButton: UIView {
 
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if let hit = super.hitTest(point, with: event) {
+            // It's me, then. That was easy.
+            print("hit: self")
             return hit
         }
-        if let actionView = actionView, actionView.hitTest(convert(point, to: actionView), with: event) != nil {
-            return self
+
+        if let actionView = actionView {
+
+            print("hitTest for actionView..")
+            // Is it inside the actionView, which is outside of my bounds?
+            if actionView.hitTest(convert(point, to: actionView), with: event) != nil {
+                print("hit: self in outside bounds")
+                return self
+            }
         }
         return nil
     }

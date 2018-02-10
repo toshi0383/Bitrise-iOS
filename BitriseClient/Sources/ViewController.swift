@@ -9,9 +9,38 @@
 import Continuum
 import UIKit
 
+// TODO: doc
+final class ChildHitTestStackView: UIStackView {
+
+    var targetChildToHitTest: UIView?
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        if let view = targetChildToHitTest {
+            if let hit = view.hitTest(convert(point, to: view), with: event) {
+                return hit
+            }
+        }
+
+        for view in subviews {
+            if let hit = view.hitTest(convert(point, to: view), with: event) {
+                return hit
+            }
+        }
+
+        // IMPORTANT: Perform hitTest for myself at last.
+        if let hit = super.hitTest(point, with: event) {
+            return hit
+        }
+
+        return nil
+    }
+}
+
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private let workflowIDs: [WorkflowID] = WorkflowID.elements
+
+    @IBOutlet private weak var rootStackView: ChildHitTestStackView!
 
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
@@ -22,31 +51,32 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     @IBOutlet private weak var apiTokenTextfield: UITextField!
     @IBOutlet private weak var tableView: UITableView!
 
-    private let store: LogicStore = .init()
-
+    private let store = LogicStore()
     private let bag = ContinuumBag()
+
+    // MARK: LifeCycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // Tell rootStackView the hitTest target.
+        rootStackView.isUserInteractionEnabled = true
+        rootStackView.targetChildToHitTest = gitObjectInputView
 
         tableView.reloadData()
 
         apiTokenTextfield.text = store.apiToken
 
         let keypath: ReferenceWritableKeyPath<LogicStore, GitObject> = \.gitObject
-        center.continuum
+        notificationCenter.continuum
             .observe(gitObjectInputView.newInput, bindTo: store, keypath)
             .disposed(by: bag)
     }
 
-    // MARK: Alert
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
 
-    private func alert(_ message: String) {
-        DispatchQueue.main.async {
-            let vc = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-            vc.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(vc, animated: true, completion: nil)
-        }
+        gitObjectInputView.resignFirstResponder()
     }
 
     // MARK: IBAction
@@ -117,4 +147,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         store.workflowID = workflowIDs[indexPath.row]
     }
 
+    // MARK: Utilities
+
+    private func alert(_ message: String) {
+        DispatchQueue.main.async {
+            let vc = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            vc.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
+            self.present(vc, animated: true, completion: nil)
+        }
+    }
 }

@@ -46,6 +46,7 @@ private final class GitObjectTypeButton: ActionPopoverButton {
 
     private func configure() {
         addSubview(imageView)
+        backgroundColor = UIColor.gitGreen
     }
 
     override func updateConstraints() {
@@ -59,6 +60,16 @@ private final class GitObjectTypeButton: ActionPopoverButton {
             imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
             imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
+    }
+
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesBegan(touches, with: event)
+        backgroundColor = UIColor.gitGreenHighlight
+    }
+
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        super.touchesEnded(touches, with: event)
+        backgroundColor = UIColor.gitGreen
     }
 }
 
@@ -75,7 +86,7 @@ private func _button(_ image: UIImage) -> UIButton {
     return b
 }
 
-final class GitObjectInputView: UIView {
+final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     /// Use this method to set initial value.
     func updateUI(_ gitObject: GitObject) {
@@ -106,7 +117,11 @@ final class GitObjectInputView: UIView {
         }
     }
 
-    @IBOutlet private weak var objectTextField: UITextField!
+    @IBOutlet private weak var objectTextField: UITextField! {
+        didSet {
+            objectTextField.delegate = self
+        }
+    }
 
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -115,8 +130,30 @@ final class GitObjectInputView: UIView {
 
         for gitObject in GitObject.enumerated() {
             objectTypeButton.addActionButton(_button(gitObject.image)) { [weak self] in
-                self?.objectTypeButton.imageView.image = gitObject.image
+                guard let me = self else { return }
+                me.newInput.value = gitObject.updateAssociatedValue(me.objectTextField.text ?? "")
+                me.objectTypeButton.imageView.image = gitObject.image
             }
         }
+
+    }
+
+    @discardableResult
+    override func resignFirstResponder() -> Bool {
+        objectTextField.resignFirstResponder()
+
+        return super.resignFirstResponder()
+    }
+
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        if let hit = super.hitTest(point, with: event) {
+            return hit
+        }
+
+        return objectTypeButton.hitTest(convert(point, to: objectTypeButton), with: event)
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        newInput.value = newInput.value.updateAssociatedValue(objectTextField.text ?? "")
     }
 }

@@ -22,4 +22,12 @@ enum GitObject {
     static func enumerated() -> [GitObject] {
         return [.branch(""), .tag(""), .commitHash("")]
     }
+
+    func updateAssociatedValue(_ value: String) -> GitObject {
+        switch self {
+        case .branch: return .branch(value)
+        case .tag: return .tag(value)
+        case .commitHash: return .commitHash(value)
+        }
+    }
 }

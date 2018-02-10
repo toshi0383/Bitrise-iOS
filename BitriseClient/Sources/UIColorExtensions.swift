@@ -10,4 +10,6 @@ extension UIColor {
     }
 
     static let baseGreen = UIColor(hex: 0x4BBFA8)
+    static let gitGreen = UIColor(hex: 0x4BBF00)
+    static let gitGreenHighlight = UIColor(hex: 0x3A9401)
 }
