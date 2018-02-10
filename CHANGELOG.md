@@ -1,8 +1,8 @@
 ## 1.1 initial release
 ##### New Feature
 
-* tag指定でreleaseをトリガー
+* trigger build by tag
 
 ## 1.0 initial release
 
-* 簡素なビルドトリガー機能
+* simple build trigger feature
