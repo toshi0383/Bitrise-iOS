@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  TriggerBuildViewController.swift
 //  BitriseClient
 //
 //  Created by Toshihiro Suzuki on 2017/12/19.
@@ -9,42 +9,11 @@
 import Continuum
 import UIKit
 
-
-/// By default non-root UIViews does not respond for outside bounds touches.
-/// This view performs hitTest for every children, in case one of them has any view
-/// which can respond to outside touch.
-/// You can reduce search cost by setting targetChildToHitTest property.
-final class ChildHitTestStackView: UIStackView {
-
-    var targetChildToHitTest: UIView?
-
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        if let view = targetChildToHitTest {
-            if let hit = view.hitTest(convert(point, to: view), with: event) {
-                return hit
-            }
-        }
-
-        for view in subviews {
-            if let hit = view.hitTest(convert(point, to: view), with: event) {
-                return hit
-            }
-        }
-
-        // IMPORTANT: Perform hitTest for myself at last.
-        if let hit = super.hitTest(point, with: event) {
-            return hit
-        }
-
-        return nil
-    }
-}
-
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private let workflowIDs: [WorkflowID] = Config.workflowIDs
 
-    @IBOutlet private weak var rootStackView: ChildHitTestStackView!
+    @IBOutlet private weak var rootStackView: UIStackView!
 
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
@@ -65,7 +34,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
 
         // Tell rootStackView the hitTest target.
         rootStackView.isUserInteractionEnabled = true
-        rootStackView.targetChildToHitTest = gitObjectInputView
+        rootStackView.hth.targetChildToHitTest = gitObjectInputView
 
         tableView.reloadData()
 

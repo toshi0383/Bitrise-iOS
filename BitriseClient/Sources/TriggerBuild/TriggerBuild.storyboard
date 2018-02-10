@@ -10,15 +10,15 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
+        <!--Trigger Build View Controller-->
         <scene sceneID="X0O-Jx-g2q">
             <objects>
-                <viewController id="KGZ-dF-ioA" customClass="ViewController" customModule="BitriseClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="KGZ-dF-ioA" customClass="TriggerBuildViewController" customModule="BitriseClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="edf-Zd-sXJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="gc6-aJ-0IL" customClass="ChildHitTestStackView" customModule="BitriseClient" customModuleProvider="target">
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="gc6-aJ-0IL">
                                 <rect key="frame" x="0.0" y="44" width="375" height="768"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="equalSpacing" alignment="center" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="UL6-aA-4rc">

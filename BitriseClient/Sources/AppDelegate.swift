@@ -6,6 +6,7 @@
 //  Copyright © 2017 toshi0383. All rights reserved.
 //
 
+import ActionPopoverButton
 import UIKit
 
 @UIApplicationMain
@@ -14,7 +15,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+
+        UIView.hth.exchangeMethods()
+
         return true
     }
 

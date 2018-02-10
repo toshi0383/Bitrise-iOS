@@ -1,5 +1,5 @@
 //
-//  ApiRequests.swift
+//  BuildTriggerRequest.swift
 //  BitriseClient
 //
 //  Created by 鈴木 俊裕 on 2018/02/05.
@@ -9,22 +9,14 @@
 import Foundation
 
 struct BuildTriggerRequest: Codable {
+
     let hook_info: HookInfo
+
     struct HookInfo: Codable {
         let type: String = "bitrise"
         let api_token: String
     }
+
     let build_params: [String: String]
     let triggered_by: String = "BitriseClient iOS App"
-}
-
-// it doesn't exist
-struct BitriseYmlRequest: Codable {
-    let hook_info: HookInfo
-    struct HookInfo: Codable {
-        let type: String = "bitrise"
-        let api_token: String
-    }
-//    let build_params: [String: String]
-//    let triggered_by: String = "BitriseClient iOS App"
 }
