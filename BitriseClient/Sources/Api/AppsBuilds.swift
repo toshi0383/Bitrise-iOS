@@ -38,13 +38,14 @@ struct AppsBuilds: Decodable {
         let pull_request_id: Int
         let pull_request_target_branch: String?
         let pull_request_view_url: String?
-        let slug: String?
+        let slug: String
         let stack_config_type: String?
         let stack_identifier: String?
         let started_on_worker_at: Date?
         let status: Status
 
         enum Status: Int, Decodable {
+            case notFinished = 0
             case finished = 1
             case error = 2
             case aborted = 3

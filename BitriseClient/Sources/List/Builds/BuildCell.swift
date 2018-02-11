@@ -10,6 +10,6 @@ import UIKit
 final class BuildCell: UITableViewCell {
     func configure(_ build: AppsBuilds.Build) {
         textLabel?.text = "#\(build.build_number) \(build.status_text)"
-        
+        accessoryType = build.status == .notFinished ? .detailButton : .none
     }
 }

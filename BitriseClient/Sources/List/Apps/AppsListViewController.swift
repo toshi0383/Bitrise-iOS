@@ -50,7 +50,9 @@ final class AppsListViewController: UIViewController, Storyboardable, UITableVie
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let vc = BuildsListViewController.makeFromStoryboard(apps[indexPath.row].slug)
+        let app = apps[indexPath.row]
+        let dep = (app.slug, app.title)
+        let vc = BuildsListViewController.makeFromStoryboard(dep)
         navigationController?.pushViewController(vc, animated: true)
     }
 }

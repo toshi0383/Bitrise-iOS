@@ -125,14 +125,4 @@ class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITab
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         store.workflowID = workflowIDs[indexPath.row]
     }
-
-    // MARK: Utilities
-
-    private func alert(_ message: String) {
-        DispatchQueue.main.async {
-            let vc = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-            vc.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(vc, animated: true, completion: nil)
-        }
-    }
 }

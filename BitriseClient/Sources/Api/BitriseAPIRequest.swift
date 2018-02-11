@@ -47,6 +47,11 @@ extension BitriseAPIRequest where Response: Decodable {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         if let data = object as? Data {
+            #if DEBUG
+                if let str = String(data: data, encoding: .utf8) {
+                    print(str)
+                }
+            #endif
             return try decoder.decode(Response.self, from: data)
         }
 
