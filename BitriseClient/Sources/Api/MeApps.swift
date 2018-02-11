@@ -28,4 +28,6 @@ struct MeApps: Decodable {
         let slug: String
         let title: String
     }
+
+    let paging: Paging
 }
