@@ -1,9 +1,17 @@
 import APIKit
 import UIKit
 
-final class AppsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
+final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
 
-    typealias Dependency = Void
+    typealias Dependency = String
+
+    static func makeFromStoryboard(_ dependency: String) -> BuildsListViewController {
+        let vc = BuildsListViewController.unsafeMakeFromStoryboard()
+        vc.appSlug = dependency
+        return vc
+    }
+
+    private var appSlug: String!
 
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
@@ -12,18 +20,18 @@ final class AppsListViewController: UIViewController, Storyboardable, UITableVie
         }
     }
 
-    private var apps: [MeApps.App] = []
+    private var builds: [AppsBuilds.Build] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        let req = MeAppsRequest()
+        let req = AppsBuildsRequest(appSlug: appSlug)
         Session.shared.send(req) { [weak self] result in
             guard let me = self else { return }
 
             switch result {
             case .success(let res):
-                me.apps = res.data
+                me.builds = res.data
                 me.tableView.reloadData()
             case .failure(let error):
                 print(error)
@@ -38,19 +46,17 @@ final class AppsListViewController: UIViewController, Storyboardable, UITableVie
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return apps.count
+        return builds.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "AppCell") as! AppCell
-        cell.configure(apps[indexPath.row])
+        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildCell") as! BuildCell
+        cell.configure(builds[indexPath.row])
         return cell
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let vc = BuildsListViewController.makeFromStoryboard(apps[indexPath.row].slug)
-        navigationController?.pushViewController(vc, animated: true)
     }
 }

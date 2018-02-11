@@ -44,8 +44,10 @@ extension BitriseAPIRequest where Response: Decodable {
     }
 
     func response(from object: Any, urlResponse: HTTPURLResponse) throws -> Response {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
         if let data = object as? Data {
-            return try JSONDecoder().decode(Response.self, from: data)
+            return try decoder.decode(Response.self, from: data)
         }
 
         throw ResponseError.unexpectedObject(object)
@@ -63,4 +65,5 @@ private class _DataParser: DataParser {
 struct Paging: Decodable {
     let page_item_limit: Int
     let total_item_count: Int
+    let next: String?
 }
