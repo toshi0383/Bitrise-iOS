@@ -1,4 +1,4 @@
-## master
+## 1.2
 ##### New Feature
 - Improve UI/UX
 
