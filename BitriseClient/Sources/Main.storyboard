@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="aOz-08-yWR">
+    <device id="retina5_9" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="2g6-6O-FFb">
+            <objects>
+                <navigationController id="aOz-08-yWR" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="6Q4-Bn-SM9">
+                        <rect key="frame" x="0.0" y="44" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="YLI-d5-3w4" kind="relationship" relationship="rootViewController" id="bYI-1k-jae"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="0a0-qa-vES" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-726" y="-751"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="146-r8-gpW">
+            <objects>
+                <viewController id="YLI-d5-3w4" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="jbD-R0-9Yr">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3Hl-qC-cPS">
+                                <rect key="frame" x="87" y="383" width="200" height="100"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dyo-bW-FVW">
+                                        <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="100" id="LiB-Oe-19v"/>
+                                            <constraint firstAttribute="width" constant="100" id="O5T-sB-I3b"/>
+                                        </constraints>
+                                        <state key="normal" title="Apps"/>
+                                        <connections>
+                                            <segue destination="qkC-es-bkW" kind="show" id="hev-Fr-c0x"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="pM0-3B-fk2">
+                                        <rect key="frame" x="100" y="0.0" width="100" height="100"/>
+                                        <state key="normal" title="Trigger"/>
+                                        <connections>
+                                            <segue destination="HuN-U8-h42" kind="show" id="92x-I3-vzq"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="pM0-3B-fk2" firstAttribute="height" secondItem="dyo-bW-FVW" secondAttribute="height" id="86I-6B-Ukl"/>
+                                    <constraint firstItem="pM0-3B-fk2" firstAttribute="width" secondItem="dyo-bW-FVW" secondAttribute="width" id="O70-hm-Sa4"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="3Hl-qC-cPS" firstAttribute="centerX" secondItem="7dv-OD-brJ" secondAttribute="centerX" id="Aph-BA-RBd"/>
+                            <constraint firstItem="3Hl-qC-cPS" firstAttribute="centerY" secondItem="7dv-OD-brJ" secondAttribute="centerY" id="HSp-tr-eLV"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="7dv-OD-brJ"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="qcl-ZS-9rj"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="bDg-9m-qFK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-38" y="-751"/>
+        </scene>
+        <!--AppsListViewController-->
+        <scene sceneID="OZD-CN-OiU">
+            <objects>
+                <viewControllerPlaceholder storyboardName="AppsListViewController" id="qkC-es-bkW" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="nDE-IT-g7V" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="515" y="-751"/>
+        </scene>
+        <!--TriggerBuild-->
+        <scene sceneID="liB-o5-IKw">
+            <objects>
+                <viewControllerPlaceholder storyboardName="TriggerBuild" id="HuN-U8-h42" sceneMemberID="viewController"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="xsg-bY-tdT" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-82" y="-359"/>
+        </scene>
+    </scenes>
+</document>

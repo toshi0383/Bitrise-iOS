@@ -7,7 +7,16 @@
 //
 
 import Foundation
+import SwiftyUserDefaults
 import UIKit
+
+// - MARK: SwiftyUserDefaults
+
+extension DefaultsKeys {
+    static let bitrisePersonalAccessToken = DefaultsKey<String?>("bitrisePersonalAccessToken")
+}
+
+// - MARK: InfoPlist
 
 private let _Plist = Bundle.main.infoDictionary!
 private class _InfoPlist {
@@ -17,6 +26,7 @@ private class _InfoPlist {
     }
     fileprivate enum OptionalStringKey: String {
         case BITRISE_WORKFLOW_IDS
+        case BITRISE_PERSONAL_ACCESS_TOKEN
     }
 
     subscript(key: StringKey) -> String {
@@ -29,6 +39,8 @@ private class _InfoPlist {
 }
 
 private let InfoPlist = _InfoPlist()
+
+// - MARK: Config
 
 final class Config {
     static var appSlug: String {
@@ -47,5 +59,22 @@ final class Config {
             .split(separator: " ")
             .filter { !$0.isEmpty }
             .map { String($0) }
+    }
+
+    static var cachedPersonalAccessToken: String? {
+        get {
+            return Defaults[.bitrisePersonalAccessToken]
+        }
+        set {
+            Defaults[.bitrisePersonalAccessToken] = newValue
+        }
+    }
+
+    static var personalAccessToken: String? {
+        if let t =  InfoPlist[.BITRISE_PERSONAL_ACCESS_TOKEN] {
+            return t
+        }
+
+        return cachedPersonalAccessToken
     }
 }

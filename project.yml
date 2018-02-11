@@ -16,6 +16,9 @@ targets:
     dependencies:
       - target: ActionPopoverButton
       - carthage: Continuum
+      - carthage: APIKit
+      - carthage: Result
+      - carthage: SwiftyUserDefaults
   ActionPopoverButton:
     platform: iOS
     type: framework

@@ -1,1 +1,4 @@
+github "antitypical/Result" "3.2.4"
+github "ishkawa/APIKit" "3.2.1"
 github "marty-suzuki/Continuum" "0.2.0"
+github "radex/SwiftyUserDefaults" "3.0.1"

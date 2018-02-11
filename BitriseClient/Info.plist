@@ -6,6 +6,8 @@
 	<string>${BITRISE_API_TOKEN}</string>
 	<key>BITRISE_APP_SLUG</key>
 	<string>${BITRISE_APP_SLUG}</string>
+	<key>BITRISE_PERSONAL_ACCESS_TOKEN</key>
+	<string>${BITRISE_PERSONAL_ACCESS_TOKEN}</string>
 	<key>BITRISE_WORKFLOW_IDS</key>
 	<string>${BITRISE_WORKFLOW_IDS}</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -29,7 +31,7 @@
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
-	<string>TriggerBuild</string>
+	<string>Main</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>
