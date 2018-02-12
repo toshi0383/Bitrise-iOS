@@ -53,7 +53,7 @@ struct AppsBuilds: Decodable {
 
         let status_text: String
         let tag: String?
-        let triggered_at: String
+        let triggered_at: Date
         let triggered_by: String?
         let triggered_workflow: String
     }
