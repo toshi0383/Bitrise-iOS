@@ -25,7 +25,7 @@ final class LogicStore {
 
         let _gitObject = gitObject
 
-        guard let url = URL(string: "https://www.bitrise.io/app/\(Config.appSlug)/build/start.json") else {
+        guard let url = URL(string: "https://www.bitrise.io/app/\(Config.appSlug!)/build/start.json") else {
             return nil
         }
 

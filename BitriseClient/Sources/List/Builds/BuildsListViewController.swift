@@ -1,25 +1,48 @@
 import APIKit
+import SwiftyUserDefaults
 import UIKit
 
 final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
 
-    typealias Dependency = (String, String)
+    struct Dependency {
+        let appSlug: String
+        let appName: String
+        let userDefaults: UserDefaults
+        let infoPlist: InfoPlist
+        init(appSlug: String,
+             appName: String,
+             infoPlist: InfoPlist = Config.infoPlist,
+             userDefaults: UserDefaults = Config.defaults) {
+            self.appSlug = appSlug
+            self.appName = appName
+            self.infoPlist = infoPlist
+            self.userDefaults = userDefaults
+        }
+    }
 
     static func makeFromStoryboard(_ dependency: Dependency) -> BuildsListViewController {
         let vc = BuildsListViewController.unsafeMakeFromStoryboard()
-        vc.appSlug = dependency.0
-        vc.appName = dependency.1
+        vc.appSlug = dependency.appSlug
+        vc.appName = dependency.appName
+        vc.infoPlist = dependency.infoPlist
+        vc.userDefaults = dependency.userDefaults
         return vc
     }
 
     private var appSlug: String!
     private var appName: String!
+    private var userDefaults: UserDefaults!
+    private var infoPlist: InfoPlist!
     private var builds: [AppsBuilds.Build] = []
-
 
     @IBOutlet private weak var triggerBuildButton: UIButton! {
         didSet {
             triggerBuildButton.layer.cornerRadius = 20
+
+            if infoPlist[.BITRISE_APP_SLUG] == nil || infoPlist[.BITRISE_API_TOKEN] == nil {
+                triggerBuildButton.isEnabled = false
+                triggerBuildButton.backgroundColor = .gray
+            }
         }
     }
 
@@ -34,6 +57,9 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // save app-title
+        userDefaults[.lastAppNameVisited] = appName
 
         navigationItem.title = appName
 
@@ -86,7 +112,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     @IBAction func triggerBuildButtonTap() {
         let vc = TriggerBuildViewController.makeFromStoryboard()
         vc.modalPresentationStyle = .overCurrentContext
-        present(vc, animated: true, completion: nil)
+        navigationController?.present(vc, animated: true, completion: nil)
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate

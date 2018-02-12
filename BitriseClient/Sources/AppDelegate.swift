@@ -8,6 +8,7 @@
 
 import ActionPopoverButton
 import APIKit
+import SwiftyUserDefaults
 import UIKit
 
 @UIApplicationMain
@@ -28,11 +29,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             switch result {
             case .success(let res):
-                if let fst = res.data.first(where: { $0.title == "abema-ios" }) {
-                    let dep: (String, String) = (fst.slug, fst.title)
+                let cond: (MeApps.App) -> Bool = {
+                    if let appname = Config.defaults[.lastAppNameVisited] {
+                        return $0.title == appname
+                    } else {
+                        return true
+                    }
+                }
+
+                if let fst = res.data.first(where: cond) {
                     DispatchQueue.main.async { [unowned self] in
-                        let vc = BuildsListViewController.makeFromStoryboard(dep)
-                        self.window?.rootViewController = vc
+
+                        // buildvc on top of appvc
+                        let appvc = AppsListViewController.makeFromStoryboard()
+                        let buildvc = BuildsListViewController.makeFromStoryboard(
+                            .init(appSlug: fst.slug, appName: fst.title)
+                        )
+                        let nc = UINavigationController()
+
+                        nc.setViewControllers([appvc, buildvc], animated: false)
+                        self.window?.rootViewController = nc
                         self.window?.makeKeyAndVisible()
                     }
                 }

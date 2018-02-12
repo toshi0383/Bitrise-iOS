@@ -7,12 +7,13 @@ Bitrise Client
 - [x] Builds List `GET /apps/${APP-SLUG}` `GET /apps/${APP-SLUG}/builds`
   + [x] Show builds without paging
   + [x] Abort Button `POST /apps/${APP-SLUG}/builds/${BUILD-SLUG}/abort`
-  + [ ] Poll interval 8sec for "new builds available message" for new builds (needs a framework like RxDataSources)
+  + [ ] Poll interval 8sec for "new builds available message" for new builds
       - [ ] Tap message to show new builds
       - [ ] PullToRefresh to fetch new builds
   + [ ] Pagination
+- [x] Show last app page on launch
 - [ ] Trigger Build for each app
-  + [ ] Cache workflowIDs (needs a framework like RxDataSources)
+  + [ ] Cache workflowIDs
 - [ ] Build Logs `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/log`
 
 # How to Build

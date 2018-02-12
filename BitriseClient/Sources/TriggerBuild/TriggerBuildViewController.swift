@@ -15,14 +15,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
 
     private let workflowIDs: [WorkflowID] = Config.workflowIDs
 
-    @IBOutlet private weak var rootStackView: UIStackView! {
-        didSet {
-            // safeArea relative margin only for iPhoneX
-            if !Device.isPhoneX {
-                rootStackView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-            }
-        }
-    }
+    @IBOutlet private weak var rootStackView: UIStackView!
 
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
@@ -40,6 +33,11 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        // safeArea relative margin only for iPhoneX
+        if !Device.isPhoneX {
+            rootStackView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        }
 
         // Tell rootStackView the hitTest target.
         rootStackView.isUserInteractionEnabled = true
