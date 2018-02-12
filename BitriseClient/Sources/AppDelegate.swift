@@ -29,6 +29,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             switch result {
             case .success(let res):
+
+                AppsManager.shared.apps = res.data
+
                 let cond: (MeApps.App) -> Bool = {
                     if let appname = Config.defaults[.lastAppNameVisited] {
                         return $0.title == appname
@@ -41,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     DispatchQueue.main.async { [unowned self] in
 
                         // buildvc on top of appvc
-                        let appvc = AppsListViewController.makeFromStoryboard()
+                        let appvc = AppsListViewController.makeFromStoryboard(.init())
                         let buildvc = BuildsListViewController.makeFromStoryboard(
                             .init(appSlug: fst.slug, appName: fst.title)
                         )
