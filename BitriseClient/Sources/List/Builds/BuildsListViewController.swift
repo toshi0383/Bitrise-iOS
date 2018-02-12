@@ -16,6 +16,13 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     private var appName: String!
     private var builds: [AppsBuilds.Build] = []
 
+
+    @IBOutlet private weak var triggerBuildButton: UIButton! {
+        didSet {
+            triggerBuildButton.layer.cornerRadius = 20
+        }
+    }
+
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
             tableView.dataSource = self
@@ -72,6 +79,14 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
                 self?.alert("Abort failed: \(error.localizedDescription)")
             }
         }
+    }
+
+    // MARK: IBAction
+
+    @IBAction func triggerBuildButtonTap() {
+        let vc = TriggerBuildViewController.makeFromStoryboard()
+        vc.modalPresentationStyle = .overCurrentContext
+        present(vc, animated: true, completion: nil)
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate

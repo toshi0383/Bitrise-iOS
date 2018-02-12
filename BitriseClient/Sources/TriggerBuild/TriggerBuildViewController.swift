@@ -9,11 +9,20 @@
 import Continuum
 import UIKit
 
-class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
+
+    typealias Dependency = Void
 
     private let workflowIDs: [WorkflowID] = Config.workflowIDs
 
-    @IBOutlet private weak var rootStackView: UIStackView!
+    @IBOutlet private weak var rootStackView: UIStackView! {
+        didSet {
+            // safeArea relative margin only for iPhoneX
+            if !Device.isPhoneX {
+                rootStackView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+            }
+        }
+    }
 
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
@@ -46,6 +55,10 @@ class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITab
             .disposed(by: bag)
 
         gitObjectInputView.updateUI(store.gitObject)
+
+        // PullToDismiss
+        let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
+        view.addGestureRecognizer(gesture)
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -53,6 +66,28 @@ class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITab
 
         gitObjectInputView.resignFirstResponder()
         apiTokenTextfield.resignFirstResponder()
+    }
+
+    // MARK: Handle PanGesture
+
+    private var oldViewHeight: CGFloat = 0
+
+    @objc func panGesture(_ gesture: UIPanGestureRecognizer) {
+        switch gesture.state {
+        case .ended:
+            print(gesture.velocity(in: view).y)
+            if gesture.translation(in: view).y > view.frame.height / 2
+                || gesture.velocity(in: view).y > 250.0 {
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                view.moveTo(y: 0, animated: true)
+            }
+        default:
+            let translationY = gesture.translation(in: view).y
+            if translationY > 0.5 {
+                view.moveTo(y: translationY, animated: false)
+            }
+        }
     }
 
     // MARK: IBAction

@@ -7,6 +7,7 @@
 //
 
 import ActionPopoverButton
+import APIKit
 import UIKit
 
 @UIApplicationMain
@@ -16,7 +17,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
+        // ActionPopoverButton
         UIView.hth.exchangeMethods()
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+//        window?.rootViewController = SplashViewController.makeFromStoryboard()
+
+        let req = MeAppsRequest()
+        Session.shared.send(req) { result in
+
+            switch result {
+            case .success(let res):
+                if let fst = res.data.first(where: { $0.title == "abema-ios" }) {
+                    let dep: (String, String) = (fst.slug, fst.title)
+                    DispatchQueue.main.async { [unowned self] in
+                        let vc = BuildsListViewController.makeFromStoryboard(dep)
+                        self.window?.rootViewController = vc
+                        self.window?.makeKeyAndVisible()
+                    }
+                }
+            case .failure(let error):
+                #if DEBUG
+                    print(error)
+                #endif
+            }
+        }
 
         return true
     }

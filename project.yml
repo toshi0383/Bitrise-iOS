@@ -15,8 +15,8 @@ targets:
       Release: configs/BitriseClient-Release.xcconfig
     dependencies:
       - target: ActionPopoverButton
-      - carthage: Continuum
       - carthage: APIKit
+      - carthage: Continuum
       - carthage: Result
       - carthage: SwiftyUserDefaults
   ActionPopoverButton:

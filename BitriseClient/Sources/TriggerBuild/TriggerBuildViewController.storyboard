@@ -13,7 +13,7 @@
         <!--Trigger Build View Controller-->
         <scene sceneID="X0O-Jx-g2q">
             <objects>
-                <viewController id="KGZ-dF-ioA" customClass="TriggerBuildViewController" customModule="BitriseClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TriggerBuildViewController" id="KGZ-dF-ioA" customClass="TriggerBuildViewController" customModule="BitriseClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="edf-Zd-sXJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -153,7 +153,9 @@
                             <constraint firstAttribute="trailing" secondItem="gc6-aJ-0IL" secondAttribute="trailing" id="Ekg-1S-FIg"/>
                             <constraint firstAttribute="bottom" secondItem="gc6-aJ-0IL" secondAttribute="bottom" id="XW7-cG-t33"/>
                             <constraint firstItem="QZm-Oi-V7D" firstAttribute="height" secondItem="edf-Zd-sXJ" secondAttribute="height" id="d1t-z4-4jt"/>
-                            <constraint firstItem="gc6-aJ-0IL" firstAttribute="top" secondItem="T5G-54-fLm" secondAttribute="top" id="hzc-R4-oHY"/>
+                            <constraint firstItem="gc6-aJ-0IL" firstAttribute="top" secondItem="edf-Zd-sXJ" secondAttribute="top" priority="777" id="hzc-R4-oHY">
+                                <variation key="heightClass=regular-widthClass=compact" constant="44"/>
+                            </constraint>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="T5G-54-fLm"/>
                         <variation key="widthClass=compact">
