@@ -3,10 +3,10 @@ Bitrise Client
 
 # Features
 - [x] Trigger Builds for a specific app
-- [ ] Apps List `GET /me/apps` (update on enterForeground)
-- [ ] Builds List `GET /apps/${APP-SLUG}` `GET /apps/${APP-SLUG}/builds`
-  + [ ] Show 30 builds without paging
-  + [ ] Abort Button `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/abort`
+- [x] Apps List `GET /me/apps` (update on enterForeground)
+- [x] Builds List `GET /apps/${APP-SLUG}` `GET /apps/${APP-SLUG}/builds`
+  + [x] Show builds without paging
+  + [x] Abort Button `POST /apps/${APP-SLUG}/builds/${BUILD-SLUG}/abort`
   + [ ] Poll interval 8sec for "new builds available message" for new builds (needs a framework like RxDataSources)
       - [ ] Tap message to show new builds
       - [ ] PullToRefresh to fetch new builds
