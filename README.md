@@ -24,12 +24,12 @@ This is ignored by git. (listed in .gitignore)
 
 #### Required
 
-- `BITRISE_APP_SLUG`
-- `BITRISE_API_TOKEN`
+- `TRIGGER_BUILD_APP_SLUG`
+- `TRIGGER_BUILD_API_TOKEN`
 
 #### Optional
 
-- `BITRISE_WORKFLOW_IDS` ... whitespace separated
+- `TRIGGER_BUILD_WORKFLOW_IDS` ... whitespace separated
 
 ## Setup Carthage
 Install the latest version of Carthage.

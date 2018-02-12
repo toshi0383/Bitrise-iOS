@@ -24,9 +24,9 @@ class InfoPlist {
     //fileprivate enum StringKey: String {
     //}
     enum OptionalStringKey: String {
-        case BITRISE_APP_SLUG
-        case BITRISE_API_TOKEN
-        case BITRISE_WORKFLOW_IDS
+        case TRIGGER_BUILD_APP_SLUG
+        case TRIGGER_BUILD_API_TOKEN
+        case TRIGGER_BUILD_WORKFLOW_IDS
         case BITRISE_PERSONAL_ACCESS_TOKEN
     }
 
@@ -60,15 +60,15 @@ final class Config {
     }
 
     static var appSlug: String? {
-        return infoPlist[.BITRISE_APP_SLUG]
+        return infoPlist[.TRIGGER_BUILD_APP_SLUG]
     }
 
     static var apiToken: String? {
-        return infoPlist[.BITRISE_API_TOKEN]
+        return infoPlist[.TRIGGER_BUILD_API_TOKEN]
     }
 
     static var workflowIDs: [WorkflowID] {
-        guard let ids = infoPlist[.BITRISE_WORKFLOW_IDS] else {
+        guard let ids = infoPlist[.TRIGGER_BUILD_WORKFLOW_IDS] else {
             return []
         }
         return ids

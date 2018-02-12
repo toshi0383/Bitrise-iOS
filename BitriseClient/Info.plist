@@ -2,14 +2,14 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>BITRISE_API_TOKEN</key>
-	<string>${BITRISE_API_TOKEN}</string>
-	<key>BITRISE_APP_SLUG</key>
-	<string>${BITRISE_APP_SLUG}</string>
+	<key>TRIGGER_BUILD_API_TOKEN</key>
+	<string>${TRIGGER_BUILD_API_TOKEN}</string>
+	<key>TRIGGER_BUILD_APP_SLUG</key>
+	<string>${TRIGGER_BUILD_APP_SLUG}</string>
 	<key>BITRISE_PERSONAL_ACCESS_TOKEN</key>
 	<string>${BITRISE_PERSONAL_ACCESS_TOKEN}</string>
-	<key>BITRISE_WORKFLOW_IDS</key>
-	<string>${BITRISE_WORKFLOW_IDS}</string>
+	<key>TRIGGER_BUILD_WORKFLOW_IDS</key>
+	<string>${TRIGGER_BUILD_WORKFLOW_IDS}</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

@@ -39,7 +39,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         didSet {
             triggerBuildButton.layer.cornerRadius = 20
 
-            if infoPlist[.BITRISE_APP_SLUG] == nil || infoPlist[.BITRISE_API_TOKEN] == nil {
+            if infoPlist[.TRIGGER_BUILD_APP_SLUG] == nil || infoPlist[.TRIGGER_BUILD_API_TOKEN] == nil {
                 triggerBuildButton.isEnabled = false
                 triggerBuildButton.backgroundColor = .gray
             }
