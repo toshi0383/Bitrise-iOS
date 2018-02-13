@@ -17,6 +17,7 @@ private struct PullRequestDescription {
         if let branch = build.branch {
             d = "\(d) \(branch)"
         }
+        d = "\(d) [\(build.triggered_workflow)]"
         self.text = d
     }
 }
