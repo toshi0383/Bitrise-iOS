@@ -9,7 +9,7 @@
 import Continuum
 import UIKit
 
-class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
+class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     typealias Dependency = Void
 
@@ -56,6 +56,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
 
         // PullToDismiss
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
+        gesture.delegate = self
         view.addGestureRecognizer(gesture)
     }
 
@@ -86,6 +87,15 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
                 view.moveTo(y: translationY, animated: false)
             }
         }
+    }
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        let location = gestureRecognizer.location(in: view)
+        if let _ = gitObjectInputView.hitTest(view.convert(location, to: gitObjectInputView),
+                                                with: nil) {
+            return false
+        }
+        return true
     }
 
     // MARK: IBAction
