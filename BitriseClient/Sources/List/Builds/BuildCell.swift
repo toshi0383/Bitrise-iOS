@@ -17,19 +17,59 @@ private struct PullRequestDescription {
         if let branch = build.branch {
             d = "\(d) \(branch)"
         }
-        d = "\(d) [\(build.triggered_workflow)]"
+        d = "\(d)"
         self.text = d
     }
 }
 
 final class BuildCell: UITableViewCell {
+
+    enum StatusColor: String {
+        case inProgress = "in-progress"
+        case success = "success"
+        case aborted = "aborted"
+        case error = "error"
+        case onHold = "on-hold"
+
+        var value: UIColor {
+            switch self {
+            case .inProgress:
+                return .buildInProgress
+            case .success:
+                return .buildSuccess
+            case .aborted:
+                return .buildAborted
+            case .error:
+                return .buildError
+            case .onHold:
+                return .buildOnHold
+            }
+        }
+    }
+
+    @IBOutlet private weak var titleLabel: UILabel!
+    @IBOutlet private weak var branchLabel: UILabel!
+    @IBOutlet private weak var subtitleLabel: UILabel!
+
+    @IBOutlet private weak var smallSquareView: UIView! {
+        didSet {
+            smallSquareView.layer.cornerRadius = 6
+        }
+    }
+
     func configure(_ build: AppsBuilds.Build) {
-        textLabel?.text = "#\(build.build_number) \(build.status_text)\n\(PullRequestDescription(build: build).text)"
-        textLabel?.numberOfLines = 0
+        titleLabel.text = "#\(build.build_number) \(build.status_text) [\(build.triggered_workflow)]"
+        branchLabel.text = PullRequestDescription(build: build).text
+
+        if let color = StatusColor(rawValue: build.status_text) {
+            smallSquareView.backgroundColor = color.value
+        } else {
+            smallSquareView.backgroundColor = .clear
+        }
 
         let formatter = DateFormatter()
         formatter.dateFormat = "YYYY/MM/dd HH:mm:ss"
-        detailTextLabel?.text = "triggeredAt: \(formatter.string(from: build.triggered_at))"
+        subtitleLabel.text = "triggeredAt: \(formatter.string(from: build.triggered_at))"
 
         accessoryType = build.status == .notFinished ? .detailButton : .none
     }
