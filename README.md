@@ -16,6 +16,7 @@ Bitrise Client
   + [ ] Tap message to show new builds
   + [ ] PullToRefresh to fetch new builds
 - [ ] Trigger Build for each app
+- [ ] [Builds] local push notification for specified build
 - [ ] Build Logs `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/log`
 - [ ] [Apps][Builds] Pagination
 

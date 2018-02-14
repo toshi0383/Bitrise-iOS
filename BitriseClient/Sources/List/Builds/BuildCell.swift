@@ -22,20 +22,15 @@ private struct PullRequestDescription {
     }
 }
 
-private struct BuildDescription {
-    let text: String
-    init(build: AppsBuilds.Build) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "YYYY/MM/dd HH:mm:ss"
-        self.text = "#\(build.build_number) \(build.status_text)\ntriggeredAt: \(formatter.string(from: build.triggered_at))"
-    }
-}
-
 final class BuildCell: UITableViewCell {
     func configure(_ build: AppsBuilds.Build) {
-        textLabel?.text = BuildDescription(build: build).text
+        textLabel?.text = "#\(build.build_number) \(build.status_text)\n\(PullRequestDescription(build: build).text)"
         textLabel?.numberOfLines = 0
-        detailTextLabel?.text = PullRequestDescription(build: build).text
+
+        let formatter = DateFormatter()
+        formatter.dateFormat = "YYYY/MM/dd HH:mm:ss"
+        detailTextLabel?.text = "triggeredAt: \(formatter.string(from: build.triggered_at))"
+
         accessoryType = build.status == .notFinished ? .detailButton : .none
     }
 }
