@@ -8,10 +8,10 @@ Bitrise Client
   + [x] Show builds without paging
   + [x] Abort Button `POST /apps/${APP-SLUG}/builds/${BUILD-SLUG}/abort`
 - [x] Show last app page on launch
-- [ ] [Trigger] improve UI
 - [ ] SettingsView to set personal access token from screen
-- [ ] BETA RELEASE 🚀
 - [ ] [Trigger] Add/Delete workflowIDs and cache them
+- [ ] [Trigger] improve UI
+- [ ] BETA RELEASE 🚀
 - [ ] [Apps][Builds] Poll interval 8sec for "new builds available message" for new builds
   + [ ] Tap message to show new builds
   + [ ] PullToRefresh to fetch new builds

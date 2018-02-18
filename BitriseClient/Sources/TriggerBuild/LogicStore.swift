@@ -13,6 +13,10 @@ typealias WorkflowID = String
 
 final class LogicStore {
 
+    static let shared = LogicStore()
+
+    var workflowIDs: [WorkflowID] = Config.workflowIDs
+
     var workflowID: WorkflowID?
     var apiToken: String? = Config.apiToken
 

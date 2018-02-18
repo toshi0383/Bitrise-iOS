@@ -13,8 +13,6 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
 
     typealias Dependency = Void
 
-    private let workflowIDs: [WorkflowID] = Config.workflowIDs
-
     @IBOutlet private weak var rootStackView: UIStackView!
 
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
@@ -26,7 +24,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     @IBOutlet private weak var apiTokenTextfield: UITextField!
     @IBOutlet private weak var tableView: UITableView!
 
-    private let store = LogicStore()
+    private let store = LogicStore.shared
     private let bag = ContinuumBag()
 
     // MARK: LifeCycle
@@ -152,20 +150,42 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     // MARK: UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return workflowIDs.count
+        switch section {
+        case 0:
+            return store.workflowIDs.count
+        case 1:
+            return 1
+        default:
+            fatalError()
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
-        cell.textLabel?.text = workflowIDs[indexPath.row]
-        return cell
+        switch indexPath.section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+            cell.textLabel?.text = store.workflowIDs[indexPath.row]
+            return cell
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewCell")! as! WorkflowAddNewCell
+            cell.configure { [weak self] text in
+                guard let me = self else { return }
+
+                let ip = IndexPath(row: me.store.workflowIDs.count, section: 0)
+                me.store.workflowIDs.append(text)
+                me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
+            }
+            return cell
+        default:
+            fatalError()
+        }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        store.workflowID = workflowIDs[indexPath.row]
+        store.workflowID = store.workflowIDs[indexPath.row]
     }
 }
