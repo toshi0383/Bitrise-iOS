@@ -131,7 +131,7 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="aaa" borderStyle="roundedRect" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="SAp-tQ-4zM">
+                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add new workflowID" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" background="git-branch" translatesAutoresizingMaskIntoConstraints="NO" id="SAp-tQ-4zM">
                                                             <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
                                                             <nil key="textColor"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
@@ -191,6 +191,7 @@
                     </view>
                     <connections>
                         <outlet property="apiTokenTextfield" destination="1oX-LG-GSH" id="zwl-aZ-kLU"/>
+                        <outlet property="baseBottomConstraint" destination="XW7-cG-t33" id="C3X-58-Siz"/>
                         <outlet property="gitObjectInputView" destination="mUe-vD-YbD" id="YKp-mv-aIM"/>
                         <outlet property="rootStackView" destination="gc6-aJ-0IL" id="jsy-Bj-TIf"/>
                         <outlet property="tableView" destination="QZm-Oi-V7D" id="9sf-4k-y40"/>
@@ -201,4 +202,7 @@
             <point key="canvasLocation" x="18" y="50"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="git-branch" width="151" height="151"/>
+    </resources>
 </document>

@@ -21,16 +21,23 @@ final class WorkflowAddNewCell: UITableViewCell, UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if let text = textField.text {
+        if let text = textField.text, textField.isFirstResponder {
             handler?(text)
         }
     }
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        if let text = textField.text {
+        guard let text = textField.text else {
+            return false
+        }
+
+        if !text.isEmpty {
             textField.text = nil
             handler?(text)
+        } else {
+            textField.resignFirstResponder()
         }
+
         return true
     }
 }

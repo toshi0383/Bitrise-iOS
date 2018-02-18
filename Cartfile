@@ -1,3 +1,4 @@
 github "marty-suzuki/Continuum"
 github "ishkawa/APIKit"
 github "radex/SwiftyUserDefaults"
+github "cokaholic/TKKeyboardControl" "master"

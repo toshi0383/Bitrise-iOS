@@ -7,11 +7,14 @@
 //
 
 import Continuum
+import TKKeyboardControl
 import UIKit
 
 class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     typealias Dependency = Void
+
+    @IBOutlet private weak var baseBottomConstraint: NSLayoutConstraint!
 
     @IBOutlet private weak var rootStackView: UIStackView!
 
@@ -22,8 +25,16 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     }
 
     @IBOutlet private weak var apiTokenTextfield: UITextField!
-    @IBOutlet private weak var tableView: UITableView!
 
+    @IBOutlet private weak var tableView: UITableView! {
+        didSet {
+            tableView.dataSource = self
+            tableView.delegate = self
+            tableView.allowsMultipleSelectionDuringEditing = false
+        }
+    }
+
+    private weak var lastFirstResponder: UIResponder?
     private let store = LogicStore.shared
     private let bag = ContinuumBag()
 
@@ -55,14 +66,51 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
         // PullToDismiss
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
         gesture.delegate = self
+        if let grs = tableView.gestureRecognizers {
+            grs.forEach {
+                gesture.require(toFail: $0)
+            }
+        }
         view.addGestureRecognizer(gesture)
+
+        view.keyboardTriggerOffset = 44.0;    // Input view frame height
+
+        view.addKeyboardNonpanning(frameBasedActionHandler: { [weak self] keyboardFrameInView, firstResponder, opening, closing in
+            guard let me = self else { return }
+
+            me.lastFirstResponder = firstResponder
+
+            guard let v = firstResponder as? UIView else { return }
+
+            if !closing {
+                let keyboardY = keyboardFrameInView.minY
+
+                // NOTE: Set no margins between the keyboard.
+                //   to avoid edge case like AddNewCell at bottom on landscape with safeArea.
+                //   Modal's presentingVC(BuildListVC) would be visible in background (thru the margin space),
+                //   because we are moving self.view frame on keyboard appearance.
+                let vMaxY = v.convert(.zero, to: me.view).y + v.frame.height // + 4
+
+                let delta = keyboardY - vMaxY
+                if delta < 0 {
+                    me.view.frame.origin.y = delta
+                }
+            } else {
+                me.view.frame.origin.y = 0
+            }
+
+            if v.isDescendant(of: me.tableView),
+                let ip = me.tableView.indexPathForSelectedRow,
+                opening {
+                me.tableView.deselectRow(at: ip, animated: true)
+            }
+        })
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
 
-        gitObjectInputView.resignFirstResponder()
-        apiTokenTextfield.resignFirstResponder()
+        lastFirstResponder?.resignFirstResponder()
     }
 
     // MARK: Handle PanGesture
@@ -88,11 +136,16 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     }
 
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+
         let location = gestureRecognizer.location(in: view)
-        if let _ = gitObjectInputView.hitTest(view.convert(location, to: gitObjectInputView),
-                                                with: nil) {
-            return false
+        let viewsToIgnorePanGesture: [UIView] = [gitObjectInputView]
+
+        for v in viewsToIgnorePanGesture {
+            if v.hitTest(view.convert(location, to: v), with: nil) != nil {
+                return false
+            }
         }
+
         return true
     }
 
@@ -178,6 +231,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
                 let ip = IndexPath(row: me.store.workflowIDs.count, section: 0)
                 me.store.workflowIDs.append(text)
                 me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
+                me.tableView.scrollToRow(at: ip, at: .top, animated: true)
             }
             return cell
         default:
@@ -186,6 +240,21 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard indexPath.section == 0 else { return }
+
         store.workflowID = store.workflowIDs[indexPath.row]
+
+        lastFirstResponder?.resignFirstResponder()
+    }
+
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0
+    }
+
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            store.workflowIDs.remove(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
 }

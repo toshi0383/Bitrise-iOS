@@ -19,6 +19,7 @@ targets:
       - carthage: Continuum
       - carthage: Result
       - carthage: SwiftyUserDefaults
+      - carthage: TKKeyboardControl
   ActionPopoverButton:
     platform: iOS
     type: framework
