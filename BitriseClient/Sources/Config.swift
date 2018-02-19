@@ -24,7 +24,6 @@ class InfoPlist {
     //fileprivate enum StringKey: String {
     //}
     enum OptionalStringKey: String {
-        case TRIGGER_BUILD_APP_SLUG
         case BITRISE_PERSONAL_ACCESS_TOKEN
     }
 
@@ -68,10 +67,6 @@ final class Config {
         } else {
             return nil
         }
-    }
-
-    static var appSlug: String? {
-        return infoPlist[.TRIGGER_BUILD_APP_SLUG]
     }
 
     static func apiToken(for appSlug: AppSlug) -> String? {

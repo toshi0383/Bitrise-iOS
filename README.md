@@ -14,14 +14,20 @@ Bitrise Client
 - [x] [Trigger] Cache workflowIDs, API token and last gitObject using Realm
 - [x] Trigger Build for each app
 - [ ] [SettingsView] bitrise personal access token
-- [ ] [Trigger] Improve trigger launcher button UX (size and haptic)
-- [ ] BETA RELEASE 🚀
-- [ ] [Apps][Builds] Poll interval 8sec for "new builds available message" for new builds
+- [ ] [Builds] WireFrame to SettingsView if no personal access token is set
+- [ ] [Trigger] Improve trigger launcher button UX (size)
+- [ ] 2.0 RELEASE 🚀
+- [ ] [Builds] Show build's username and commit message
+- [ ] [Builds] Poll interval 8sec for "new builds available"
   + [ ] Tap message to show new builds
   + [ ] PullToRefresh to fetch new builds
-- [ ] [Builds] local push notification for specified build
+- [ ] [Builds] Poll interval for status of each in-progress/on-hold builds
+- [ ] [Builds] Drop down menu at navigationBar to switch apps
+- [ ] [Builds] Local push notification for specified build
 - [ ] Build Logs `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/log`
-- [ ] [Apps][Builds] Pagination
+- [ ] [Builds] Pagination
+- [ ] [Apps] Pagination
+- [ ] 3.0 RELEASE 🚀
 
 # How to Build
 ## App Configuration
@@ -38,9 +44,8 @@ SeeAlso: http://devcenter.bitrise.io/api/v0.1/#authentication
 
 Currently BuildTriggerViewController supports single app.
 
-- `TRIGGER_BUILD_APP_SLUG`
-- `TRIGGER_BUILD_API_TOKEN`
-- `TRIGGER_BUILD_WORKFLOW_IDS` ... whitespace separated
+- `TRIGGER_BUILD_API_TOKENS`
+- `TRIGGER_BUILD_WORKFLOW_IDS`
 
 SeeAlso: http://devcenter.bitrise.io/api/build-trigger
 
