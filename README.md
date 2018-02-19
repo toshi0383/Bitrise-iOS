@@ -11,8 +11,8 @@ Bitrise Client
 - [x] [Trigger] keyboard awareness
 - [x] [Trigger] Add/Delete workflowIDs
 - [x] Install Encrypted Realm
-- [ ] [Trigger] Cache workflowIDs, API token and last gitObject using Realm
-- [ ] Trigger Build for each app
+- [x] [Trigger] Cache workflowIDs, API token and last gitObject using Realm
+- [x] Trigger Build for each app
 - [ ] [SettingsView] bitrise personal access token
 - [ ] [Trigger] Improve trigger launcher button UX (size and haptic)
 - [ ] BETA RELEASE 🚀
