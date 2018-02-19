@@ -20,6 +20,8 @@ targets:
       - carthage: Result
       - carthage: SwiftyUserDefaults
       - carthage: TKKeyboardControl
+      - carthage: Realm
+      - carthage: RealmSwift
   ActionPopoverButton:
     platform: iOS
     type: framework

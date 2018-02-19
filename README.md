@@ -10,7 +10,7 @@ Bitrise Client
 - [x] Show last app page on launch
 - [x] [Trigger] keyboard awareness
 - [x] [Trigger] Add/Delete workflowIDs
-- [ ] Install Encrypted Realm
+- [x] Install Encrypted Realm
 - [ ] [Trigger] Cache workflowIDs, API token and last gitObject using Realm
 - [ ] Trigger Build for each app
 - [ ] [SettingsView] bitrise personal access token
