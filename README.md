@@ -9,13 +9,16 @@ Bitrise Client
   + [x] Abort Button `POST /apps/${APP-SLUG}/builds/${BUILD-SLUG}/abort`
 - [x] Show last app page on launch
 - [x] [Trigger] keyboard awareness
-- [ ] [Trigger] Add/Delete workflowIDs and cache them
-- [ ] SettingsView to set personal access token from screen
+- [x] [Trigger] Add/Delete workflowIDs
+- [ ] Install Encrypted Realm
+- [ ] [Trigger] Cache workflowIDs, API token and last gitObject using Realm
+- [ ] Trigger Build for each app
+- [ ] [SettingsView] bitrise personal access token
+- [ ] [Trigger] Improve trigger launcher button UX (size and haptic)
 - [ ] BETA RELEASE 🚀
 - [ ] [Apps][Builds] Poll interval 8sec for "new builds available message" for new builds
   + [ ] Tap message to show new builds
   + [ ] PullToRefresh to fetch new builds
-- [ ] Trigger Build for each app
 - [ ] [Builds] local push notification for specified build
 - [ ] Build Logs `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/log`
 - [ ] [Apps][Builds] Pagination
