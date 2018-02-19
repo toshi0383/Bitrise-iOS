@@ -12,7 +12,13 @@ import UIKit
 
 class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
-    typealias Dependency = Void
+    typealias Dependency = TriggerBuildLogicStore
+
+    static func makeFromStoryboard(_ logicStore: TriggerBuildLogicStore) -> TriggerBuildViewController {
+        let vc = TriggerBuildViewController.unsafeMakeFromStoryboard()
+        vc.logicStore = logicStore
+        return vc
+    }
 
     @IBOutlet private weak var baseBottomConstraint: NSLayoutConstraint!
 
@@ -35,7 +41,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     }
 
     private weak var lastFirstResponder: UIResponder?
-    private let store = LogicStore.shared
+    private var logicStore: TriggerBuildLogicStore!
     private let bag = ContinuumBag()
 
     // MARK: LifeCycle
@@ -54,14 +60,14 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
 
         tableView.reloadData()
 
-        apiTokenTextfield.text = store.apiToken
+        apiTokenTextfield.text = logicStore.apiToken
 
-        let keypath: ReferenceWritableKeyPath<LogicStore, GitObject> = \.gitObject
+        let keypath: ReferenceWritableKeyPath<TriggerBuildLogicStore, GitObject> = \.gitObject
         notificationCenter.continuum
-            .observe(gitObjectInputView.newInput, bindTo: store, keypath)
+            .observe(gitObjectInputView.newInput, bindTo: logicStore, keypath)
             .disposed(by: bag)
 
-        gitObjectInputView.updateUI(store.gitObject)
+        gitObjectInputView.updateUI(logicStore.gitObject)
 
         // PullToDismiss
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
@@ -157,10 +163,10 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
         apiTokenTextfield.resignFirstResponder()
 
         if let text = apiTokenTextfield.text, !text.isEmpty {
-            store.apiToken = text
+            logicStore.apiToken = text
         }
 
-        guard let req = store.urlRequest() else {
+        guard let req = logicStore.urlRequest() else {
             alert("ERROR: Could not build request.")
             return
         }
@@ -209,7 +215,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return store.workflowIDs.count
+            return logicStore.workflowIDs.count
         case 1:
             return 1
         default:
@@ -221,15 +227,15 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
-            cell.textLabel?.text = store.workflowIDs[indexPath.row]
+            cell.textLabel?.text = logicStore.workflowIDs[indexPath.row]
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewCell")! as! WorkflowAddNewCell
             cell.configure { [weak self] text in
                 guard let me = self else { return }
 
-                let ip = IndexPath(row: me.store.workflowIDs.count, section: 0)
-                me.store.workflowIDs.append(text)
+                let ip = IndexPath(row: me.logicStore.workflowIDs.count, section: 0)
+                me.logicStore.appendWorkflowID(text)
                 me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
                 me.tableView.scrollToRow(at: ip, at: .top, animated: true)
             }
@@ -242,7 +248,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.section == 0 else { return }
 
-        store.workflowID = store.workflowIDs[indexPath.row]
+        logicStore.workflowID = logicStore.workflowIDs[indexPath.row]
 
         lastFirstResponder?.resignFirstResponder()
     }
@@ -253,7 +259,7 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            store.workflowIDs.remove(at: indexPath.row)
+            logicStore.removeWorkflowID(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }

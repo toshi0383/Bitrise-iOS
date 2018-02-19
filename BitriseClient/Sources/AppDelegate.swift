@@ -24,6 +24,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
 //        window?.rootViewController = SplashViewController.makeFromStoryboard()
 
+        DispatchQueue.global().async {
+            RealmManager.shared.initialize()
+        }
+
         let req = MeAppsRequest()
         Session.shared.send(req) { result in
 

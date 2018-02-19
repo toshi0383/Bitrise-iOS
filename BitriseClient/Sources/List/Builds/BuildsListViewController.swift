@@ -38,11 +38,6 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     @IBOutlet private weak var triggerBuildButton: UIButton! {
         didSet {
             triggerBuildButton.layer.cornerRadius = 20
-
-            if infoPlist[.TRIGGER_BUILD_APP_SLUG] == nil || infoPlist[.TRIGGER_BUILD_API_TOKEN] == nil {
-                triggerBuildButton.isEnabled = false
-                triggerBuildButton.backgroundColor = .gray
-            }
         }
     }
 
@@ -110,7 +105,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     // MARK: IBAction
 
     @IBAction func triggerBuildButtonTap() {
-        let vc = TriggerBuildViewController.makeFromStoryboard()
+        let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: appSlug))
         vc.modalPresentationStyle = .overCurrentContext
         navigationController?.present(vc, animated: true, completion: nil)
     }

@@ -25,9 +25,12 @@ class InfoPlist {
     //}
     enum OptionalStringKey: String {
         case TRIGGER_BUILD_APP_SLUG
-        case TRIGGER_BUILD_API_TOKEN
-        case TRIGGER_BUILD_WORKFLOW_IDS
         case BITRISE_PERSONAL_ACCESS_TOKEN
+    }
+
+    enum OptionalDictionaryKey: String {
+        case TRIGGER_BUILD_WORKFLOW_IDS
+        case TRIGGER_BUILD_API_TOKENS
     }
 
     //subscript(key: StringKey) -> String {
@@ -37,6 +40,14 @@ class InfoPlist {
     subscript(key: OptionalStringKey) -> String? {
         if let s = _Plist["\(key)"] as? String, !s.isEmpty {
             return s
+        } else {
+            return nil
+        }
+    }
+
+    subscript(key: OptionalDictionaryKey) -> [String: String]? {
+        if let s = _Plist["\(key)"] as? String, !s.isEmpty {
+            return try! JSONDecoder().decode([String: String].self, from: s.data(using: .utf8)!)
         } else {
             return nil
         }
@@ -63,19 +74,37 @@ final class Config {
         return infoPlist[.TRIGGER_BUILD_APP_SLUG]
     }
 
-    static var apiToken: String? {
-        return infoPlist[.TRIGGER_BUILD_API_TOKEN]
+    static func apiToken(for appSlug: AppSlug) -> String? {
+        return apiTokensMap?[appSlug]
     }
 
-    static var workflowIDs: [WorkflowID] {
-        guard let ids = infoPlist[.TRIGGER_BUILD_WORKFLOW_IDS] else {
-            return []
+    static var apiTokensMap: [AppSlug: String]? {
+        return infoPlist[.TRIGGER_BUILD_API_TOKENS]
+    }
+
+    static var workflowIDsMap: [AppSlug: [WorkflowID]] {
+        guard let dictionary = infoPlist[.TRIGGER_BUILD_WORKFLOW_IDS] else {
+            return [:]
         }
-        return ids
+
+        return dictionary.mapValues(stringToStrArray)
+    }
+
+    private static func stringToStrArray(_ string: String) -> [String] {
+        return string
             .split(separator: " ")
             .filter { !$0.isEmpty }
             .map { String($0) }
     }
+
+    //static func workflowIDs(for appSlug: String) -> [WorkflowID] {
+    //    guard let dictionary = infoPlist[.TRIGGER_BUILD_WORKFLOW_IDS],
+    //        let idsStr = dictionary[appSlug]
+    //        else {
+    //        return []
+    //    }
+    //    return stringToStrArray(idsStr)
+    //}
 
     static var personalAccessToken: String? {
         if let t = infoPlist[.BITRISE_PERSONAL_ACCESS_TOKEN] {
