@@ -12,4 +12,10 @@ extension UIColor {
     static let baseGreen = UIColor(hex: 0x4BBFA8)
     static let gitRed = UIColor(hex: 0xFF5500)
     static let gitRedHighlight = UIColor(hex: 0xDB4B02)
+
+    static let buildInProgress = UIColor(hex: 0x8054A6)
+    static let buildSuccess    = UIColor(hex: 0x43C2A3)
+    static let buildAborted    = UIColor(hex: 0xFEDE35)
+    static let buildError      = UIColor(hex: 0xEE742E)
+    static let buildOnHold     = UIColor(hex: 0x064357)
 }

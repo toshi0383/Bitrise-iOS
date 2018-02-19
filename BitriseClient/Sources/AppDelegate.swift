@@ -7,6 +7,8 @@
 //
 
 import ActionPopoverButton
+import APIKit
+import SwiftyUserDefaults
 import UIKit
 
 @UIApplicationMain
@@ -16,7 +18,53 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
+        // ActionPopoverButton
         UIView.hth.exchangeMethods()
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+//        window?.rootViewController = SplashViewController.makeFromStoryboard()
+
+        DispatchQueue.global().async {
+            RealmManager.shared.initialize()
+        }
+
+        let req = MeAppsRequest()
+        Session.shared.send(req) { result in
+
+            switch result {
+            case .success(let res):
+
+                AppsManager.shared.apps = res.data
+
+                let cond: (MeApps.App) -> Bool = {
+                    if let appname = Config.defaults[.lastAppNameVisited] {
+                        return $0.title == appname
+                    } else {
+                        return true
+                    }
+                }
+
+                if let fst = res.data.first(where: cond) {
+                    DispatchQueue.main.async { [unowned self] in
+
+                        // buildvc on top of appvc
+                        let appvc = AppsListViewController.makeFromStoryboard(.init())
+                        let buildvc = BuildsListViewController.makeFromStoryboard(
+                            .init(appSlug: fst.slug, appName: fst.title)
+                        )
+                        let nc = UINavigationController()
+
+                        nc.setViewControllers([appvc, buildvc], animated: false)
+                        self.window?.rootViewController = nc
+                        self.window?.makeKeyAndVisible()
+                    }
+                }
+            case .failure(let error):
+                #if DEBUG
+                    print(error)
+                #endif
+            }
+        }
 
         return true
     }

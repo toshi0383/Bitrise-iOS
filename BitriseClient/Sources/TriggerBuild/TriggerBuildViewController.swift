@@ -7,11 +7,20 @@
 //
 
 import Continuum
+import TKKeyboardControl
 import UIKit
 
-class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
-    private let workflowIDs: [WorkflowID] = Config.workflowIDs
+    typealias Dependency = TriggerBuildLogicStore
+
+    static func makeFromStoryboard(_ logicStore: TriggerBuildLogicStore) -> TriggerBuildViewController {
+        let vc = TriggerBuildViewController.unsafeMakeFromStoryboard()
+        vc.logicStore = logicStore
+        return vc
+    }
+
+    @IBOutlet private weak var baseBottomConstraint: NSLayoutConstraint!
 
     @IBOutlet private weak var rootStackView: UIStackView!
 
@@ -22,9 +31,17 @@ class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITab
     }
 
     @IBOutlet private weak var apiTokenTextfield: UITextField!
-    @IBOutlet private weak var tableView: UITableView!
 
-    private let store = LogicStore()
+    @IBOutlet private weak var tableView: UITableView! {
+        didSet {
+            tableView.dataSource = self
+            tableView.delegate = self
+            tableView.allowsMultipleSelectionDuringEditing = false
+        }
+    }
+
+    private weak var lastFirstResponder: UIResponder?
+    private var logicStore: TriggerBuildLogicStore!
     private let bag = ContinuumBag()
 
     // MARK: LifeCycle
@@ -32,27 +49,110 @@ class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITab
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        // safeArea relative margin only for iPhoneX
+        if !Device.isPhoneX {
+            rootStackView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        }
+
         // Tell rootStackView the hitTest target.
         rootStackView.isUserInteractionEnabled = true
         rootStackView.hth.targetChildToHitTest = gitObjectInputView
 
         tableView.reloadData()
 
-        apiTokenTextfield.text = store.apiToken
+        apiTokenTextfield.text = logicStore.apiToken
 
-        let keypath: ReferenceWritableKeyPath<LogicStore, GitObject> = \.gitObject
+        let keypath: ReferenceWritableKeyPath<TriggerBuildLogicStore, GitObject> = \.gitObject
         notificationCenter.continuum
-            .observe(gitObjectInputView.newInput, bindTo: store, keypath)
+            .observe(gitObjectInputView.newInput, bindTo: logicStore, keypath)
             .disposed(by: bag)
 
-        gitObjectInputView.updateUI(store.gitObject)
+        gitObjectInputView.updateUI(logicStore.gitObject)
+
+        // PullToDismiss
+        let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
+        gesture.delegate = self
+        if let grs = tableView.gestureRecognizers {
+            grs.forEach {
+                gesture.require(toFail: $0)
+            }
+        }
+        view.addGestureRecognizer(gesture)
+
+        view.keyboardTriggerOffset = 44.0;    // Input view frame height
+
+        view.addKeyboardNonpanning(frameBasedActionHandler: { [weak self] keyboardFrameInView, firstResponder, opening, closing in
+            guard let me = self else { return }
+
+            me.lastFirstResponder = firstResponder
+
+            guard let v = firstResponder as? UIView else { return }
+
+            if !closing {
+                let keyboardY = keyboardFrameInView.minY
+
+                // NOTE: Set no margins between the keyboard.
+                //   to avoid edge case like AddNewCell at bottom on landscape with safeArea.
+                //   Modal's presentingVC(BuildListVC) would be visible in background (thru the margin space),
+                //   because we are moving self.view frame on keyboard appearance.
+                let vMaxY = v.convert(.zero, to: me.view).y + v.frame.height // + 4
+
+                let delta = keyboardY - vMaxY
+                if delta < 0 {
+                    me.view.frame.origin.y = delta
+                }
+            } else {
+                me.view.frame.origin.y = 0
+            }
+
+            if v.isDescendant(of: me.tableView),
+                let ip = me.tableView.indexPathForSelectedRow,
+                opening {
+                me.tableView.deselectRow(at: ip, animated: true)
+            }
+        })
     }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
 
-        gitObjectInputView.resignFirstResponder()
-        apiTokenTextfield.resignFirstResponder()
+        lastFirstResponder?.resignFirstResponder()
+    }
+
+    // MARK: Handle PanGesture
+
+    private var oldViewHeight: CGFloat = 0
+
+    @objc func panGesture(_ gesture: UIPanGestureRecognizer) {
+        switch gesture.state {
+        case .ended:
+            print(gesture.velocity(in: view).y)
+            if gesture.translation(in: view).y > view.frame.height / 2
+                || gesture.velocity(in: view).y > 250.0 {
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                view.moveTo(y: 0, animated: true)
+            }
+        default:
+            let translationY = gesture.translation(in: view).y
+            if translationY > 0.5 {
+                view.moveTo(y: translationY, animated: false)
+            }
+        }
+    }
+
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+
+        let location = gestureRecognizer.location(in: view)
+        let viewsToIgnorePanGesture: [UIView] = [gitObjectInputView]
+
+        for v in viewsToIgnorePanGesture {
+            if v.hitTest(view.convert(location, to: v), with: nil) != nil {
+                return false
+            }
+        }
+
+        return true
     }
 
     // MARK: IBAction
@@ -63,10 +163,10 @@ class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITab
         apiTokenTextfield.resignFirstResponder()
 
         if let text = apiTokenTextfield.text, !text.isEmpty {
-            store.apiToken = text
+            logicStore.apiToken = text
         }
 
-        guard let req = store.urlRequest() else {
+        guard let req = logicStore.urlRequest() else {
             alert("ERROR: Could not build request.")
             return
         }
@@ -109,30 +209,58 @@ class TriggerBuildViewController: UIViewController, UITableViewDataSource, UITab
     // MARK: UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+        return 2
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return workflowIDs.count
+        switch section {
+        case 0:
+            return logicStore.workflowIDs.count
+        case 1:
+            return 1
+        default:
+            fatalError()
+        }
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
-        cell.textLabel?.text = workflowIDs[indexPath.row]
-        return cell
+        switch indexPath.section {
+        case 0:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
+            cell.textLabel?.text = logicStore.workflowIDs[indexPath.row]
+            return cell
+        case 1:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewCell")! as! WorkflowAddNewCell
+            cell.configure { [weak self] text in
+                guard let me = self else { return }
+
+                let ip = IndexPath(row: me.logicStore.workflowIDs.count, section: 0)
+                me.logicStore.appendWorkflowID(text)
+                me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
+                me.tableView.scrollToRow(at: ip, at: .top, animated: true)
+            }
+            return cell
+        default:
+            fatalError()
+        }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        store.workflowID = workflowIDs[indexPath.row]
+        guard indexPath.section == 0 else { return }
+
+        logicStore.workflowID = logicStore.workflowIDs[indexPath.row]
+
+        lastFirstResponder?.resignFirstResponder()
     }
 
-    // MARK: Utilities
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return indexPath.section == 0
+    }
 
-    private func alert(_ message: String) {
-        DispatchQueue.main.async {
-            let vc = UIAlertController(title: nil, message: message, preferredStyle: .alert)
-            vc.addAction(UIAlertAction(title: "OK", style: .cancel, handler: nil))
-            self.present(vc, animated: true, completion: nil)
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            logicStore.removeWorkflowID(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
 }

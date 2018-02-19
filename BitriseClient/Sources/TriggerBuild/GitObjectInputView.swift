@@ -153,7 +153,6 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
             objectTypeButton.addActionButton(_button(gitObject.image)) { [weak self] in
                 guard let me = self else { return }
 
-                me.newInput.value = gitObject.updateAssociatedValue(me.objectTextField.text ?? "")
                 me.objectTypeButton.imageView.image = gitObject.image
                 me.updatePlaceholder()
 

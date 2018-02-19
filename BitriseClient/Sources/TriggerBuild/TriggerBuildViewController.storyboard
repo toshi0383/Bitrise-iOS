@@ -13,7 +13,7 @@
         <!--Trigger Build View Controller-->
         <scene sceneID="X0O-Jx-g2q">
             <objects>
-                <viewController id="KGZ-dF-ioA" customClass="TriggerBuildViewController" customModule="BitriseClient" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="TriggerBuildViewController" id="KGZ-dF-ioA" customClass="TriggerBuildViewController" customModule="BitriseClient" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="edf-Zd-sXJ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -124,6 +124,31 @@
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </tableViewCell>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddNewCell" id="jEU-5X-XBC" customClass="WorkflowAddNewCell" customModule="BitriseClient" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="45" width="375" height="44"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jEU-5X-XBC" id="OHl-Cb-TbA">
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add new workflowID" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" background="git-branch" translatesAutoresizingMaskIntoConstraints="NO" id="SAp-tQ-4zM">
+                                                            <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
+                                                            <nil key="textColor"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                            <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                                        </textField>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="SAp-tQ-4zM" firstAttribute="top" secondItem="OHl-Cb-TbA" secondAttribute="top" id="Axx-sK-gab"/>
+                                                        <constraint firstAttribute="trailing" secondItem="SAp-tQ-4zM" secondAttribute="trailing" id="HxY-Gr-ruv"/>
+                                                        <constraint firstItem="SAp-tQ-4zM" firstAttribute="leading" secondItem="OHl-Cb-TbA" secondAttribute="leading" id="s0s-1l-PA0"/>
+                                                        <constraint firstAttribute="bottom" secondItem="SAp-tQ-4zM" secondAttribute="bottom" id="waJ-bi-oQ0"/>
+                                                    </constraints>
+                                                </tableViewCellContentView>
+                                                <connections>
+                                                    <outlet property="textField" destination="SAp-tQ-4zM" id="eFo-5O-XFh"/>
+                                                </connections>
+                                            </tableViewCell>
                                         </prototypes>
                                         <connections>
                                             <outlet property="dataSource" destination="KGZ-dF-ioA" id="8X0-Jc-Da3"/>
@@ -153,7 +178,9 @@
                             <constraint firstAttribute="trailing" secondItem="gc6-aJ-0IL" secondAttribute="trailing" id="Ekg-1S-FIg"/>
                             <constraint firstAttribute="bottom" secondItem="gc6-aJ-0IL" secondAttribute="bottom" id="XW7-cG-t33"/>
                             <constraint firstItem="QZm-Oi-V7D" firstAttribute="height" secondItem="edf-Zd-sXJ" secondAttribute="height" id="d1t-z4-4jt"/>
-                            <constraint firstItem="gc6-aJ-0IL" firstAttribute="top" secondItem="T5G-54-fLm" secondAttribute="top" id="hzc-R4-oHY"/>
+                            <constraint firstItem="gc6-aJ-0IL" firstAttribute="top" secondItem="edf-Zd-sXJ" secondAttribute="top" priority="777" id="hzc-R4-oHY">
+                                <variation key="heightClass=regular-widthClass=compact" constant="44"/>
+                            </constraint>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="T5G-54-fLm"/>
                         <variation key="widthClass=compact">
@@ -164,6 +191,7 @@
                     </view>
                     <connections>
                         <outlet property="apiTokenTextfield" destination="1oX-LG-GSH" id="zwl-aZ-kLU"/>
+                        <outlet property="baseBottomConstraint" destination="XW7-cG-t33" id="C3X-58-Siz"/>
                         <outlet property="gitObjectInputView" destination="mUe-vD-YbD" id="YKp-mv-aIM"/>
                         <outlet property="rootStackView" destination="gc6-aJ-0IL" id="jsy-Bj-TIf"/>
                         <outlet property="tableView" destination="QZm-Oi-V7D" id="9sf-4k-y40"/>
@@ -174,4 +202,7 @@
             <point key="canvasLocation" x="18" y="50"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="git-branch" width="151" height="151"/>
+    </resources>
 </document>
