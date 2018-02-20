@@ -1,5 +1,5 @@
 // Generated using xcconfig-extractor 0.4.0 by Toshihiro Suzuki - https://github.com/toshi0383/xcconfig-extractor
-#include "secret.xcconfig"
+#include "user.xcconfig"
 PRODUCT_NAME = $(TARGET_NAME)
 SWIFT_VERSION = 4.0
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks

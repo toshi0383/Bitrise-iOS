@@ -1,6 +1,6 @@
 .DS_Store
 *.xcodeproj
-configs/secret.xcconfig
+configs/user.xcconfig
 
 *.pbxuser
 !default.pbxuser

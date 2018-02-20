@@ -2,10 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>TRIGGER_BUILD_API_TOKENS</key>
-	<string>${TRIGGER_BUILD_API_TOKENS}</string>
-	<key>BITRISE_PERSONAL_ACCESS_TOKEN</key>
-	<string>${BITRISE_PERSONAL_ACCESS_TOKEN}</string>
 	<key>TRIGGER_BUILD_WORKFLOW_IDS</key>
 	<string>${TRIGGER_BUILD_WORKFLOW_IDS}</string>
 	<key>CFBundleDevelopmentRegion</key>
