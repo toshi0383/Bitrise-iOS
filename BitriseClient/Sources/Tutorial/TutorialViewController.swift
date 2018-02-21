@@ -1,4 +1,5 @@
 import UIKit
+import SafariServices
 
 final class TutorialViewController: UIViewController, Storyboardable, UITextFieldDelegate {
 
@@ -52,6 +53,13 @@ final class TutorialViewController: UIViewController, Storyboardable, UITextFiel
         updatePersonalAccessToken()
     }
 
+    @IBAction func infoButton() {
+        let url = URL(string: "http://devcenter.bitrise.io/api/v0.1/#authentication")!
+        let sf = SFSafariViewController(url: url)
+        sf.modalPresentationStyle = .overCurrentContext
+        present(sf, animated: true, completion: nil)
+    }
+
     // MARK: UITextFieldDelegate
 
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -66,6 +74,7 @@ final class TutorialViewController: UIViewController, Storyboardable, UITextFiel
             return
         }
         Config.personalAccessToken = text
+        Haptic.generate(.light)
         Router.shared.showAppsList()
     }
 }

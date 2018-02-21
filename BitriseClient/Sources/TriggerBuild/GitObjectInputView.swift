@@ -156,12 +156,12 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
                 me.objectTypeButton.imageView.image = gitObject.image
                 me.updatePlaceholder()
 
-                me.haptic(.heavy)
+                Haptic.generate(.heavy)
             }
         }
 
-        objectTypeButton.onFocusActionChanged { [weak self] in
-            self?.haptic(.light)
+        objectTypeButton.onFocusActionChanged {
+            Haptic.generate(.light)
         }
     }
 
@@ -189,11 +189,5 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     private func updatePlaceholder() {
         objectTextField.placeholder = Placeholder(newInput.value).text
-    }
-
-    private func haptic(_ style: UIImpactFeedbackStyle) {
-        let generator = UIImpactFeedbackGenerator(style: style)
-        generator.prepare()
-        generator.impactOccurred()
     }
 }

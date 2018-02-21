@@ -22,17 +22,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-//        window?.rootViewController = SplashViewController.makeFromStoryboard()
 
         DispatchQueue.global().async {
             RealmManager.shared.initialize()
         }
 
-        // if Config.personalAccessToken == nil {
+         if Config.personalAccessToken == nil {
             Router.shared.showTutorial()
-        // } else {
-        //     Router.shared.showAppsList()
-        // }
+         } else {
+             Router.shared.showAppsList()
+         }
+
         return true
     }
 

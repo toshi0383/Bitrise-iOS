@@ -100,6 +100,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     // MARK: IBAction
 
     @IBAction func triggerBuildButtonTap() {
+        Haptic.generate(.light)
         let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: appSlug))
         vc.modalPresentationStyle = .overCurrentContext
         navigationController?.present(vc, animated: true, completion: nil)

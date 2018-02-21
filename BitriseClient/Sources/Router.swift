@@ -19,13 +19,21 @@ final class Router {
     func showTutorial() {
         let vc = TutorialViewController.makeFromStoryboard()
         let nc = UINavigationController(rootViewController: vc)
+        nc.isNavigationBarHidden = true
         appWindow?.rootViewController = nc
         appWindow?.makeKeyAndVisible()
     }
 
     func showAppsList() {
+
+        do {
+            let vc = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateInitialViewController()
+            self.appWindow?.rootViewController = vc
+            self.appWindow?.makeKeyAndVisible()
+        }
+
         let req = MeAppsRequest()
-        Session.shared.send(req) { result in
+        Session.shared.send(req) { [unowned self] result in
 
             switch result {
             case .success(let res):
@@ -52,13 +60,14 @@ final class Router {
 
                         nc.setViewControllers([appvc, buildvc], animated: false)
                         self.appWindow?.rootViewController = nc
-                        self.appWindow?.makeKeyAndVisible()
                     }
                 }
             case .failure(let error):
                 #if DEBUG
                     print(error)
                 #endif
+
+                self.showTutorial()
             }
         }
 
