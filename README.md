@@ -2,29 +2,28 @@ Bitrise Client
 ---
 
 # Features
-- [x] Trigger Builds for a specific app
-- [x] Apps List `GET /me/apps` (update on enterForeground)
-- [x] Builds List `GET /apps/${APP-SLUG}` `GET /apps/${APP-SLUG}/builds`
-  + [x] Show builds without paging
-  + [x] Abort Button `POST /apps/${APP-SLUG}/builds/${BUILD-SLUG}/abort`
-- [x] Show last app page on launch
-- [x] [Trigger] keyboard awareness
-- [x] [Trigger] Add/Delete workflowIDs
-- [x] Install Encrypted Realm
-- [x] [Trigger] Cache workflowIDs, API token and last gitObject using Realm
-- [x] Trigger Build for each app
-- [x] Improve credential management (Store it in realm)
-- [x] [TutorialView] bitrise personal access token
-- [x] [Trigger] Improve trigger launcher button UX (size)
-- [ ] 2.0 beta RELEASE 🚀
-- [ ] [Setting] Display OSS Licenses
-- [ ] Submit to App Store 🍎
+- ✅ Apps List `GET /me/apps`
+- ✅ Builds List `GET /apps/${APP-SLUG}` `GET /apps/${APP-SLUG}/builds`
+  + ✅ Show builds without paging
+  + ✅ Abort `POST /apps/${APP-SLUG}/builds/${BUILD-SLUG}/abort`
+- ✅ Show last visited app page on launch
+- ✅ [Trigger] Add/Delete workflowIDs
+- ✅ [Trigger] Cache workflowIDs, API token and last gitObject using Realm
+- ✅ [Settings] Store credentials in Encrypted Realm
+- ✅ [Trigger] Trigger Build for each app
+- ✅ [TutorialView] bitrise personal access token
+- ✅ 2.0 beta RELEASE 🚀
+
+# TODOs
 - [ ] [Builds] Show build's username and commit message
 - [ ] [Builds] Poll interval 8sec for "new builds available"
   + [ ] Tap message to show new builds
   + [ ] PullToRefresh to fetch new builds
 - [ ] [Builds] Poll interval for status of each in-progress/on-hold builds
 - [ ] 2.0 RELEASE 🚀
+- [ ] [Settings] Display OSS Licenses
+- [ ] Submit to App Store? 🍎
+- [ ] [Builds] Brush up UI (make it more "Bitrise")
 - [ ] [Builds] Drop down menu at navigationBar to switch apps
 - [ ] [Builds] Local push notification for specified build
 - [ ] Build Logs `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/log`
@@ -44,12 +43,12 @@ brew install carthage
 
 Run following to build dependency frameworks.
 ```
-carthage bootstrap --platform iOS --no-use-binaries
+carthage bootstrap --platform iOS
 ```
 
 ## Generate xcodeproj
 
-Please install the latest XcodeGen on your own.
+Please install the latest version of [XcodeGen](https://github.com/yonaskolb/XcodeGen) on your own.
 ```
 mint install yonaskolb/XcodeGen
 ```
@@ -59,10 +58,11 @@ Generate xcodeproj by running command below.
 xcodegen
 ```
 
-Now you can build and run.
+Now you can open the xcodeproj, build it, and run.👌
 
-## Set credentials from app
-You need to set credentials below to use full feature of this app.  
+## Set credentials in app
+You need to set credentials below to use full feature of this app.
+
 All tokens are securely stored in encrypted database using Realm. Encrypted key is stored in your keychain. Don't worry, it's safe.😉
 
 https://realm.io/docs/swift/latest/#encryption
@@ -79,17 +79,18 @@ SeeAlso: http://devcenter.bitrise.io/api/build-trigger
 
 # Pro tip: use `configs/user.xcconfig` for convenience.
 
-You can define workflowIDs preset for each apps by using `TRIGGER_BUILD_WORKFLOW_IDS`. This way your team members do not have to manually add workflowIDs.
-The format is in JSON. Use AppSlug as a key and set whitespace separated string as workflowIDs.
+You can define workflowIDs preset for each apps by using `TRIGGER_BUILD_WORKFLOW_IDS`. This way you don't have to manually add workflowIDs.
+
+The format is in JSON. Use AppSlug as a key and set **whitespace separated string** as workflowIDs.
 
 e.g.
 ```
 TRIGGER_BUILD_WORKFLOW_IDS={ "fdc3abbc325071dd": "beta danger release test" }
 ```
 
-Put `TRIGGER_BUILD_WORKFLOW_IDS` in `configs/user.xcconfig` and the app will read and store it in database at initial launch.
+Put this in `configs/user.xcconfig`, so the app can read and store parsed values in database at initial launch. Make sure you clean install for this config to take effect.
 
-`user.xcconfig` is ignored by git. (listed in .gitignore)
+`user.xcconfig` is ignored by git. (listed in `.gitignore`)
 
 # License
 MIT
