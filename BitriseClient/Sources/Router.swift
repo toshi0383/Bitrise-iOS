@@ -12,9 +12,7 @@ import UIKit
 final class Router {
     static let shared = Router()
 
-    private var appWindow: UIWindow? {
-        return UIApplication.shared.keyWindow
-    }
+    var appWindow: UIWindow?
 
     func showTutorial() {
         let vc = TutorialViewController.makeFromStoryboard()
