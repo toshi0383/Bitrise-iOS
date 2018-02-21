@@ -13,9 +13,8 @@ Bitrise Client
 - [x] Install Encrypted Realm
 - [x] [Trigger] Cache workflowIDs, API token and last gitObject using Realm
 - [x] Trigger Build for each app
-- [ ] Improve credential management (Store it in realm)
-- [ ] [SettingsView] bitrise personal access token
-- [ ] [Builds] WireFrame to SettingsView if no personal access token is set
+- [x] Improve credential management (Store it in realm)
+- [x] [TutorialView] bitrise personal access token
 - [ ] [Trigger] Improve trigger launcher button UX (size)
 - [ ] 2.0 RELEASE 🚀
 - [ ] [Builds] Show build's username and commit message

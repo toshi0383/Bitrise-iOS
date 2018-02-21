@@ -21,7 +21,7 @@ final class RealmManager {
                     let properties: [String: Any?] = [
                         "appSlug": appSlug,
                         "workflowIDs": workflowIDs,
-                        "apiToken": Config.apiToken(for: appSlug) ?? NSNull(),
+                        "apiToken": NSNull(),
                     ]
                     return BuildTriggerRealm(value: properties)
                 }

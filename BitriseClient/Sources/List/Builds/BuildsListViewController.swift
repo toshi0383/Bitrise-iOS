@@ -8,14 +8,11 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let appSlug: String
         let appName: String
         let userDefaults: UserDefaults
-        let infoPlist: InfoPlist
         init(appSlug: String,
              appName: String,
-             infoPlist: InfoPlist = Config.infoPlist,
              userDefaults: UserDefaults = Config.defaults) {
             self.appSlug = appSlug
             self.appName = appName
-            self.infoPlist = infoPlist
             self.userDefaults = userDefaults
         }
     }
@@ -24,7 +21,6 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let vc = BuildsListViewController.unsafeMakeFromStoryboard()
         vc.appSlug = dependency.appSlug
         vc.appName = dependency.appName
-        vc.infoPlist = dependency.infoPlist
         vc.userDefaults = dependency.userDefaults
         return vc
     }
@@ -32,7 +28,6 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     private var appSlug: String!
     private var appName: String!
     private var userDefaults: UserDefaults!
-    private var infoPlist: InfoPlist!
     private var builds: [AppsBuilds.Build] = []
 
     @IBOutlet private weak var triggerBuildButton: UIButton! {
