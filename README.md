@@ -62,7 +62,10 @@ xcodegen
 Now you can build and run.
 
 ## Set credentials from app
-You need to set credentials below to use full feature of this app.
+You need to set credentials below to use full feature of this app.  
+All tokens are securely stored in encrypted database using Realm. Encrypted key is stored in your keychain. Don't worry, it's safe.😉
+
+https://realm.io/docs/swift/latest/#encryption
 
 ### Bitrise Personal Access Token
 Required to access Bitrise v0.1 API.
