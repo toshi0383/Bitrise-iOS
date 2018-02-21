@@ -8,14 +8,7 @@
 
 import Foundation
 import RealmSwift
-import SwiftyUserDefaults
 import UIKit
-
-// - MARK: SwiftyUserDefaults
-
-extension DefaultsKeys {
-    static let lastAppNameVisited = DefaultsKey<String?>("lastAppNameVisited")
-}
 
 // - MARK: InfoPlist
 
@@ -40,8 +33,6 @@ private class _InfoPlist {
 // - MARK: Config
 
 final class Config {
-
-    static let defaults: UserDefaults = Defaults
 
     static var workflowIDsMap: [AppSlug: [WorkflowID]] {
         guard let dictionary = InfoPlist[.TRIGGER_BUILD_WORKFLOW_IDS] else {
@@ -70,6 +61,23 @@ final class Config {
             let settings = realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1") ?? SettingsRealm()
             try! realm.write {
                 settings.personalAccessToken = newValue
+                realm.add(settings, update: true)
+            }
+        }
+    }
+
+    // MARK: lastAppNameVisited
+
+    static var lastAppNameVisited: String? {
+        get {
+            let realm = Realm.getRealm()
+            return realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1")?.lastAppNameVisited
+        }
+        set {
+            let realm = Realm.getRealm()
+            let settings = realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1") ?? SettingsRealm()
+            try! realm.write {
+                settings.lastAppNameVisited = newValue
                 realm.add(settings, update: true)
             }
         }

@@ -39,7 +39,7 @@ final class Router {
                 AppsManager.shared.apps = res.data
 
                 let cond: (MeApps.App) -> Bool = {
-                    if let appname = Config.defaults[.lastAppNameVisited] {
+                    if let appname = Config.lastAppNameVisited {
                         return $0.title == appname
                     } else {
                         return true

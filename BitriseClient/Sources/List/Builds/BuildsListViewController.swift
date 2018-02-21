@@ -7,13 +7,10 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     struct Dependency {
         let appSlug: String
         let appName: String
-        let userDefaults: UserDefaults
         init(appSlug: String,
-             appName: String,
-             userDefaults: UserDefaults = Config.defaults) {
+             appName: String) {
             self.appSlug = appSlug
             self.appName = appName
-            self.userDefaults = userDefaults
         }
     }
 
@@ -21,7 +18,6 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let vc = BuildsListViewController.unsafeMakeFromStoryboard()
         vc.appSlug = dependency.appSlug
         vc.appName = dependency.appName
-        vc.userDefaults = dependency.userDefaults
         return vc
     }
 
@@ -50,7 +46,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         super.viewDidLoad()
 
         // save app-title
-        userDefaults[.lastAppNameVisited] = appName
+        Config.lastAppNameVisited = appName
 
         navigationItem.title = appName
 

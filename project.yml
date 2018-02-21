@@ -18,7 +18,6 @@ targets:
       - carthage: APIKit
       - carthage: Continuum
       - carthage: Result
-      - carthage: SwiftyUserDefaults
       - carthage: TKKeyboardControl
       - carthage: Realm
       - carthage: RealmSwift
