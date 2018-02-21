@@ -7,41 +7,25 @@
 //
 
 import Foundation
+import RealmSwift
 import SwiftyUserDefaults
 import UIKit
 
 // - MARK: SwiftyUserDefaults
 
 extension DefaultsKeys {
-    static let bitrisePersonalAccessToken = DefaultsKey<String?>("bitrisePersonalAccessToken")
     static let lastAppNameVisited = DefaultsKey<String?>("lastAppNameVisited")
 }
 
 // - MARK: InfoPlist
 
-private let _Plist = Bundle.main.infoDictionary!
-class InfoPlist {
-    //fileprivate enum StringKey: String {
-    //}
-    enum OptionalStringKey: String {
-        case BITRISE_PERSONAL_ACCESS_TOKEN
-    }
+private let InfoPlist = _InfoPlist()
+
+private class _InfoPlist {
+    private let _Plist = Bundle.main.infoDictionary!
 
     enum OptionalDictionaryKey: String {
         case TRIGGER_BUILD_WORKFLOW_IDS
-        case TRIGGER_BUILD_API_TOKENS
-    }
-
-    //subscript(key: StringKey) -> String {
-    //    return _Plist["\(key)"] as! String
-    //}
-
-    subscript(key: OptionalStringKey) -> String? {
-        if let s = _Plist["\(key)"] as? String, !s.isEmpty {
-            return s
-        } else {
-            return nil
-        }
     }
 
     subscript(key: OptionalDictionaryKey) -> [String: String]? {
@@ -57,28 +41,10 @@ class InfoPlist {
 
 final class Config {
 
-    static let infoPlist = InfoPlist()
-
     static let defaults: UserDefaults = Defaults
 
-    static func getNonEmptyStringOrNil(_ key: InfoPlist.OptionalStringKey) -> String? {
-        if let s: String = infoPlist[key], !s.isEmpty {
-            return s
-        } else {
-            return nil
-        }
-    }
-
-    static func apiToken(for appSlug: AppSlug) -> String? {
-        return apiTokensMap?[appSlug]
-    }
-
-    static var apiTokensMap: [AppSlug: String]? {
-        return infoPlist[.TRIGGER_BUILD_API_TOKENS]
-    }
-
     static var workflowIDsMap: [AppSlug: [WorkflowID]] {
-        guard let dictionary = infoPlist[.TRIGGER_BUILD_WORKFLOW_IDS] else {
+        guard let dictionary = InfoPlist[.TRIGGER_BUILD_WORKFLOW_IDS] else {
             return [:]
         }
 
@@ -92,29 +58,20 @@ final class Config {
             .map { String($0) }
     }
 
-    //static func workflowIDs(for appSlug: String) -> [WorkflowID] {
-    //    guard let dictionary = infoPlist[.TRIGGER_BUILD_WORKFLOW_IDS],
-    //        let idsStr = dictionary[appSlug]
-    //        else {
-    //        return []
-    //    }
-    //    return stringToStrArray(idsStr)
-    //}
+    // MARK: PersonalAccessToken
 
     static var personalAccessToken: String? {
-        if let t = infoPlist[.BITRISE_PERSONAL_ACCESS_TOKEN] {
-            return t
-        }
-
-        return cachedPersonalAccessToken
-    }
-
-    static var cachedPersonalAccessToken: String? {
         get {
-            return defaults[.bitrisePersonalAccessToken]
+            let realm = Realm.getRealm()
+            return realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1")?.personalAccessToken
         }
         set {
-            defaults[.bitrisePersonalAccessToken] = newValue
+            let realm = Realm.getRealm()
+            let settings = realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1") ?? SettingsRealm()
+            try! realm.write {
+                settings.personalAccessToken = newValue
+                realm.add(settings, update: true)
+            }
         }
     }
 }

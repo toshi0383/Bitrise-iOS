@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="Se4-dW-c06">
+    <device id="retina5_9" orientation="landscape">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Tutorial View Controller-->
+        <scene sceneID="4Ch-f0-cxz">
+            <objects>
+                <viewController storyboardIdentifier="TutorialViewController" id="Se4-dW-c06" customClass="TutorialViewController" customModule="BitriseClient" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="BLk-x9-Ef3">
+                        <rect key="frame" x="0.0" y="0.0" width="812" height="375"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="xDY-hI-AUn">
+                                <rect key="frame" x="48" y="90.000000000000014" width="716" height="174.33333333333337"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Sw-qb-22o">
+                                        <rect key="frame" x="183" y="0.0" width="350" height="38.333333333333336"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="350" id="HSj-St-r7W"/>
+                                        </constraints>
+                                        <string key="text">Hello there!
+Enter personal access token to get started!</string>
+                                        <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cyg-29-Jb5">
+                                        <rect key="frame" x="347" y="53.333333333333343" width="22" height="22"/>
+                                        <color key="tintColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
+                                        <connections>
+                                            <action selector="infoButton" destination="Se4-dW-c06" eventType="touchUpInside" id="xWC-hF-7I7"/>
+                                        </connections>
+                                    </button>
+                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Personal Access Token" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="ZKN-SN-tpi">
+                                        <rect key="frame" x="183" y="90.333333333333343" width="350" height="30"/>
+                                        <color key="backgroundColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
+                                        <nil key="textColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" returnKeyType="done" secureTextEntry="YES" textContentType="password"/>
+                                    </textField>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="mh9-jW-RJS">
+                                        <rect key="frame" x="339.66666666666669" y="135.33333333333334" width="37" height="39"/>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
+                                        <state key="normal" title="Go!">
+                                            <color key="titleColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="button" destination="Se4-dW-c06" eventType="touchUpInside" id="wRh-SO-wfc"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstItem="ZKN-SN-tpi" firstAttribute="width" secondItem="2Sw-qb-22o" secondAttribute="width" id="y6f-wG-so8"/>
+                                </constraints>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstItem="xDY-hI-AUn" firstAttribute="centerX" secondItem="wi3-5c-RwP" secondAttribute="centerX" id="3Fn-8E-2Sd"/>
+                            <constraint firstItem="wi3-5c-RwP" firstAttribute="trailing" secondItem="xDY-hI-AUn" secondAttribute="trailing" priority="997" constant="4" id="I4L-6L-iJz"/>
+                            <constraint firstItem="xDY-hI-AUn" firstAttribute="centerY" secondItem="wi3-5c-RwP" secondAttribute="centerY" id="cnm-Y6-Md7"/>
+                            <constraint firstItem="xDY-hI-AUn" firstAttribute="leading" secondItem="wi3-5c-RwP" secondAttribute="leading" priority="997" constant="4" id="wSp-pX-hhy"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="wi3-5c-RwP"/>
+                    </view>
+                    <connections>
+                        <outlet property="textField" destination="ZKN-SN-tpi" id="CLn-Dk-myv"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gvu-a2-CQ8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="145" y="-215"/>
+        </scene>
+    </scenes>
+</document>

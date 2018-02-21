@@ -8,14 +8,11 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let appSlug: String
         let appName: String
         let userDefaults: UserDefaults
-        let infoPlist: InfoPlist
         init(appSlug: String,
              appName: String,
-             infoPlist: InfoPlist = Config.infoPlist,
              userDefaults: UserDefaults = Config.defaults) {
             self.appSlug = appSlug
             self.appName = appName
-            self.infoPlist = infoPlist
             self.userDefaults = userDefaults
         }
     }
@@ -24,7 +21,6 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let vc = BuildsListViewController.unsafeMakeFromStoryboard()
         vc.appSlug = dependency.appSlug
         vc.appName = dependency.appName
-        vc.infoPlist = dependency.infoPlist
         vc.userDefaults = dependency.userDefaults
         return vc
     }
@@ -32,12 +28,12 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     private var appSlug: String!
     private var appName: String!
     private var userDefaults: UserDefaults!
-    private var infoPlist: InfoPlist!
     private var builds: [AppsBuilds.Build] = []
+    private var workItem: DispatchWorkItem?
 
     @IBOutlet private weak var triggerBuildButton: UIButton! {
         didSet {
-            triggerBuildButton.layer.cornerRadius = 20
+            triggerBuildButton.layer.cornerRadius = triggerBuildButton.frame.width / 2
         }
     }
 
@@ -105,6 +101,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     // MARK: IBAction
 
     @IBAction func triggerBuildButtonTap() {
+        Haptic.generate(.light)
         let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: appSlug))
         vc.modalPresentationStyle = .overCurrentContext
         navigationController?.present(vc, animated: true, completion: nil)
@@ -140,5 +137,25 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         present(actionSheet, animated: true, completion: nil)
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        triggerBuildButton.alpha = 0.1
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+
+        self.workItem?.cancel()
+
+        let workItem = DispatchWorkItem { [weak self] in
+            UIView.animate(withDuration: 0.3) {
+                self?.triggerBuildButton.alpha = 1.0
+            }
+        }
+
+        self.workItem = workItem
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5,
+                                      execute: workItem)
     }
 }
