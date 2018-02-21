@@ -15,19 +15,22 @@ Bitrise Client
 - [x] Trigger Build for each app
 - [x] Improve credential management (Store it in realm)
 - [x] [TutorialView] bitrise personal access token
-- [ ] [Trigger] Improve trigger launcher button UX (size)
-- [ ] 2.0 RELEASE 🚀
+- [x] [Trigger] Improve trigger launcher button UX (size)
+- [ ] 2.0 beta RELEASE 🚀
 - [ ] [Builds] Show build's username and commit message
 - [ ] [Builds] Poll interval 8sec for "new builds available"
   + [ ] Tap message to show new builds
   + [ ] PullToRefresh to fetch new builds
 - [ ] [Builds] Poll interval for status of each in-progress/on-hold builds
+- [ ] 2.0 RELEASE 🚀
 - [ ] [Builds] Drop down menu at navigationBar to switch apps
 - [ ] [Builds] Local push notification for specified build
 - [ ] Build Logs `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/log`
 - [ ] [Builds] Pagination
 - [ ] [Apps] Pagination
 - [ ] 3.0 RELEASE 🚀
+
+Feel free to contrbute👌 I'm going to move these TODOs to GitHub issues.
 
 # Getting Started
 

@@ -29,10 +29,11 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     private var appName: String!
     private var userDefaults: UserDefaults!
     private var builds: [AppsBuilds.Build] = []
+    private var workItem: DispatchWorkItem?
 
     @IBOutlet private weak var triggerBuildButton: UIButton! {
         didSet {
-            triggerBuildButton.layer.cornerRadius = 20
+            triggerBuildButton.layer.cornerRadius = triggerBuildButton.frame.width / 2
         }
     }
 
@@ -136,5 +137,25 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         present(actionSheet, animated: true, completion: nil)
+    }
+
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        triggerBuildButton.alpha = 0.1
+    }
+
+    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+
+        self.workItem?.cancel()
+
+        let workItem = DispatchWorkItem { [weak self] in
+            UIView.animate(withDuration: 0.3) {
+                self?.triggerBuildButton.alpha = 1.0
+            }
+        }
+
+        self.workItem = workItem
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5,
+                                      execute: workItem)
     }
 }

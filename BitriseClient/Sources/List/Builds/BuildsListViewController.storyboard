@@ -88,12 +88,13 @@
                                 </prototypes>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1oD-dk-IlY">
-                                <rect key="frame" x="295" y="732" width="40" height="40"/>
+                                <rect key="frame" x="280" y="726" width="50" height="50"/>
                                 <color key="backgroundColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="8J4-cR-k4g"/>
-                                    <constraint firstAttribute="width" constant="40" id="qSN-s6-nOK"/>
+                                    <constraint firstAttribute="height" constant="50" id="8J4-cR-k4g"/>
+                                    <constraint firstAttribute="width" constant="50" id="qSN-s6-nOK"/>
                                 </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                 <state key="normal" title="🚀"/>
                                 <connections>
                                     <action selector="triggerBuildButtonTap" destination="vBi-NG-FsP" eventType="touchUpInside" id="kK7-FM-FeR"/>
@@ -102,8 +103,8 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="1oD-dk-IlY" secondAttribute="bottom" constant="40" id="59g-pF-len"/>
-                            <constraint firstItem="llP-vn-awV" firstAttribute="trailing" secondItem="1oD-dk-IlY" secondAttribute="trailing" constant="40" id="8hi-VM-5X8"/>
+                            <constraint firstAttribute="bottom" secondItem="1oD-dk-IlY" secondAttribute="bottom" constant="36" id="59g-pF-len"/>
+                            <constraint firstItem="llP-vn-awV" firstAttribute="trailing" secondItem="1oD-dk-IlY" secondAttribute="trailing" constant="45" id="8hi-VM-5X8"/>
                             <constraint firstItem="YfG-x1-ouX" firstAttribute="bottom" secondItem="zaA-O1-4UU" secondAttribute="bottom" id="Eaz-4A-2Gb"/>
                             <constraint firstItem="YfG-x1-ouX" firstAttribute="leading" secondItem="zaA-O1-4UU" secondAttribute="leading" id="a5D-Nc-lul"/>
                             <constraint firstItem="YfG-x1-ouX" firstAttribute="trailing" secondItem="zaA-O1-4UU" secondAttribute="trailing" id="vD8-oE-ZIV"/>
