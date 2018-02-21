@@ -154,6 +154,8 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
                 guard let me = self else { return }
 
                 me.objectTypeButton.imageView.image = gitObject.image
+
+                me.newInput.value = gitObject.updateAssociatedValue(me.objectTextField.text ?? "")
                 me.updatePlaceholder()
 
                 Haptic.generate(.heavy)
