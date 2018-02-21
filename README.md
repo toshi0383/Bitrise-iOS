@@ -1,5 +1,6 @@
-Bitrise Client
+Bitrise iOS Client app
 ---
+![screen-shots.png](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/screen-shots.png)
 
 # Features
 - ✅ Apps List `GET /me/apps`
@@ -12,7 +13,7 @@ Bitrise Client
 - ✅ [Settings] Store credentials in Encrypted Realm
 - ✅ [Trigger] Trigger Build for each app
 - ✅ [TutorialView] bitrise personal access token
-- ✅ 2.0 beta RELEASE 🚀
+- ✅ 2.0 beta RELEASE (open-sourced!) 🚀
 
 # TODOs
 - [ ] [Builds] Show build's username and commit message
