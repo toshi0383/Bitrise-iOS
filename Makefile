@@ -1,4 +1,4 @@
-SKETCHTOOL:=/Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool
+SKETCHTOOL ?= /Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool
 
 clean:
 	rm -rf Carthage/Build/iOS
