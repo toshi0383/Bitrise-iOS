@@ -17,6 +17,8 @@ Bitrise Client
 - [x] [TutorialView] bitrise personal access token
 - [x] [Trigger] Improve trigger launcher button UX (size)
 - [ ] 2.0 beta RELEASE 🚀
+- [ ] [Setting] Display OSS Licenses
+- [ ] Submit to App Store 🍎
 - [ ] [Builds] Show build's username and commit message
 - [ ] [Builds] Poll interval 8sec for "new builds available"
   + [ ] Tap message to show new builds
