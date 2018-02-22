@@ -1,5 +1,4 @@
 import APIKit
-import SwiftyUserDefaults
 import UIKit
 
 final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {

@@ -7,7 +7,6 @@
 //
 
 import ActionPopoverButton
-import SwiftyUserDefaults
 import UIKit
 
 @UIApplicationMain
