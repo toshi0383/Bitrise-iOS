@@ -16,6 +16,7 @@ Bitrise iOS Client app 🚀
 - ✅ 2.0 beta RELEASE (open-sourced!) 🚀
 
 # TODOs
+- ✅ Feel free to propose anything. 👍
 - [ ] [Builds] Show build's username and commit message
 - [ ] [Builds] Poll interval 8sec for "new builds available"
   + [ ] Tap message to show new builds
