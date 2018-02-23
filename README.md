@@ -57,7 +57,7 @@ mint install yonaskolb/XcodeGen
 
 Generate xcodeproj by running command below.
 ```
-xcodegen
+mint run xcodegen
 ```
 
 Now you can open the xcodeproj, build it, and run.👌
