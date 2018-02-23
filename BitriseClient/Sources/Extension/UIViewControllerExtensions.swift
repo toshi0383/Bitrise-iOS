@@ -16,4 +16,12 @@ extension UIViewController {
             self?.present(vc, animated: true, completion: nil)
         }
     }
+
+    func alert(_ message: String, voidCompletion: (() -> ())?) {
+        DispatchQueue.main.async { [weak self] in
+            let vc = UIAlertController(title: nil, message: message, preferredStyle: .alert)
+            vc.addAction(UIAlertAction(title: "OK", style: .default, handler: { _ in voidCompletion?() }))
+            self?.present(vc, animated: true, completion: nil)
+        }
+    }
 }

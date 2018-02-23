@@ -52,7 +52,7 @@ final class Router {
                         // buildvc on top of appvc
                         let appvc = AppsListViewController.makeFromStoryboard(.init())
                         let buildvc = BuildsListViewController.makeFromStoryboard(
-                            .init(appSlug: fst.slug, appName: fst.title)
+                            .init(viewModel: .init(appSlug: fst.slug, appName: fst.title))
                         )
                         let nc = UINavigationController()
 

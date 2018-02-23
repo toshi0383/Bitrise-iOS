@@ -52,7 +52,7 @@ final class AppsListViewController: UIViewController, Storyboardable, UITableVie
 
         let app = appsManager.apps[indexPath.row]
         let vc = BuildsListViewController.makeFromStoryboard(
-            .init(appSlug: app.slug, appName: app.title))
+            .init(viewModel: .init(appSlug: app.slug, appName: app.title)))
         navigationController?.pushViewController(vc, animated: true)
     }
 }

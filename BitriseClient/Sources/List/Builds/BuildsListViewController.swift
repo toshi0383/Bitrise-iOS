@@ -4,26 +4,18 @@ import UIKit
 final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
 
     struct Dependency {
-        let appSlug: String
-        let appName: String
-        init(appSlug: String,
-             appName: String) {
-            self.appSlug = appSlug
-            self.appName = appName
-        }
+        let viewModel: BuildsListViewModel
     }
 
     static func makeFromStoryboard(_ dependency: Dependency) -> BuildsListViewController {
         let vc = BuildsListViewController.unsafeMakeFromStoryboard()
-        vc.appSlug = dependency.appSlug
-        vc.appName = dependency.appName
+        vc.viewModel = dependency.viewModel
         return vc
     }
 
-    private var appSlug: String!
-    private var appName: String!
-    private var userDefaults: UserDefaults!
-    private var builds: [AppsBuilds.Build] = []
+    private var viewModel: BuildsListViewModel!
+
+    // animation dispatch after
     private var workItem: DispatchWorkItem?
 
     @IBOutlet private weak var triggerBuildButton: UIButton! {
@@ -44,60 +36,17 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // save app-title
-        Config.lastAppNameVisited = appName
+        navigationItem.title = viewModel.navigationBarTitle
 
-        navigationItem.title = appName
-
-        fetchDataAndReloadTable()
-    }
-
-    // MARK: API Call
-
-    // TODO: Insert Animation
-    private func fetchDataAndReloadTable() {
-        let req = AppsBuildsRequest(appSlug: appSlug)
-        Session.shared.send(req) { [weak self] result in
-            guard let me = self else { return }
-
-            switch result {
-            case .success(let res):
-                me.builds = res.data
-                me.tableView.reloadData()
-            case .failure(let error):
-                print(error)
-            }
-        }
-    }
-
-    private func sendAbortRequest(indexPath: IndexPath) {
-        let buildSlug = builds[indexPath.row].slug
-        let buildNumber = builds[indexPath.row].build_number
-        let req = AppsBuildsAbortRequest(appSlug: appSlug, buildSlug: buildSlug)
-
-        Session.shared.send(req) { [weak self] result in
-            guard let me = self else { return }
-
-            switch result {
-            case .success(let res):
-                if let msg = res.error_msg {
-                    me.alert(msg)
-                } else {
-                    me.alert("Aborted: #\(buildNumber)") { [weak self] _ in
-                        self?.fetchDataAndReloadTable()
-                    }
-                }
-            case .failure(let error):
-                self?.alert("Abort failed: \(error.localizedDescription)")
-            }
-        }
+        viewModel.viewDidLoad(reloadData: { [weak self] in self?.tableView.reloadData() },
+                              alert: { [weak self] in self?.alert($0, voidCompletion: $1)})
     }
 
     // MARK: IBAction
 
     @IBAction func triggerBuildButtonTap() {
         Haptic.generate(.light)
-        let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: appSlug))
+        let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: viewModel.appSlug))
         vc.modalPresentationStyle = .overCurrentContext
         navigationController?.present(vc, animated: true, completion: nil)
     }
@@ -109,12 +58,12 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return builds.count
+        return viewModel.builds.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildCell") as! BuildCell
-        cell.configure(builds[indexPath.row])
+        cell.configure(viewModel.builds[indexPath.row])
         return cell
     }
 
@@ -126,7 +75,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
         actionSheet.addAction(UIAlertAction(title: "Abort", style: .default, handler: { [weak self] _ in
-            self?.sendAbortRequest(indexPath: indexPath)
+            self?.viewModel.sendAbortRequest(indexPath: indexPath)
         }))
 
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
