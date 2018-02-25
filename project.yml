@@ -21,6 +21,11 @@ targets:
       - carthage: TKKeyboardControl
       - carthage: Realm
       - carthage: RealmSwift
+  BitriseClientTests:
+    platform: iOS
+    type: bundle.unit-test
+    sources:
+      - Tests/BitriseClientTests
   ActionPopoverButton:
     platform: iOS
     type: framework
