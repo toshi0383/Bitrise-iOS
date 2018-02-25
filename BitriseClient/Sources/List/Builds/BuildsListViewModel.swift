@@ -6,6 +6,7 @@
 //
 
 import APIKit
+import Continuum
 import Foundation
 
 final class BuildsListViewModel {
@@ -16,18 +17,15 @@ final class BuildsListViewModel {
 
     // MARK: Output
 
-    // FIXME: This is terrible. I need a Reactive tool.
-    //   Maybe Continuum with closure handler API?
-    typealias AlertClosure = (String, (() -> ())?) -> ()
-
     let appSlug: String
     let navigationBarTitle: String
-
-    private(set) var reloadData: (() -> ())!
-    private(set) var alert: AlertClosure!
+    let alertMessage: Constant<String>
+    let reloadDataTrigger: Constant<Void?>
 
     // MARK: private properties
 
+    private let _alertMessage = Variable<String>(value: "")
+    private let _reloadDataTrigger = Variable<Void?>(value: nil)
     private(set) var builds: [AppsBuilds.Build] = []
 
     // MARK: Initializer
@@ -37,16 +35,15 @@ final class BuildsListViewModel {
         self.appSlug = appSlug
         self.appName = appName
         self.navigationBarTitle = appName
+        self.alertMessage = Constant(variable: _alertMessage)
+        self.reloadDataTrigger = Constant(variable: _reloadDataTrigger)
     }
 
     // MARK: LifeCycle & Update
 
-    func viewDidLoad(reloadData: @escaping () -> (), alert: @escaping AlertClosure) {
+    func viewDidLoad() {
         // save app-title
         Config.lastAppNameVisited = appName
-
-        self.reloadData = reloadData
-        self.alert = alert
 
         fetchDataAndReloadTable()
     }
@@ -62,7 +59,7 @@ final class BuildsListViewModel {
             switch result {
             case .success(let res):
                 me.builds = res.data
-                me.reloadData()
+                me._reloadDataTrigger.value = ()
             case .failure(let error):
                 print(error)
             }
@@ -80,14 +77,13 @@ final class BuildsListViewModel {
             switch result {
             case .success(let res):
                 if let msg = res.error_msg {
-                    me.alert(msg)
+                    me._alertMessage.value = msg
                 } else {
-                    me.alert("Aborted: #\(buildNumber)") { [weak self] in
-                        self?.fetchDataAndReloadTable()
-                    }
+                    me._alertMessage.value = "Aborted: #\(buildNumber)"
+                    me.fetchDataAndReloadTable()
                 }
             case .failure(let error):
-                self?.alert("Abort failed: \(error.localizedDescription)")
+                me._alertMessage.value = "Abort failed: \(error.localizedDescription)"
             }
         }
     }

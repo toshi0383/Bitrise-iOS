@@ -1,5 +1,5 @@
 github "antitypical/Result" "3.2.4"
 github "cokaholic/TKKeyboardControl" "b02597fbde50b27fd608953177362c26de222cbc"
 github "ishkawa/APIKit" "3.2.1"
-github "marty-suzuki/Continuum" "0.2.0"
 github "realm/realm-cocoa" "v3.1.1"
+github "toshi0383/Continuum" "0f9f629ef86bf760a8ad3a1c84662b6fde0b34e0"
