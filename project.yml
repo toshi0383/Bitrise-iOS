@@ -24,12 +24,16 @@ targets:
   BitriseClientTests:
     platform: iOS
     type: bundle.unit-test
+    configFiles:
+      Debug: configs/BitriseClientTests-Debug.xcconfig
     sources:
       - Tests/BitriseClientTests
     dependencies:
       - target: BitriseClient
     settings:
       TEST_HOST: "$(BUILT_PRODUCTS_DIR)/BitriseClient.app/BitriseClient"
+      LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
+      OTHER_SWIFT_FLAGS: "$(inherited) -DTEST"
   ActionPopoverButton:
     platform: iOS
     type: framework
