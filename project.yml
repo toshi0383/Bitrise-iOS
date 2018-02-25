@@ -39,7 +39,7 @@ targets:
       Debug: configs/ActionPopoverButton-Debug.xcconfig
       Release: configs/ActionPopoverButton-Release.xcconfig
 scheme:
-    test:
+    build:
       gatherCoverageData: true
       targets:
         BitriseClient: all
