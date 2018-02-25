@@ -26,6 +26,10 @@ targets:
     type: bundle.unit-test
     sources:
       - Tests/BitriseClientTests
+    dependencies:
+      - target: BitriseClient
+    settings:
+      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/BitriseClient.app/BitriseClient"
   ActionPopoverButton:
     platform: iOS
     type: framework
@@ -34,3 +38,8 @@ targets:
     configFiles:
       Debug: configs/ActionPopoverButton-Debug.xcconfig
       Release: configs/ActionPopoverButton-Release.xcconfig
+scheme:
+    test:
+      gatherCoverageData: true
+      targets:
+        BitriseClient: all
