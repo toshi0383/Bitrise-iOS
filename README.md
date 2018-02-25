@@ -2,6 +2,8 @@ Bitrise iOS Client app 🚀
 ---
 ![screen-shots.png](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/screen-shots.png)
 
+[![Build Status](https://www.bitrise.io/app/a438cf48a72e2a1e/status.svg?token=63jRo8jI-419K26Bo3OrQw&branch=master)](https://www.bitrise.io/app/a438cf48a72e2a1e)
+
 # Features
 - ✅ Apps List `GET /me/apps`
 - ✅ Builds List `GET /apps/${APP-SLUG}` `GET /apps/${APP-SLUG}/builds`
