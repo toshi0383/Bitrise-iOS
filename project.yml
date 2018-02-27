@@ -21,6 +21,11 @@ targets:
       - carthage: TKKeyboardControl
       - carthage: Realm
       - carthage: RealmSwift
+    scheme:
+      testTargets:
+        - BitriseClientTests
+      gatherCoverageData: true
+
   BitriseClientTests:
     platform: iOS
     type: bundle.unit-test
@@ -42,8 +47,3 @@ targets:
     configFiles:
       Debug: configs/ActionPopoverButton-Debug.xcconfig
       Release: configs/ActionPopoverButton-Release.xcconfig
-scheme:
-    build:
-      gatherCoverageData: true
-      targets:
-        BitriseClient: all
