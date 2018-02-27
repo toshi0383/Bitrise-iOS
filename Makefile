@@ -1,7 +1,7 @@
 SKETCHTOOL ?= /Applications/Sketch.app/Contents/Resources/sketchtool/bin/sketchtool
 
 test:
-	xcodebuild test -project BitriseClient.xcodeproj -scheme BitriseClient -destination 'name=iPhone X'
+	xcodebuild test -project BitriseClient.xcodeproj -scheme BitriseClientTests -destination 'name=iPhone X'
 
 clean:
 	rm -rf Carthage/Build/iOS

@@ -35,7 +35,9 @@ targets:
         - BitriseClientTests
       gatherCoverageData: true
       environmentVariables:
-        TEST: YES
+        - variable: TEST
+          value: YESS
+          isEnabled: true
   ActionPopoverButton:
     platform: iOS
     type: framework
