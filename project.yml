@@ -21,11 +21,6 @@ targets:
       - carthage: TKKeyboardControl
       - carthage: Realm
       - carthage: RealmSwift
-    scheme:
-      testTargets:
-        - BitriseClientTests
-      gatherCoverageData: true
-
   BitriseClientTests:
     platform: iOS
     type: bundle.unit-test
@@ -35,10 +30,12 @@ targets:
       - Tests/BitriseClientTests
     dependencies:
       - target: BitriseClient
-    settings:
-      TEST_HOST: "$(BUILT_PRODUCTS_DIR)/BitriseClient.app/BitriseClient"
-      LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/Frameworks @loader_path/Frameworks"
-      OTHER_SWIFT_FLAGS: "$(inherited) -DTEST"
+    scheme:
+      testTargets:
+        - BitriseClientTests
+      gatherCoverageData: true
+      environmentVariables:
+        TEST: YES
   ActionPopoverButton:
     platform: iOS
     type: framework

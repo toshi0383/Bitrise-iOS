@@ -1,1 +1,1 @@
-OTHER_SWIFT_FLAGS=$(inherited) -DTEST
+TEST_HOST = $(BUILT_PRODUCTS_DIR)/BitriseClient.app/BitriseClient
