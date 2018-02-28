@@ -1,4 +1,4 @@
-github "toshi0383/Continuum" "toshi0383-onvaluechange"
+github "marty-suzuki/Continuum"
 github "ishkawa/APIKit"
 github "cokaholic/TKKeyboardControl" "master"
 github "realm/realm-cocoa"
