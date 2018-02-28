@@ -1,4 +1,5 @@
 import APIKit
+import Continuum
 import UIKit
 
 final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
@@ -31,6 +32,8 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         }
     }
 
+    private let disposeBag = NotificationCenterContinuum.Bag()
+
     // MARK: LifeCycle
 
     override func viewDidLoad() {
@@ -38,8 +41,23 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
         navigationItem.title = viewModel.navigationBarTitle
 
-        viewModel.viewDidLoad(reloadData: { [weak self] in self?.tableView.reloadData() },
-                              alert: { [weak self] in self?.alert($0, voidCompletion: $1)})
+        viewModel.viewDidLoad()
+
+        notificationCenter.continuum
+            .observe(viewModel.alertMessage, on: .main) { [weak self] msg in
+                if !msg.isEmpty { // skip initial value
+                    self?.alert(msg)
+                }
+            }
+            .disposed(by: disposeBag)
+
+        notificationCenter.continuum
+            .observe(viewModel.reloadDataTrigger, on: .main) { [weak self] v in
+                if v != nil { // skip initial value
+                    self?.tableView.reloadData()
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: IBAction
