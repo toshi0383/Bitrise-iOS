@@ -1,4 +1,5 @@
-github "marty-suzuki/Continuum"
-github "ishkawa/APIKit"
 github "cokaholic/TKKeyboardControl" "master"
+github "ishkawa/APIKit"
+github "marty-suzuki/Continuum"
+github "onmyway133/DeepDiff"
 github "realm/realm-cocoa"

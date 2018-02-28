@@ -17,10 +17,14 @@ targets:
       - target: ActionPopoverButton
       - carthage: APIKit
       - carthage: Continuum
+      - carthage: DeepDiff
       - carthage: Result
-      - carthage: TKKeyboardControl
       - carthage: Realm
       - carthage: RealmSwift
+      - carthage: TKKeyboardControl
+    prebuildScripts:
+      - name: sourcery
+        script: sourcery
   BitriseClientTests:
     platform: iOS
     type: bundle.unit-test

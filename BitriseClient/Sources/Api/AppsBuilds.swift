@@ -23,7 +23,7 @@ struct AppsBuilds: Decodable {
 
     let data: [Build]
 
-    struct Build: Decodable {
+    struct Build: Decodable, Hashable, AutoEquatable {
         let abort_reason: String?
         let branch: String?
         let build_number: Int
@@ -59,4 +59,10 @@ struct AppsBuilds: Decodable {
     }
 
     let paging: Paging
+}
+
+extension AppsBuilds.Build {
+    var hashValue: Int {
+        return build_number
+    }
 }

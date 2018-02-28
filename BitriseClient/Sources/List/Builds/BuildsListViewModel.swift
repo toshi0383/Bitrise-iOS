@@ -7,6 +7,7 @@
 
 import APIKit
 import Continuum
+import DeepDiff
 import Foundation
 
 final class BuildsListViewModel {
@@ -20,12 +21,12 @@ final class BuildsListViewModel {
     let appSlug: String
     let navigationBarTitle: String
     let alertMessage: Constant<String>
-    let reloadDataTrigger: Constant<Void?>
+    let dataChanges: Constant<[Change<AppsBuilds.Build>]>
 
     // MARK: private properties
 
     private let _alertMessage = Variable<String>(value: "")
-    private let _reloadDataTrigger = Variable<Void?>(value: nil)
+    private let _dataChanges = Variable<[Change<AppsBuilds.Build>]>(value: [])
     private(set) var builds: [AppsBuilds.Build] = []
 
     // MARK: Initializer
@@ -36,7 +37,7 @@ final class BuildsListViewModel {
         self.appName = appName
         self.navigationBarTitle = appName
         self.alertMessage = Constant(variable: _alertMessage)
-        self.reloadDataTrigger = Constant(variable: _reloadDataTrigger)
+        self.dataChanges = Constant(variable: _dataChanges)
     }
 
     // MARK: LifeCycle & Update
@@ -58,8 +59,9 @@ final class BuildsListViewModel {
 
             switch result {
             case .success(let res):
+                let changes = diff(old: me.builds, new: res.data)
                 me.builds = res.data
-                me._reloadDataTrigger.value = ()
+                me._dataChanges.value = changes
             case .failure(let error):
                 print(error)
             }
