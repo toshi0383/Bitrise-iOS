@@ -24,7 +24,7 @@ targets:
       - carthage: TKKeyboardControl
     prebuildScripts:
       - name: sourcery
-        script: if [ ! -z $CI ];then sourcery;fi
+        script: if [ -z $CI ];then sourcery;fi
   BitriseClientTests:
     platform: iOS
     type: bundle.unit-test
