@@ -1,0 +1,6 @@
+sources:
+  - BitriseClient/Sources
+templates:
+  - Resources/SourceryTemplates/AutoEquatables.stencil
+output:
+  BitriseClient/Sources/Gen/Sourcery.out.swift

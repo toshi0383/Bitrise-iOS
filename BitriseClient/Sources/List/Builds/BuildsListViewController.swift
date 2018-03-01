@@ -1,5 +1,6 @@
 import APIKit
 import Continuum
+import DeepDiff
 import UIKit
 
 final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
@@ -52,9 +53,9 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
             .disposed(by: disposeBag)
 
         notificationCenter.continuum
-            .observe(viewModel.reloadDataTrigger, on: .main) { [weak self] v in
-                if v != nil { // skip initial value
-                    self?.tableView.reloadData()
+            .observe(viewModel.dataChanges, on: .main) { [weak self] changes in
+                if !changes.isEmpty { // skip initial value
+                    self?.tableView.reload(changes: changes, completion: { _ in })
                 }
             }
             .disposed(by: disposeBag)
