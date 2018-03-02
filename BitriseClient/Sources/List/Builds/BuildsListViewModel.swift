@@ -29,13 +29,18 @@ final class BuildsListViewModel {
     private let _dataChanges = Variable<[Change<AppsBuilds.Build>]>(value: [])
     private(set) var builds: [AppsBuilds.Build] = []
 
+    private let session: Session
+
     // MARK: Initializer
 
     init(appSlug: String,
-         appName: String) {
+         appName: String,
+         session: Session = .shared) {
         self.appSlug = appSlug
         self.appName = appName
         self.navigationBarTitle = appName
+        self.session = session
+
         self.alertMessage = Constant(variable: _alertMessage)
         self.dataChanges = Constant(variable: _dataChanges)
     }
@@ -53,7 +58,7 @@ final class BuildsListViewModel {
 
     func fetchDataAndReloadTable() {
         let req = AppsBuildsRequest(appSlug: appSlug)
-        Session.shared.send(req) { [weak self] result in
+        session.send(req) { [weak self] result in
             guard let me = self else { return }
 
             switch result {
@@ -72,7 +77,7 @@ final class BuildsListViewModel {
         let buildNumber = builds[indexPath.row].build_number
         let req = AppsBuildsAbortRequest(appSlug: appSlug, buildSlug: buildSlug)
 
-        Session.shared.send(req) { [weak self] result in
+        session.send(req) { [weak self] result in
             guard let me = self else { return }
 
             switch result {
