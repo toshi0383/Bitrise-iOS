@@ -51,7 +51,6 @@ final class BuildsListViewModel {
 
     // MARK: API Call
 
-    // TODO: Insert Animation
     func fetchDataAndReloadTable() {
         let req = AppsBuildsRequest(appSlug: appSlug)
         Session.shared.send(req) { [weak self] result in
@@ -88,10 +87,6 @@ final class BuildsListViewModel {
                 me._alertMessage.value = "Abort failed: \(error.localizedDescription)"
             }
         }
-    }
-
-    private func alert(_ message: String, completion: (() -> ())? = nil) {
-        alert(message, completion: completion)
     }
 
 }
