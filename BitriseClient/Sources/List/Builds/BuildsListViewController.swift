@@ -33,6 +33,14 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         }
     }
 
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
+        self.tableView.addSubview(refreshControl)
+        return refreshControl
+    }()
+
     private let disposeBag = NotificationCenterContinuum.Bag()
 
     // MARK: LifeCycle
@@ -59,6 +67,18 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
                 }
             }
             .disposed(by: disposeBag)
+
+        notificationCenter.continuum
+            .observe(viewModel.isNewDataIndicatorHidden, on: .main) { [weak self] isHidden in
+                guard let me = self else { return }
+
+                if isHidden {
+                    me.refreshControl.endRefreshing()
+                } else {
+                    me.refreshControl.beginRefreshing()
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: IBAction
@@ -68,6 +88,10 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: viewModel.appSlug))
         vc.modalPresentationStyle = .overCurrentContext
         navigationController?.present(vc, animated: true, completion: nil)
+    }
+
+    @objc private func pullToRefresh() {
+        viewModel.triggerPullToRefresh()
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate
