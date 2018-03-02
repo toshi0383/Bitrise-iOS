@@ -87,7 +87,7 @@ final class BuildsListViewModel {
     func triggerPullToRefresh() {
         _isNewDataIndicatorHidden.value = false
 
-        let req = AppsBuildsRequest(appSlug: appSlug)
+        let req = AppsBuildsRequest(appSlug: appSlug, limit: 10)
 
         session.send(req) { [weak self] result in
             guard let me = self else { return }
