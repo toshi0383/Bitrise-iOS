@@ -101,7 +101,7 @@ final class BuildsListViewModel {
                 var reachedCurrent = false
 
                 for (i, new) in res.data.enumerated() {
-                    if newBuilds.contains(new) {
+                    if newBuilds.containsByBuildNumber(new) {
                         reachedCurrent = true
                         break
                     }
@@ -147,4 +147,10 @@ final class BuildsListViewModel {
         }
     }
 
+}
+
+private extension Array where Element == AppsBuilds.Build {
+    func containsByBuildNumber(_ build: Element) -> Bool {
+        return self.contains { $0.build_number == build.build_number }
+    }
 }
