@@ -85,9 +85,22 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
     @IBAction func triggerBuildButtonTap() {
         Haptic.generate(.light)
-        let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: viewModel.appSlug))
+
+        let logicStore = TriggerBuildLogicStore(appSlug: viewModel.appSlug)
+        let vc = TriggerBuildViewController.makeFromStoryboard(logicStore)
+
         vc.modalPresentationStyle = .overCurrentContext
+
         navigationController?.present(vc, animated: true, completion: nil)
+
+        notificationCenter.continuum
+            .observe(logicStore.buildDidTriggerRelay) { [weak viewModel] trigger in
+                if trigger != nil {
+                    viewModel?.triggerPullToRefresh()
+                }
+            }
+            .disposed(by: disposeBag)
+
     }
 
     @objc private func pullToRefresh() {

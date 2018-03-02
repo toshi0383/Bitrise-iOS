@@ -17,10 +17,15 @@ final class TriggerBuildLogicStore {
 
     private var realmObject: BuildTriggerRealm!
 
+    let buildDidTriggerRelay: Constant<Void?>
+    private let _buildDidTriggerRelay = Variable<Void?>(value: nil)
+
     /// NOTE: Accesses to realm in current thread.
     init(appSlug: String) {
 
         let realm = Realm.getRealm()
+
+        buildDidTriggerRelay = Constant(variable: _buildDidTriggerRelay)
 
         if let obj = realm.object(ofType: BuildTriggerRealm.self, forPrimaryKey: appSlug) {
             realmObject = obj
@@ -100,6 +105,10 @@ final class TriggerBuildLogicStore {
         req.httpMethod = "POST"
 
         return req
+    }
+
+    func buildDidTrigger() {
+        _buildDidTriggerRelay.value = ()
     }
 }
 

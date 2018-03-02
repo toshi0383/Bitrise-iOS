@@ -200,6 +200,8 @@ class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewD
                 }
             }()
 
+            me.logicStore.buildDidTrigger()
+
             me.alert("Success\n\(str)")
         }
 
