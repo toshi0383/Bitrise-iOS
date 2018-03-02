@@ -108,6 +108,10 @@ final class BuildsListViewModel {
                     newBuilds.insert(new, at: i)
                 }
 
+                if !reachedCurrent {
+                    print("FIXME: there is new data in between")
+                }
+
                 me.nextTokenNew.value = !reachedCurrent ? res.paging.next : nil
 
                 let changes = diff(old: me.builds, new: newBuilds)
