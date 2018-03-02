@@ -139,6 +139,8 @@ final class BuildsListViewModel {
                     me._alertMessage.value = msg
                 } else {
                     me._alertMessage.value = "Aborted: #\(buildNumber)"
+
+                    // FIXME: only reload aborted build
                     me.fetchDataAndReloadTable()
                 }
             case .failure(let error):
