@@ -13,9 +13,15 @@ struct AppsBuildsRequest: BitriseAPIRequest {
     typealias Response = AppsBuilds
 
     let path: String
+    private let limit: Int
 
-    init(appSlug: String) {
+    var queryParameters: [String : Any]? {
+        return ["limit": limit]
+    }
+
+    init(appSlug: String, limit: Int = 50) {
         self.path = "/apps/\(appSlug)/builds"
+        self.limit = limit
     }
 }
 

@@ -33,6 +33,14 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         }
     }
 
+    private lazy var refreshControl: UIRefreshControl = {
+        let refreshControl = UIRefreshControl()
+        refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl.addTarget(self, action: #selector(pullToRefresh), for: .valueChanged)
+        self.tableView.addSubview(refreshControl)
+        return refreshControl
+    }()
+
     private let disposeBag = NotificationCenterContinuum.Bag()
 
     // MARK: LifeCycle
@@ -59,15 +67,44 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
                 }
             }
             .disposed(by: disposeBag)
+
+        notificationCenter.continuum
+            .observe(viewModel.isNewDataIndicatorHidden, on: .main) { [weak self] isHidden in
+                guard let me = self else { return }
+
+                if isHidden {
+                    me.refreshControl.endRefreshing()
+                } else {
+                    me.refreshControl.beginRefreshing()
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: IBAction
 
     @IBAction func triggerBuildButtonTap() {
         Haptic.generate(.light)
-        let vc = TriggerBuildViewController.makeFromStoryboard(TriggerBuildLogicStore(appSlug: viewModel.appSlug))
+
+        let logicStore = TriggerBuildLogicStore(appSlug: viewModel.appSlug)
+        let vc = TriggerBuildViewController.makeFromStoryboard(logicStore)
+
         vc.modalPresentationStyle = .overCurrentContext
+
         navigationController?.present(vc, animated: true, completion: nil)
+
+        notificationCenter.continuum
+            .observe(logicStore.buildDidTriggerRelay) { [weak viewModel] trigger in
+                if trigger != nil {
+                    viewModel?.triggerPullToRefresh()
+                }
+            }
+            .disposed(by: disposeBag)
+
+    }
+
+    @objc private func pullToRefresh() {
+        viewModel.triggerPullToRefresh()
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate
