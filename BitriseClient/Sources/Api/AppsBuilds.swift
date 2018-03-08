@@ -30,6 +30,9 @@ struct AppsBuilds: Decodable {
     let data: [Build]
 
     struct Build: Decodable, Hashable, AutoEquatable {
+
+        typealias Slug = String
+
         let abort_reason: String?
         let branch: String?
         let build_number: Int
@@ -44,7 +47,7 @@ struct AppsBuilds: Decodable {
         let pull_request_id: Int
         let pull_request_target_branch: String?
         let pull_request_view_url: String?
-        let slug: String
+        let slug: Slug
         let stack_config_type: String?
         let stack_identifier: String?
         let started_on_worker_at: Date?

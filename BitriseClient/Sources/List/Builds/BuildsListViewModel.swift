@@ -37,6 +37,7 @@ final class BuildsListViewModel {
     private let nextTokenMore = Variable<String?>(value: nil)
 
     private let session: Session
+    private let disposeBag = NotificationCenterContinuum.Bag()
 
     // MARK: Initializer
 
@@ -51,6 +52,35 @@ final class BuildsListViewModel {
         self.alertMessage = Constant(variable: _alertMessage)
         self.dataChanges = Constant(variable: _dataChanges)
         self.isNewDataIndicatorHidden = Constant(variable: _isNewDataIndicatorHidden)
+
+        let buildPollingManager = BuildPollingManagerPool.shared.manager(for: appSlug)
+
+        notificationCenter.continuum
+            .observe(dataChanges, on: OperationQueue()) { [weak self] changes in
+                if changes.isEmpty { // skip initial value
+                    return
+                }
+                for c in changes {
+                    if let item = c.insert?.item {
+
+                        buildPollingManager.addPollingTarget(buildSlug: item.slug) { [weak self] build in
+                            guard let me = self else { return }
+
+                            var newData = me.builds
+                            if let index = newData.index(where: { $0.slug == build.slug }) {
+                                newData[index] = build
+                            }
+
+                            let changes = diff(old: me.builds, new: newData)
+                            me.builds = newData
+
+                            // FIXME: Avoid Race Condition
+                            me._dataChanges.value = changes
+                        }
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: LifeCycle & Update
