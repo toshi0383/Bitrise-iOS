@@ -95,6 +95,7 @@ final class BuildsListViewModel {
     // MARK: API Call
 
     // TODO: paging
+    // FIXME: avoid dropping existing data
     func fetchDataAndReloadTable() {
         let req = AppsBuildsRequest(appSlug: appSlug)
 
