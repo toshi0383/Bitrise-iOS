@@ -63,7 +63,7 @@ final class BuildsListViewModel {
                 for c in changes {
                     if let item = c.insert?.item {
 
-                        buildPollingManager.addPollingTarget(buildSlug: item.slug) { [weak self] build in
+                        buildPollingManager.addTarget(buildSlug: item.slug) { [weak self] build in
                             guard let me = self else { return }
 
                             var newData = me.builds

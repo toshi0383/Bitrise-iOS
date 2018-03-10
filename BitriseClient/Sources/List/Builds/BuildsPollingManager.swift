@@ -27,14 +27,14 @@ final class BuildPollingManager {
         self.session = session
     }
 
-    func addPollingTarget(buildSlug: Slug, completion: @escaping UpdateHandler) {
+    func addTarget(buildSlug: Slug, completion: @escaping UpdateHandler) {
         handlers[buildSlug] = completion
 
         // start polling
         startPolling(buildSlug)
     }
 
-    func removePollingTarget(buildSlug: Slug) {
+    func removeTarget(buildSlug: Slug) {
         handlers.removeValue(forKey: buildSlug)
         workItemMap.removeValue(forKey: buildSlug)?.cancel()
     }
