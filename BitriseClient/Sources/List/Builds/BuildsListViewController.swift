@@ -81,6 +81,12 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
             .disposed(by: disposeBag)
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        viewModel.viewWillDisappear()
+    }
+
     // MARK: IBAction
 
     @IBAction func triggerBuildButtonTap() {

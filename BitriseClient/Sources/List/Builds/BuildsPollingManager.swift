@@ -27,6 +27,10 @@ final class BuildPollingManager {
         self.session = session
     }
 
+    var targets: [AppsBuilds.Build.Slug] {
+        return handlers.keys.map { $0 }
+    }
+
     func addTarget(buildSlug: Slug, completion: @escaping UpdateHandler) {
         handlers[buildSlug] = completion
 
@@ -61,6 +65,8 @@ final class BuildPollingManager {
                 me.handlers[buildSlug]?(build)
                 if build.status == .notFinished {
                     me.startPolling(buildSlug)
+                } else {
+                    me.removeTarget(buildSlug: buildSlug)
                 }
             case .failure(let error):
                 print("\(error)")

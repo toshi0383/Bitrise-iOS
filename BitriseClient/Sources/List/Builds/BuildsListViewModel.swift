@@ -38,6 +38,7 @@ final class BuildsListViewModel {
 
     private let session: Session
     private let disposeBag = NotificationCenterContinuum.Bag()
+    private let buildPollingManager: BuildPollingManager
 
     /// lock to avoid race condition
     private let lock = NSLock()
@@ -57,6 +58,7 @@ final class BuildsListViewModel {
         self.isNewDataIndicatorHidden = Constant(variable: _isNewDataIndicatorHidden)
 
         let buildPollingManager = BuildPollingManagerPool.shared.manager(for: appSlug)
+        self.buildPollingManager = buildPollingManager
 
         notificationCenter.continuum
             .observe(dataChanges, on: OperationQueue()) { [weak self] changes in
@@ -92,6 +94,12 @@ final class BuildsListViewModel {
         Config.lastAppNameVisited = appName
 
         fetchDataAndReloadTable()
+    }
+
+    func viewWillDisappear() {
+        for buildSlug in buildPollingManager.targets {
+            buildPollingManager.removeTarget(buildSlug: buildSlug)
+        }
     }
 
     // MARK: API Call
