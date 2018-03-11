@@ -140,6 +140,10 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
             self?.viewModel.sendAbortRequest(indexPath: indexPath)
         }))
 
+        actionSheet.addAction(UIAlertAction(title: "Set Notification", style: .default, handler: { [weak self] _ in
+            self?.viewModel.reserveNotification(indexPath: indexPath)
+        }))
+
         actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
 
         present(actionSheet, animated: true, completion: nil)
