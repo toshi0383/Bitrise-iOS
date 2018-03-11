@@ -39,6 +39,9 @@ final class BuildsListViewModel {
     private let session: Session
     private let disposeBag = NotificationCenterContinuum.Bag()
 
+    /// lock to avoid race condition
+    private let lock = NSLock()
+
     // MARK: Initializer
 
     init(appSlug: String,
@@ -65,6 +68,7 @@ final class BuildsListViewModel {
 
                         buildPollingManager.addTarget(buildSlug: item.slug) { [weak self] build in
                             guard let me = self else { return }
+                            me.lock.lock(); defer { me.lock.unlock() }
 
                             var newData = me.builds
                             if let index = newData.index(where: { $0.slug == build.slug }) {
@@ -73,8 +77,6 @@ final class BuildsListViewModel {
 
                             let changes = diff(old: me.builds, new: newData)
                             me.builds = newData
-
-                            // FIXME: Avoid Race Condition
                             me._dataChanges.value = changes
                         }
                     }
