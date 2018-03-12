@@ -44,7 +44,7 @@ struct AppsBuilds: Decodable {
         let is_on_hold: Bool
         // TODO
         // let original_build_params: [String: AnyObject]
-        let pull_request_id: Int
+        let pull_request_id: Int?
         let pull_request_target_branch: String?
         let pull_request_view_url: String?
         let slug: Slug
