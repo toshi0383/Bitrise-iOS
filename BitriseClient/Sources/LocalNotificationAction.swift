@@ -16,7 +16,7 @@ class LocalNotificationAction: NSObject, UNUserNotificationCenterDelegate {
         let title: String
         let body: String
         init(build: AppsBuilds.Build) {
-            self.title = "Build Status Update"
+            self.title = "Build #\(build.build_number) \(build.status_text)"
             self.body = build.status_text
         }
     }
@@ -53,7 +53,6 @@ class LocalNotificationAction: NSObject, UNUserNotificationCenterDelegate {
         let content = UNMutableNotificationContent()
         let not = Notification(build: build)
         content.title = not.title
-        content.body = not.body
         content.sound = UNNotificationSound.default()
 
         // 通常
