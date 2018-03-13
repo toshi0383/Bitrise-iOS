@@ -53,8 +53,7 @@ final class BuildPollingManager {
     func addLocalNotification(buildSlug: Slug) {
         localNotificationTargets.insert(buildSlug)
         if !handlers.keys.contains(buildSlug) {
-            fatalError("would it ever reach here?")
-            startPolling(buildSlug)
+            fatalError("Polling should have already started.")
         }
     }
 
