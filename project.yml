@@ -1,6 +1,4 @@
 name: BitriseClient
-fileGroups:
-  - configs
 configFiles:
   Debug: configs/Debug.xcconfig
   Release: configs/Release.xcconfig
