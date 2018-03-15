@@ -27,24 +27,6 @@ class LocalNotificationAction: NSObject, UNUserNotificationCenterDelegate {
         self.session = session
     }
 
-    func reserve(appSlug: AppSlug, buildSlug: AppsBuilds.Build.Slug) {
-        requestAuthorizationIfNeeded()
-
-        let trigger: UNNotificationTrigger
-        trigger = UNTimeIntervalNotificationTrigger(timeInterval: 5, repeats: false)
-        let content = UNMutableNotificationContent()
-        content.title = "hello"
-        content.body = buildSlug
-
-        // 通常
-        let request = UNNotificationRequest(identifier: "\(appSlug)-\(buildSlug)",
-                                            content: content,
-                                            trigger: trigger)
-
-        UNUserNotificationCenter.current()
-            .add(request, withCompletionHandler: nil)
-    }
-
     func send(build: AppsBuilds.Build) {
         requestAuthorizationIfNeeded()
 
@@ -80,23 +62,6 @@ class LocalNotificationAction: NSObject, UNUserNotificationCenterDelegate {
     // MARK: UNUserNotificationCenterDelegate
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        let separated = notification.request.identifier.split(separator: "-").map(String.init)
-        if separated.count != 2 {
-            completionHandler([.alert, .badge, .sound])
-            return
-        }
-
-        let appSlug = separated[0]
-        let buildSlug = separated[1]
-        let req = BuildRequest(appSlug: appSlug, buildSlug: buildSlug)
-
-        session.send(req) { [weak self] result in
-            switch result {
-            case .success(let res):
-                self?.send(build: res.data)
-            case .failure(let error):
-                print("\(error)")
-            }
-        }
+        completionHandler([.alert, .badge, .sound])
     }
 }
