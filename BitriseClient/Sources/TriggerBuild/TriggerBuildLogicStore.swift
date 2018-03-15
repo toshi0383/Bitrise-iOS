@@ -13,6 +13,7 @@ import RealmSwift
 typealias WorkflowID = String
 typealias AppSlug = String
 
+// TODO: Rewrite as ViewModel
 final class TriggerBuildLogicStore {
 
     private var realmObject: BuildTriggerRealm!

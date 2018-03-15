@@ -10,7 +10,8 @@ import Continuum
 import TKKeyboardControl
 import UIKit
 
-class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+// TODO: Refactoring
+final class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
     typealias Dependency = TriggerBuildLogicStore
 
