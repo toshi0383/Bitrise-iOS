@@ -166,6 +166,11 @@ final class BuildsListViewModel {
         }
     }
 
+    func reserveNotification(indexPath: IndexPath) {
+        let buildSlug = builds[indexPath.row].slug
+        buildPollingManager.addLocalNotification(buildSlug: buildSlug)
+    }
+
     func sendAbortRequest(indexPath: IndexPath) {
         let buildSlug = builds[indexPath.row].slug
         let buildNumber = builds[indexPath.row].build_number

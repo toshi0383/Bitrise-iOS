@@ -30,7 +30,7 @@ Bitrise iOS Client app 🚀
 - [ ] Submit to App Store? 🍎
 - [ ] [Builds] Brush up UI (make it more "Bitrise")
 - [ ] [Builds] Drop down menu at navigationBar to switch apps
-- [ ] [Builds] Local push notification for specified build
+- ✅ [Builds] Local push notification for specified build
 - [ ] Build Logs `GET /apps/${APP-SLUG}/builds/${BUILD-SLUG}/log`
 - [ ] [Builds] Pagination
 - [ ] [Apps] Pagination

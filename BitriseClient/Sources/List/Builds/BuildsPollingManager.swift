@@ -17,14 +17,19 @@ final class BuildPollingManager {
     private let interval: Double = 8.0
 
     private var handlers: [Slug: UpdateHandler] = [:]
+    private var localNotificationTargets: Set<Slug> = []
     private var workItemMap: [Slug: DispatchWorkItem] = [:]
 
     let appSlug: String // accessed from pool
     private let session: Session
+    private let localNotificationAction: LocalNotificationAction
 
-    init(appSlug: String, session: Session = .shared) {
+    init(appSlug: String,
+         session: Session = .shared,
+         localNotificationAction: LocalNotificationAction = .shared) {
         self.appSlug = appSlug
         self.session = session
+        self.localNotificationAction = localNotificationAction
     }
 
     var targets: [AppsBuilds.Build.Slug] {
@@ -40,7 +45,16 @@ final class BuildPollingManager {
 
     func removeTarget(buildSlug: Slug) {
         handlers.removeValue(forKey: buildSlug)
-        workItemMap.removeValue(forKey: buildSlug)?.cancel()
+        if !localNotificationTargets.contains(buildSlug) {
+            workItemMap.removeValue(forKey: buildSlug)?.cancel()
+        }
+    }
+
+    func addLocalNotification(buildSlug: Slug) {
+        localNotificationTargets.insert(buildSlug)
+        if !handlers.keys.contains(buildSlug) {
+            fatalError("Polling should have already started.")
+        }
     }
 
     // MARK: Utilities
@@ -51,7 +65,8 @@ final class BuildPollingManager {
 
         workItemMap[buildSlug] = workItem
 
-        DispatchQueue.global().asyncAfter(deadline: DispatchTime.now() + interval, execute: workItem)
+        DispatchQueue.global()
+            .asyncAfter(deadline: DispatchTime.now() + interval, execute: workItem)
     }
 
     private func callAPIAndUpdateHandler(_ buildSlug: Slug) {
@@ -62,12 +77,22 @@ final class BuildPollingManager {
             switch result {
             case .success(let res):
                 let build = res.data
+
                 me.handlers[buildSlug]?(build)
+
                 if build.status == .notFinished {
                     me.startPolling(buildSlug)
+
                 } else {
+
+                    if me.localNotificationTargets.contains(where: { $0 == build.slug }) {
+                        me.localNotificationAction.send(build: build)
+                        me.localNotificationTargets.remove(build.slug)
+                    }
+
                     me.removeTarget(buildSlug: buildSlug)
                 }
+
             case .failure(let error):
                 print("\(error)")
             }
