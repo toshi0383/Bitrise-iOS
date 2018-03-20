@@ -28,10 +28,10 @@ enum GitObject {
             self = .branch(value)
             return
         case "tag":
-            self = .branch(value)
+            self = .tag(value)
             return
-        case "tag":
-            self = .branch(value)
+        case "commitHash":
+            self = .commitHash(value)
             return
         default:
             return nil

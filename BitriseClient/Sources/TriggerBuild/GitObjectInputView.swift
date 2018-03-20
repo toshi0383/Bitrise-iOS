@@ -117,7 +117,7 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     // Input result
     // Observed by using Continuum
-    let newInput = Variable<GitObject>(value: .branch(""))
+    let newInput = Variable<GitObject?>(value: nil)
 
     private let objectTypeButton: GitObjectTypeButton = {
         let button = GitObjectTypeButton()
@@ -183,13 +183,16 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        newInput.value = newInput.value.updateAssociatedValue(objectTextField.text ?? "")
+        let str = objectTextField.text ?? ""
+        newInput.value = newInput.value?.updateAssociatedValue(str) ?? .branch(str)
         updatePlaceholder()
     }
 
     // MARK: Utilities
 
     private func updatePlaceholder() {
-        objectTextField.placeholder = Placeholder(newInput.value).text
+        if let value = newInput.value {
+            objectTextField.placeholder = Placeholder(value).text
+        }
     }
 }
