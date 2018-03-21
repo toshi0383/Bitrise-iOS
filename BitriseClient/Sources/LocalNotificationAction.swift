@@ -37,7 +37,6 @@ class LocalNotificationAction: NSObject, UNUserNotificationCenterDelegate {
         content.title = not.title
         content.sound = UNNotificationSound.default()
 
-        // 通常
         let request = UNNotificationRequest(identifier: "normal",
                                             content: content,
                                             trigger: trigger)
@@ -47,7 +46,7 @@ class LocalNotificationAction: NSObject, UNUserNotificationCenterDelegate {
         center.add(request, withCompletionHandler: nil)
     }
 
-    private func requestAuthorizationIfNeeded() {
+    func requestAuthorizationIfNeeded() {
         let center = UNUserNotificationCenter.current()
         center.delegate = self
 

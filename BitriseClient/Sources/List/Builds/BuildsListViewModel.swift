@@ -37,6 +37,7 @@ final class BuildsListViewModel {
     private let nextTokenMore = Variable<String?>(value: nil)
 
     private let session: Session
+    private let localNotificationAction: LocalNotificationAction
     private let disposeBag = NotificationCenterContinuum.Bag()
     private let buildPollingManager: BuildPollingManager
 
@@ -47,10 +48,12 @@ final class BuildsListViewModel {
 
     init(appSlug: String,
          appName: String,
+         localNotificationAction: LocalNotificationAction = .shared,
          session: Session = .shared) {
         self.appSlug = appSlug
         self.appName = appName
         self.navigationBarTitle = appName
+        self.localNotificationAction = localNotificationAction
         self.session = session
 
         self.alertMessage = Constant(variable: _alertMessage)
@@ -167,6 +170,8 @@ final class BuildsListViewModel {
     }
 
     func reserveNotification(indexPath: IndexPath) {
+        localNotificationAction.requestAuthorizationIfNeeded()
+
         let buildSlug = builds[indexPath.row].slug
         buildPollingManager.addLocalNotification(buildSlug: buildSlug)
     }
