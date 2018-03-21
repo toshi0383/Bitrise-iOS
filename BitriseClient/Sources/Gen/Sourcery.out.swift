@@ -36,7 +36,7 @@ internal func == (lhs: AppsBuilds.Build, rhs: AppsBuilds.Build) -> Bool {
     guard compareOptionals(lhs: lhs.environment_prepare_finished_at, rhs: rhs.environment_prepare_finished_at, compare: ==) else { return false }
     guard compareOptionals(lhs: lhs.finished_at, rhs: rhs.finished_at, compare: ==) else { return false }
     guard lhs.is_on_hold == rhs.is_on_hold else { return false }
-    guard lhs.pull_request_id == rhs.pull_request_id else { return false }
+    guard compareOptionals(lhs: lhs.pull_request_id, rhs: rhs.pull_request_id, compare: ==) else { return false }
     guard compareOptionals(lhs: lhs.pull_request_target_branch, rhs: rhs.pull_request_target_branch, compare: ==) else { return false }
     guard compareOptionals(lhs: lhs.pull_request_view_url, rhs: rhs.pull_request_view_url, compare: ==) else { return false }
     guard lhs.slug == rhs.slug else { return false }

@@ -63,9 +63,12 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
         apiTokenTextfield.text = logicStore.apiToken
 
-        let keypath: ReferenceWritableKeyPath<TriggerBuildLogicStore, GitObject> = \.gitObject
         notificationCenter.continuum
-            .observe(gitObjectInputView.newInput, bindTo: logicStore, keypath)
+            .observe(gitObjectInputView.newInput) { [weak self] value in
+                if let value = value {
+                    self?.logicStore.gitObject = value
+                }
+            }
             .disposed(by: bag)
 
         gitObjectInputView.updateUI(logicStore.gitObject)

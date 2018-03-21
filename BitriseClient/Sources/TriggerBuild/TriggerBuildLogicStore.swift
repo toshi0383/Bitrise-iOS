@@ -77,11 +77,15 @@ final class TriggerBuildLogicStore {
         }
     }
 
-    var gitObject: GitObject {
+    var gitObject: GitObject! {
         get {
-            return GitObject(realmObject: realmObject) ?? .branch("")
+            return GitObject(realmObject: realmObject)
         }
         set {
+            // skip initial value via continuum
+            guard let newValue = newValue else {
+                return
+            }
             try! Realm.getRealm().write {
                 realmObject.gitObjectValue = newValue.associatedValue
                 realmObject.gitObjectType = newValue.type
