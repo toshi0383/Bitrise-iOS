@@ -14,8 +14,8 @@ private struct PullRequestDescription {
         if let target = build.pull_request_target_branch {
             d = "\(target) <="
         }
-        if let branch = build.branch {
-            d = "\(d) \(branch)"
+        if let tagOrbranch = (build.tag ?? build.branch) {
+            d = "\(d) \(tagOrbranch)"
         }
         d = "\(d)"
         self.text = d
