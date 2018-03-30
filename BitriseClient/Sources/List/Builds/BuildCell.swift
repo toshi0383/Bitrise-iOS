@@ -150,7 +150,9 @@ final class BuildCell: UITableViewCell {
                 subtitleLabel2.text = "\(minutes)m \(seconds)s"
             } else {
                 subtitleLabel2.text = "n/a"
-                assertionFailure("finished_at should exist")
+
+                // happens when aborted before it starts.
+                // assertionFailure("finished_at should exist")
             }
         }
 
