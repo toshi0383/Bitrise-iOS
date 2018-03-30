@@ -24,7 +24,7 @@ Bitrise iOS Client app 🚀
 - [ ] [Builds] Poll interval 8sec for "new builds available"
   + [ ] Tap message to show new builds
   + ✅ PullToRefresh to fetch new builds
-- [ ] [Builds] Poll interval for status of each in-progress/on-hold builds
+- ✅ [Builds] Poll interval for status of each in-progress/on-hold builds
 - [ ] 2.0 RELEASE 🚀
 - [ ] [Settings] Display OSS Licenses
 - [ ] Submit to App Store? 🍎
