@@ -62,12 +62,23 @@
                                                                 </stackView>
                                                             </subviews>
                                                         </stackView>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vnR-Nz-SKD">
-                                                            <rect key="frame" x="0.0" y="39" width="33" height="15.666666666666664"/>
-                                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                                            <nil key="textColor"/>
-                                                            <nil key="highlightedColor"/>
-                                                        </label>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="ot9-M1-9LR">
+                                                            <rect key="frame" x="0.0" y="39" width="70" height="15.666666666666664"/>
+                                                            <subviews>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vnR-Nz-SKD">
+                                                                    <rect key="frame" x="0.0" y="0.0" width="33" height="15.666666666666666"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="kg8-TY-gkq">
+                                                                    <rect key="frame" x="37" y="0.0" width="33" height="15.666666666666666"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                            </subviews>
+                                                        </stackView>
                                                     </subviews>
                                                 </stackView>
                                             </subviews>
@@ -82,6 +93,7 @@
                                             <outlet property="branchLabel" destination="AhJ-fg-qr4" id="h4N-ks-yW3"/>
                                             <outlet property="smallSquareView" destination="M3b-Hh-6o4" id="SoT-QF-Ur8"/>
                                             <outlet property="subtitleLabel" destination="vnR-Nz-SKD" id="KTe-kw-cOR"/>
+                                            <outlet property="subtitleLabel2" destination="kg8-TY-gkq" id="8fK-9v-oLJ"/>
                                             <outlet property="titleLabel" destination="pjD-cH-trZ" id="CdN-ja-sWs"/>
                                         </connections>
                                     </tableViewCell>
