@@ -31,7 +31,15 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
     }
 
-    @IBOutlet private weak var apiTokenTextfield: UITextField!
+    @IBOutlet private weak var apiTokenTextfield: UITextField! {
+        didSet {
+            // No Continuum: `UITextField.text` keyPath didn't compile.
+            apiTokenTextfield.delegate = TextFieldDelegate { apiToken in
+                // NOTE: retaining delegate instance by implicit strong self capture
+                self.logicStore?.apiToken = apiToken
+            }
+        }
+    }
 
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
@@ -40,6 +48,8 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             tableView.allowsMultipleSelectionDuringEditing = false
         }
     }
+
+    // MARK: Private
 
     private weak var lastFirstResponder: UIResponder?
     private var logicStore: TriggerBuildLogicStore!
@@ -61,6 +71,8 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
         tableView.reloadData()
 
+        // No need to perform reactive update for apiTokenTextField.
+        // Currently apiToken is not changed outside this view.
         apiTokenTextfield.text = logicStore.apiToken
 
         notificationCenter.continuum
@@ -166,50 +178,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         gitObjectInputView.resignFirstResponder()
         apiTokenTextfield.resignFirstResponder()
 
-        if let text = apiTokenTextfield.text, !text.isEmpty {
-            logicStore.apiToken = text
-        }
-
-        guard let req = logicStore.urlRequest() else {
-            alert("ERROR: Could not build request.")
-            return
-        }
-
-        let task = URLSession.shared.dataTask(with: req) { [weak self] (data, res, err) in
-
-            guard let me = self else { return }
-
-            #if DEBUG
-            if let res = res as? HTTPURLResponse {
-                print(res.statusCode)
-                print(res.allHeaderFields)
-            }
-            #endif
-
-            if let err = err {
-                me.alert(err.localizedDescription)
-                return
-            }
-
-            guard (res as? HTTPURLResponse)?.statusCode == 201 else {
-                me.alert("Fail")
-                return
-            }
-
-            let str: String = {
-                if let data = data {
-                    return String(data: data, encoding: .utf8) ?? ""
-                } else {
-                    return ""
-                }
-            }()
-
-            me.logicStore.buildDidTrigger()
-
-            me.alert("Success\n\(str)")
-        }
-
-        task.resume()
+        logicStore.triggerBuild()
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate
