@@ -119,16 +119,20 @@ private final class Action {
 ///
 /// [Handling Touches Correctly]
 /// In most cases, popped stackview won't receive any touch.
-/// This is because the stackview is rendered outside parents bounds.
+/// This is because the stackview is rendered outside of it's parent's bounds.
 /// Make sure you don't cut the hitTest chain by either:
 ///
 /// - subclassing and implementing override hitTest for each parents of the ActionPopoverButton
 ///
 /// or
 ///
-/// - Use `UIView.hth.targetChildToHitTest` to do archive this without subclassing.
+/// - using `UIView.hth.targetChildToHitTest` to archive that behavior without subclassing.
 ///   Call `UIView.hth.exchangeMethods()` in your AppDelegate on launch to make automatic hitTest delegation work.
 ///
+/// [TODO]
+/// - Customizable spacing
+/// - Customizable style (circle)
+/// - Automatically decide popping position
 open class ActionPopoverButton: UIView {
 
     public var touchedAlpha: CGFloat = 0.5
@@ -141,12 +145,16 @@ open class ActionPopoverButton: UIView {
         actions.append(action)
     }
 
+    /// Called each time the focused view is changed by dragging (touchesMoved).
+    /// Not called on tap or touchesEnded.
     public func onFocusActionChanged(_ block: @escaping () -> ()) {
         _onFocusActionChanged = block
     }
 
     open override func didMoveToSuperview() {
         super.didMoveToSuperview()
+
+        // IMPORTANT to draw stackview outside the bounds.
         clipsToBounds = false
     }
 

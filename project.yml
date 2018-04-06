@@ -44,7 +44,7 @@ targets:
     platform: iOS
     type: framework
     sources:
-      - ActionPopoverButton
+      - ActionPopoverButton/ActionPopoverButton
     configFiles:
       Debug: configs/ActionPopoverButton-Debug.xcconfig
       Release: configs/ActionPopoverButton-Release.xcconfig
