@@ -2,15 +2,8 @@ import UIKit
 
 private final class _HorizontalStackView: UIStackView {
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configure()
-    }
-
-    required init(coder: NSCoder) {
-        super.init(coder: coder)
-        configure()
-    }
+    override init(frame: CGRect) { super.init(frame: frame); configure(); }
+    required init(coder: NSCoder) { super.init(coder: coder); configure(); }
 
     private func configure() {
         distribution = .equalSpacing
@@ -103,14 +96,39 @@ private final class _ActionView: UIView {
 }
 
 private final class Action {
+
     let view: UIView
     let onTapBlock: (() -> ())
+
     init(view: UIView, onTapBlock: @escaping () -> ()) {
         self.view = view
         self.onTapBlock = onTapBlock
     }
 }
 
+/// Interactive popover view without UIPopoverController.
+///
+/// Add ActionPopoverButton as subview.
+/// Popover stackview will show-up on either on tap or on dragging.
+/// Currently it shows up under the bottom of it's parent.
+///
+/// [FEATURES]
+/// - Custom views for each button
+/// - User tap is handled by UIGestureRecognizer registered internally.
+/// - Buttons are highlighted on tap by modifying alpha to 0.5
+///
+/// [Handling Touches Correctly]
+/// In most cases, popped stackview won't receive any touch.
+/// This is because the stackview is rendered outside parents bounds.
+/// Make sure you don't cut the hitTest chain by either:
+///
+/// - subclassing and implementing override hitTest for each parents of the ActionPopoverButton
+///
+/// or
+///
+/// - Use `UIView.hth.targetChildToHitTest` to do archive this without subclassing.
+///   Call `UIView.hth.exchangeMethods()` in your AppDelegate on launch to make automatic hitTest delegation work.
+///
 open class ActionPopoverButton: UIView {
 
     public var touchedAlpha: CGFloat = 0.5

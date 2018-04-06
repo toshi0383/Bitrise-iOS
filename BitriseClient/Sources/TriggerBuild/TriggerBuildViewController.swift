@@ -65,6 +65,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             rootStackView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         }
 
+        // [ActionPopoverButton]
         // Tell rootStackView the hitTest target.
         rootStackView.isUserInteractionEnabled = true
         rootStackView.hth.targetChildToHitTest = gitObjectInputView

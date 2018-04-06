@@ -63,6 +63,7 @@ private enum AssociatedKey {
 
 extension HitTestHooking where Base: UIView {
 
+    /// TODO: Support multiple children
     public var targetChildToHitTest: UIView? {
         set {
             objc_setAssociatedObject(base, &AssociatedKey.target, newValue, .OBJC_ASSOCIATION_ASSIGN)
