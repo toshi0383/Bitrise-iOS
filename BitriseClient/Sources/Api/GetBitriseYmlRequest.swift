@@ -7,7 +7,6 @@
 
 import APIKit
 import Foundation
-import Yams
 
 struct YmlDataParser: DataParser {
     let contentType: String? = nil
