@@ -1,4 +1,5 @@
 import Continuum
+import Highlightr
 import UIKit
 
 /// This VC is implemented without IBs.
@@ -8,6 +9,8 @@ final class BitriseYmlViewController: UIViewController {
 
     private let disposeBag = NotificationCenterContinuum.Bag()
 
+    private let buttonSize: CGSize = CGSize(width: 30, height: 30)
+
     init(viewModel: BitriseYmlViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
@@ -16,10 +19,20 @@ final class BitriseYmlViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     private let textView: UITextView = {
-        let tv = UITextView()
+
+        let textStorage = CodeAttributedString()
+        textStorage.language = "yaml"
+        let layoutManager = NSLayoutManager()
+        textStorage.addLayoutManager(layoutManager)
+
+        let textContainer = NSTextContainer(size: .zero)
+        layoutManager.addTextContainer(textContainer)
+
+        let tv = UITextView(frame: .zero, textContainer: textContainer)
         tv.isEditable = false
-        let font = UIFont.systemFont(ofSize: 22)
-        tv.font = font
+        tv.tintColor = .white // cursor color
+        tv.backgroundColor = textStorage.highlightr.theme.themeBackgroundColor
+        tv.contentInset = UIEdgeInsets(top: 100, left: 0, bottom: 0, right: 0)
         return tv
     }()
 
@@ -49,21 +62,23 @@ final class BitriseYmlViewController: UIViewController {
         let v = UIStackView()
         v.axis = .horizontal
         v.distribution = .equalSpacing
+        v.alignment = .center
         v.spacing = 10
         return v
     }()
 
     private let titleLabel: UILabel = {
         let l = UILabel()
-        l.font = UIFont.boldSystemFont(ofSize: 40)
+        l.font = UIFont.boldSystemFont(ofSize: 20)
         l.backgroundColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.6)
+        l.textAlignment = .center
         return l
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        view.backgroundColor = .white
+        view.backgroundColor = (textView.textStorage as! CodeAttributedString).highlightr.theme.themeBackgroundColor
 
         do {
             view.addSubview(textView)
@@ -88,15 +103,15 @@ final class BitriseYmlViewController: UIViewController {
             titleLabel.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
                 titleLabel.widthAnchor.constraint(equalToConstant: 200),
-                titleLabel.heightAnchor.constraint(equalToConstant: 50),
+                titleLabel.heightAnchor.constraint(equalToConstant: 20),
             ])
             titleLabel.text = viewModel.appName
 
             // closeButton
             closeButton.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                closeButton.widthAnchor.constraint(equalToConstant: 50),
-                closeButton.heightAnchor.constraint(equalToConstant: 50),
+                closeButton.widthAnchor.constraint(equalToConstant: buttonSize.width),
+                closeButton.heightAnchor.constraint(equalToConstant: buttonSize.height),
             ])
 
             closeButton.addTarget(self, action: #selector(closeButtonTap), for: .touchUpInside)
@@ -104,8 +119,8 @@ final class BitriseYmlViewController: UIViewController {
             // editSaveButton
             editSaveButton.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                editSaveButton.widthAnchor.constraint(equalToConstant: 50),
-                editSaveButton.heightAnchor.constraint(equalToConstant: 50),
+                editSaveButton.widthAnchor.constraint(equalToConstant: buttonSize.width),
+                editSaveButton.heightAnchor.constraint(equalToConstant: buttonSize.height),
             ])
 
             editSaveButton.addTarget(self, action: #selector(editSaveButtonTap), for: .touchUpInside)
