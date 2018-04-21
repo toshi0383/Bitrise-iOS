@@ -10,7 +10,7 @@ import Foundation
 
 protocol BitriseAPIRequest: Request { }
 
-extension BitriseAPIRequest where Response: Decodable {
+extension BitriseAPIRequest {
     var baseURL: URL {
         return URL(string: "https://api.bitrise.io/v0.1")!
     }
@@ -38,7 +38,9 @@ extension BitriseAPIRequest where Response: Decodable {
         #endif
         return urlRequest
     }
+}
 
+extension BitriseAPIRequest where Response: Decodable {
     var dataParser: DataParser {
         return _DataParser()
     }
