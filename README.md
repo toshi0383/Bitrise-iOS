@@ -20,6 +20,9 @@ Bitrise iOS Client app 🚀
 
 # TODOs
 - ✅ Feel free to propose anything. 👍
+- ✅ [bitrise.yml] download
+- ✅ [bitrise.yml] Syntax Highlight
+- [ ] [bitrise.yml] upload
 - [ ] [Builds] Show build's username and commit message
 - [ ] [Builds] Poll interval 8sec for "new builds available"
   + [ ] Tap message to show new builds
