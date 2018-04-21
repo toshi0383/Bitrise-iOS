@@ -31,9 +31,9 @@ extension BitriseAPIRequest {
 
     func intercept(urlRequest: URLRequest) throws -> URLRequest {
         #if DEBUG
-            print(urlRequest)
+//            print(urlRequest)
             if let headers = urlRequest.allHTTPHeaderFields {
-                print(headers)
+//                print(headers)
             }
         #endif
         return urlRequest
@@ -50,9 +50,9 @@ extension BitriseAPIRequest where Response: Decodable {
         decoder.dateDecodingStrategy = .iso8601
         if let data = object as? Data {
             #if DEBUG
-                if let str = String(data: data, encoding: .utf8) {
-                    print(str)
-                }
+//                if let str = String(data: data, encoding: .utf8) {
+//                    print(str)
+//                }
             #endif
             return try decoder.decode(Response.self, from: data)
         }
