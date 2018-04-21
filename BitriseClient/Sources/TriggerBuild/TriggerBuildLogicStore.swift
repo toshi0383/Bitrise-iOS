@@ -13,20 +13,36 @@ import RealmSwift
 typealias WorkflowID = String
 typealias AppSlug = String
 
-// TODO: Rewrite as ViewModel
+/// LogicStore
+///
+/// - performs database update
+/// - publish states for view
+/// - triggers new builds via network
+///
+/// Let's say it's a fat viewcontroller but is testable.
 final class TriggerBuildLogicStore {
+
+    // MARK: Output
+
+    let buildDidTriggerRelay: Constant<Void?>
+    let alertMessage: Constant<String>
+
+    // MARK: Private
+
+    private let _buildDidTriggerRelay = Variable<Void?>(value: nil)
+    private let _alertMessage = Variable<String>(value: "")
 
     private var realmObject: BuildTriggerRealm!
 
-    let buildDidTriggerRelay: Constant<Void?>
-    private let _buildDidTriggerRelay = Variable<Void?>(value: nil)
+    // MARK: LifeCycle
 
     /// NOTE: Accesses to realm in current thread.
     init(appSlug: String) {
 
-        let realm = Realm.getRealm()
-
         buildDidTriggerRelay = Constant(variable: _buildDidTriggerRelay)
+        alertMessage = Constant(variable: _alertMessage)
+
+        let realm = Realm.getRealm()
 
         if let obj = realm.object(ofType: BuildTriggerRealm.self, forPrimaryKey: appSlug) {
             realmObject = obj
@@ -93,7 +109,7 @@ final class TriggerBuildLogicStore {
         }
     }
 
-    func urlRequest() -> URLRequest? {
+    private func urlRequest() -> URLRequest? {
 
         guard let token = apiToken else { return nil }
         guard let workflowID = workflowID else { return nil }
@@ -112,8 +128,52 @@ final class TriggerBuildLogicStore {
         return req
     }
 
-    func buildDidTrigger() {
-        _buildDidTriggerRelay.value = ()
+    func triggerBuild() {
+
+        guard let req = urlRequest() else {
+            alert("ERROR: Could not build request.")
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: req) { [weak self] (data, res, err) in
+
+            guard let me = self else { return }
+
+            #if DEBUG
+                if let res = res as? HTTPURLResponse {
+                    print(res.statusCode)
+                    print(res.allHeaderFields)
+                }
+            #endif
+
+            if let err = err {
+                me.alert(err.localizedDescription)
+                return
+            }
+
+            guard (res as? HTTPURLResponse)?.statusCode == 201 else {
+                me.alert("Fail")
+                return
+            }
+
+            let str: String = {
+                if let data = data {
+                    return String(data: data, encoding: .utf8) ?? ""
+                } else {
+                    return ""
+                }
+            }()
+
+            me._buildDidTriggerRelay.value = ()
+
+            me.alert("Success\n\(str)")
+        }
+
+        task.resume()
+    }
+
+    private func alert(_ string: String) {
+        _alertMessage.value = string
     }
 }
 

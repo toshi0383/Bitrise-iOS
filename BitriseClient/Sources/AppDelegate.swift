@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
 
-        // ActionPopoverButton
+        // [ActionPopoverButton]
         UIView.hth.exchangeMethods()
 
         window = UIWindow(frame: UIScreen.main.bounds)
