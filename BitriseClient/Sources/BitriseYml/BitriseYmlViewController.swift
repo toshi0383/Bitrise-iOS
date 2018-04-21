@@ -88,7 +88,7 @@ final class BitriseYmlViewController: UIViewController {
                 textView.topAnchor.constraint(equalTo: view.topAnchor),
                 textView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
                 textView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                textView.widthAnchor.constraint(equalToConstant: 1080),
+                textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             ])
 
             notificationCenter.continuum
