@@ -96,7 +96,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     // MARK: IBAction
 
     @IBAction func bitriseYmlButtonTap() {
-        let vm = BitriseYmlViewModel(appSlug: viewModel.appSlug)
+        let vm = BitriseYmlViewModel(appSlug: viewModel.appSlug, appName: viewModel.navigationBarTitle)
         let vc = BitriseYmlViewController(viewModel: vm)
 
         vc.modalPresentationStyle = .overCurrentContext

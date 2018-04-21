@@ -25,14 +25,17 @@ final class BitriseYmlViewModel {
     let editState: Constant<EditState>
     private let _editState = Variable<EditState>(value: .initial)
 
+    let appName: String
+
     // MARK: Input
 
     private let appSlug: AppSlug
 
     // MARK: Initialize
 
-    init(appSlug: AppSlug) {
+    init(appSlug: AppSlug, appName: String) {
         self.appSlug = appSlug
+        self.appName = appName
         self.ymlPayload = Constant(variable: _ymlPayload)
         self.editState = Constant(variable: _editState)
 

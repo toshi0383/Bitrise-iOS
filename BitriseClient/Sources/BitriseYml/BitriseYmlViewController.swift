@@ -53,6 +53,13 @@ final class BitriseYmlViewController: UIViewController {
         return v
     }()
 
+    private let titleLabel: UILabel = {
+        let l = UILabel()
+        l.font = UIFont.boldSystemFont(ofSize: 40)
+        l.backgroundColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.6)
+        return l
+    }()
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -76,6 +83,14 @@ final class BitriseYmlViewController: UIViewController {
 
         do {
             view.addSubview(buttonStackView)
+
+            // titleLabel
+            titleLabel.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                titleLabel.widthAnchor.constraint(equalToConstant: 200),
+                titleLabel.heightAnchor.constraint(equalToConstant: 50),
+            ])
+            titleLabel.text = viewModel.appName
 
             // closeButton
             closeButton.translatesAutoresizingMaskIntoConstraints = false
@@ -120,6 +135,7 @@ final class BitriseYmlViewController: UIViewController {
                 buttonStackView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -10),
             ])
 
+            buttonStackView.addArrangedSubview(titleLabel)
             buttonStackView.addArrangedSubview(editSaveButton)
             buttonStackView.addArrangedSubview(closeButton)
         }
