@@ -164,8 +164,12 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         present(actionSheet, animated: true, completion: nil)
     }
 
+    private var alphaChangingViews: [UIView] {
+        return [triggerBuildButton, bitriseYmlButton]
+    }
+
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        triggerBuildButton.alpha = 0.1
+        alphaChangingViews.forEach { $0.alpha = 0.1 }
     }
 
     func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
@@ -174,7 +178,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
         let workItem = DispatchWorkItem { [weak self] in
             UIView.animate(withDuration: 0.3) {
-                self?.triggerBuildButton.alpha = 1.0
+                self?.alphaChangingViews.forEach { $0.alpha = 1.0 }
             }
         }
 
