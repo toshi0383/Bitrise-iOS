@@ -16,6 +16,7 @@ targets:
       - carthage: APIKit
       - carthage: Continuum
       - carthage: DeepDiff
+      - carthage: Highlightr
       - carthage: Result
       - carthage: Realm
       - carthage: RealmSwift

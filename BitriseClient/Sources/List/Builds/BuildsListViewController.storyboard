@@ -99,32 +99,51 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1oD-dk-IlY">
-                                <rect key="frame" x="280" y="726" width="50" height="50"/>
-                                <color key="backgroundColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="8J4-cR-k4g"/>
-                                    <constraint firstAttribute="width" constant="50" id="qSN-s6-nOK"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
-                                <state key="normal" title="🚀"/>
-                                <connections>
-                                    <action selector="triggerBuildButtonTap" destination="vBi-NG-FsP" eventType="touchUpInside" id="kK7-FM-FeR"/>
-                                </connections>
-                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="C2B-c7-beb">
+                                <rect key="frame" x="218" y="726" width="112" height="50"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GZR-Db-SMV">
+                                        <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                        <color key="backgroundColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="width" constant="50" id="lSL-0p-PL4"/>
+                                            <constraint firstAttribute="height" constant="50" id="rn5-0I-JbB"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                        <state key="normal" title="📝"/>
+                                        <connections>
+                                            <action selector="bitriseYmlButtonTap" destination="vBi-NG-FsP" eventType="touchUpInside" id="yV6-8b-z7S"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1oD-dk-IlY">
+                                        <rect key="frame" x="62" y="0.0" width="50" height="50"/>
+                                        <color key="backgroundColor" red="0.29411764709999999" green="0.74901960779999999" blue="0.6588235294" alpha="1" colorSpace="deviceRGB"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="50" id="8J4-cR-k4g"/>
+                                            <constraint firstAttribute="width" constant="50" id="qSN-s6-nOK"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                                        <state key="normal" title="🚀"/>
+                                        <connections>
+                                            <action selector="triggerBuildButtonTap" destination="vBi-NG-FsP" eventType="touchUpInside" id="kK7-FM-FeR"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="1oD-dk-IlY" secondAttribute="bottom" constant="36" id="59g-pF-len"/>
-                            <constraint firstItem="llP-vn-awV" firstAttribute="trailing" secondItem="1oD-dk-IlY" secondAttribute="trailing" constant="45" id="8hi-VM-5X8"/>
+                            <constraint firstItem="C2B-c7-beb" firstAttribute="trailing" secondItem="llP-vn-awV" secondAttribute="trailing" constant="-45" id="5yb-1I-hqk"/>
                             <constraint firstItem="YfG-x1-ouX" firstAttribute="bottom" secondItem="zaA-O1-4UU" secondAttribute="bottom" id="Eaz-4A-2Gb"/>
                             <constraint firstItem="YfG-x1-ouX" firstAttribute="leading" secondItem="zaA-O1-4UU" secondAttribute="leading" id="a5D-Nc-lul"/>
+                            <constraint firstAttribute="bottom" secondItem="C2B-c7-beb" secondAttribute="bottom" constant="36" id="nrc-Nk-ROP"/>
                             <constraint firstItem="YfG-x1-ouX" firstAttribute="trailing" secondItem="zaA-O1-4UU" secondAttribute="trailing" id="vD8-oE-ZIV"/>
                             <constraint firstItem="YfG-x1-ouX" firstAttribute="top" secondItem="zaA-O1-4UU" secondAttribute="top" id="wOf-sX-CQf"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="llP-vn-awV"/>
                     </view>
                     <connections>
+                        <outlet property="bitriseYmlButton" destination="GZR-Db-SMV" id="OKv-mL-dsO"/>
                         <outlet property="tableView" destination="YfG-x1-ouX" id="0Gh-VN-iD2"/>
                         <outlet property="triggerBuildButton" destination="1oD-dk-IlY" id="gO9-Vz-snL"/>
                     </connections>

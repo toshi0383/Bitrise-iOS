@@ -26,6 +26,12 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         }
     }
 
+    @IBOutlet private weak var bitriseYmlButton: UIButton! {
+        didSet {
+            bitriseYmlButton.layer.cornerRadius = bitriseYmlButton.frame.width / 2
+        }
+    }
+
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
             tableView.dataSource = self
@@ -88,6 +94,15 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     }
 
     // MARK: IBAction
+
+    @IBAction func bitriseYmlButtonTap() {
+        let vm = BitriseYmlViewModel(appSlug: viewModel.appSlug, appName: viewModel.navigationBarTitle)
+        let vc = BitriseYmlViewController(viewModel: vm)
+
+        vc.modalPresentationStyle = .overCurrentContext
+
+        navigationController?.present(vc, animated: true, completion: nil)
+    }
 
     @IBAction func triggerBuildButtonTap() {
         Haptic.generate(.light)
