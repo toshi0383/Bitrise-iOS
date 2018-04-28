@@ -129,17 +129,20 @@ final class BitriseYmlViewController: UIViewController {
                 .observe(viewModel.editState, on: .main) { [weak self] in
                     guard let me = self else { return }
 
-                    let img: UIImage
                     switch $0 {
                     case .editing:
-                        img = me.iconSave
+                        me.hideLoading()
                         me.textView.isEditable = true
-                    default:
-                        img = me.iconEdit
-                        me.textView.isEditable = false // TODO
+                        me.editSaveButton.setImage(me.iconSave, for: .normal)
+                    case .initial:
+                        me.hideLoading()
+                        me.textView.isEditable = false
+                        me.editSaveButton.setImage(me.iconEdit, for: .normal)
+                    case .saving:
+                        me.showLoading()
+                        me.textView.isEditable = false
                     }
 
-                    me.editSaveButton.setImage(img, for: .normal)
                 }
                 .disposed(by: disposeBag)
 
@@ -154,10 +157,29 @@ final class BitriseYmlViewController: UIViewController {
             buttonStackView.addArrangedSubview(editSaveButton)
             buttonStackView.addArrangedSubview(closeButton)
         }
+
+        notificationCenter.continuum
+            .observe(viewModel.alertMessage, on: .main) { [weak self] msg in
+                if !msg.isEmpty {
+                    self?.alert(msg)
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     @objc func closeButtonTap() {
-        dismiss(animated: true, completion: nil)
+        switch viewModel.editState.value {
+        case .initial:
+            dismiss(animated: true, completion: nil)
+        case .saving:
+            dismiss(animated: true, completion: nil)
+        case .editing:
+            prompt("Quit editing?") { [weak self] in
+                if $0 {
+                    self?.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
     }
 
     @objc func editSaveButtonTap() {
@@ -169,6 +191,46 @@ final class BitriseYmlViewController: UIViewController {
             }
         } else {
             viewModel.editSaveButtonTap()
+        }
+    }
+
+    private lazy var loadingView: UIView = {
+        let v = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        v.translatesAutoresizingMaskIntoConstraints = false
+        let base = UIView()
+        base.translatesAutoresizingMaskIntoConstraints = false
+        base.backgroundColor = UIColor(displayP3Red: 0.0, green: 0.0, blue: 0.0, alpha: 0.3)
+        base.addSubview(v)
+        let parent = self.view!
+        parent.addSubview(base)
+        NSLayoutConstraint.activate([
+            base.topAnchor.constraint(equalTo: parent.topAnchor),
+            base.bottomAnchor.constraint(equalTo: parent.bottomAnchor),
+            base.leadingAnchor.constraint(equalTo: parent.leadingAnchor),
+            base.trailingAnchor.constraint(equalTo: parent.trailingAnchor),
+            v.centerXAnchor.constraint(equalTo: base.centerXAnchor),
+            v.centerYAnchor.constraint(equalTo: base.centerYAnchor),
+        ])
+        return base
+    }()
+
+    private func showLoading() {
+        if loadingView.alpha == 1.0 {
+            return
+        }
+        (loadingView.subviews.first as? UIActivityIndicatorView)?.startAnimating()
+        UIView.animate(withDuration: 0.2) {
+            self.loadingView.alpha = 1.0
+        }
+    }
+
+    private func hideLoading() {
+        if loadingView.alpha == 0.0 {
+            return
+        }
+        (loadingView.subviews.first as? UIActivityIndicatorView)?.stopAnimating()
+        UIView.animate(withDuration: 0.2) {
+            self.loadingView.alpha = 0.0
         }
     }
 }

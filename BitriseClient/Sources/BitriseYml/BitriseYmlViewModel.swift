@@ -25,6 +25,9 @@ final class BitriseYmlViewModel {
     let editState: Constant<EditState>
     private let _editState = Variable<EditState>(value: .initial)
 
+    let alertMessage: Constant<String>
+    private let _alertMessage = Variable<String>(value: "")
+
     let appName: String
 
     // MARK: Input
@@ -38,6 +41,7 @@ final class BitriseYmlViewModel {
         self.appName = appName
         self.ymlPayload = Constant(variable: _ymlPayload)
         self.editState = Constant(variable: _editState)
+        self.alertMessage = Constant(variable: _alertMessage)
 
         let req = GetBitriseYmlRequest(appSlug: appSlug)
         Session.shared.send(req) { [weak self] r in
@@ -64,11 +68,23 @@ final class BitriseYmlViewModel {
             // ignore
             break
         case .editing:
-            // TODO: fetch, compare and save if no conflicts
-            _editState.value = .initial
-//            let req = PostBitriseYmlRequest(appSlug: appSlug, data: bitriseYml.data`)
-//            Session.shared.send(<#T##request: Request##Request#>)
-            break
+
+            _editState.value = .saving
+
+            // TODO: fetch, compare and check for any conflicts
+            let req = PostBitriseYmlRequest(appSlug: appSlug, ymlString: ymlPayload.value)
+            Session.shared.send(req) { [weak self] result in
+                guard let me = self else { return }
+
+                switch result {
+                case .success:
+                    // me._alertMessage.value = "Yml Upload Success!"
+                    me._editState.value = .initial
+
+                case .failure(let error):
+                    me._alertMessage.value = "Yml Upload Error: \(error)"
+                }
+            }
         }
     }
 }
