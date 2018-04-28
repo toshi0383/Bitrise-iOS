@@ -8,7 +8,7 @@
 import APIKit
 import Foundation
 
-struct YmlDataParser: DataParser {
+struct BitriseYmlDataParser: DataParser {
     let contentType: String? = nil
 
     func parse(data: Data) throws -> Any {
@@ -33,7 +33,7 @@ struct GetBitriseYmlRequest: BitriseAPIRequest {
         self.path = "apps/\(appSlug)/bitrise.yml"
     }
 
-    let dataParser: DataParser = YmlDataParser()
+    let dataParser: DataParser = BitriseYmlDataParser()
 
     func response(from object: Any, urlResponse: HTTPURLResponse) throws -> BitriseYml {
         if let yml = object as? BitriseYml {
