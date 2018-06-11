@@ -51,7 +51,7 @@ final class BuildsListViewModel {
             }))
         }
 
-        if build.status == .finished {
+        if build.status != .notFinished {
             alertActions.append(AlertAction.init(title: "Rebuild", handler: { [weak self] _ in
                 guard let me = self else { return }
 
