@@ -67,6 +67,15 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
             .disposed(by: disposeBag)
 
         notificationCenter.continuum
+            .observe(viewModel.alertActions, on: .main) { [weak self] alertActions in
+                if alertActions.isEmpty {
+                    return
+                }
+                self?.showActionSheet(actions: alertActions)
+            }
+            .disposed(by: disposeBag)
+
+        notificationCenter.continuum
             .observe(viewModel.dataChanges, on: .main) { [weak self] changes in
                 if !changes.isEmpty { // skip initial value
                     self?.tableView.reload(changes: changes, completion: { _ in })

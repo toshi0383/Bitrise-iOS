@@ -34,7 +34,7 @@ final class BuildsListViewModel {
 
     func tappedAccessoryButtonIndexPath(_ indexPath: IndexPath) {
 
-        if builds.count - 1 > indexPath.row {
+        if builds.count < indexPath.row + 1 {
             return
         }
 
@@ -58,6 +58,10 @@ final class BuildsListViewModel {
                 TriggerBuildAction.shared.sendRebuildRequest(appSlug: me.appSlug, build)
             }))
         }
+
+        alertActions.append(.init(title: "Cancel", style: .cancel, handler: nil))
+
+        _alertActions.value = alertActions
     }
 
     // MARK: Output
