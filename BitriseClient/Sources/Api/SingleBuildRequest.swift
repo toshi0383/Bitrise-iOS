@@ -1,5 +1,5 @@
 //
-//  BuildRequest.swift
+//  SingleBuildRequest.swift
 //  BitriseClient
 //
 //  Created by Toshihiro Suzuki on 2018/03/08.
@@ -8,9 +8,9 @@
 import APIKit
 import Foundation
 
-struct BuildRequest: BitriseAPIRequest {
+struct SingleBuildRequest: BitriseAPIRequest {
 
-    typealias Response = Build
+    typealias Response = JSON
 
     let path: String
 
@@ -19,6 +19,10 @@ struct BuildRequest: BitriseAPIRequest {
     }
 }
 
-struct Build: Decodable {
+struct SingleBuild {
     let data: AppsBuilds.Build
+
+    init(from json: JSON) {
+        self.data = AppsBuilds.Build(from: json["data"] as! JSON)
+    }
 }

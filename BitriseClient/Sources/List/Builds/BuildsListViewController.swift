@@ -149,17 +149,20 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     }
 
     func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
+
+        viewModel.tappedAccessoryButtonIndexPath(indexPath)
+
+    }
+
+    func showActionSheet(actions: [BuildsListViewModel.AlertAction]) {
+
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        actionSheet.addAction(UIAlertAction(title: "Abort", style: .default, handler: { [weak self] _ in
-            self?.viewModel.sendAbortRequest(indexPath: indexPath)
-        }))
-
-        actionSheet.addAction(UIAlertAction(title: "Set Notification", style: .default, handler: { [weak self] _ in
-            self?.viewModel.reserveNotification(indexPath: indexPath)
-        }))
-
-        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        for action in actions {
+            actionSheet.addAction(UIAlertAction(title: action.title,
+                                                style: action.style,
+                                                handler: action.handler))
+        }
 
         present(actionSheet, animated: true, completion: nil)
     }

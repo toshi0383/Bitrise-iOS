@@ -3,6 +3,47 @@
 
 
 // swiftlint:disable file_length
+
+func compareDictionary(_ x: [String: Any], _ y: [String: Any]) -> Bool {
+    if x.count != y.count { return false }
+
+    for (k1, v1) in x {
+        guard let v2 = y[k1] else { return false }
+        if !compareAny(v1, v2) {
+            return false
+        }
+    }
+
+    return true
+}
+
+func compareArray(_ x: [Any], _ y: [Any]) -> Bool {
+    if x.count != y.count { return false }
+
+    for (i, _x) in x.enumerated() {
+        if !compareAny(_x, y[i]) {
+            return false
+        }
+    }
+    return true
+}
+
+func compareAny(_ x: Any, _ y: Any) -> Bool {
+    if let a = x as? Int, let b = y as? Int {
+        return a == b
+    }
+    if let a = x as? String, let b = y as? String {
+        return a == b
+    }
+    if let a = x as? [Any], let b = y as? [Any] {
+        return compareArray(a, b)
+    }
+    if let a = x as? [String: Any], let b = y as? [String: Any] {
+        return compareDictionary(a, b)
+    }
+    return false
+}
+
 fileprivate func compareOptionals<T>(lhs: T?, rhs: T?, compare: (_ lhs: T, _ rhs: T) -> Bool) -> Bool {
     switch (lhs, rhs) {
     case let (lValue?, rValue?):
