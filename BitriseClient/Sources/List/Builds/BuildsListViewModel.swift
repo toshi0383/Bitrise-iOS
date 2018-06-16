@@ -43,11 +43,10 @@ final class BuildsListViewModel {
 
         if build.status == .notFinished {
             alertActions.append(AlertAction.init(title: "Abort", handler: { [weak self] _ in
-                guard let me = self else {
-                    return
-                }
-
-                me.sendAbortRequest(forBuild: build)
+                self?.sendAbortRequest(forBuild: build)
+            }))
+            alertActions.append(AlertAction.init(title: "Set Notification", handler: { [weak self] _ in
+                self?.reserveNotification(forBuild: build)
             }))
         }
 
@@ -225,11 +224,10 @@ final class BuildsListViewModel {
         }
     }
 
-    func reserveNotification(indexPath: IndexPath) {
+    func reserveNotification(forBuild build: AppsBuilds.Build) {
         localNotificationAction.requestAuthorizationIfNeeded()
 
-        let buildSlug = builds[indexPath.row].slug
-        buildPollingManager.addLocalNotification(buildSlug: buildSlug)
+        buildPollingManager.addLocalNotification(buildSlug: build.slug)
     }
 
     private func sendAbortRequest(forBuild build: AppsBuilds.Build) {
