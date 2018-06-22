@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13771" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KGZ-dF-ioA">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KGZ-dF-ioA">
     <device id="retina5_9" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -124,7 +124,7 @@
                                                 </tableViewCellContentView>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </tableViewCell>
-                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddNewCell" id="jEU-5X-XBC" customClass="WorkflowAddNewCell" customModule="BitriseClient" customModuleProvider="target">
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddNewCell" id="jEU-5X-XBC" customClass="AnyAddNewCell" customModule="BitriseClient" customModuleProvider="target">
                                                 <rect key="frame" x="0.0" y="45" width="375" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jEU-5X-XBC" id="OHl-Cb-TbA">
@@ -147,6 +147,44 @@
                                                 </tableViewCellContentView>
                                                 <connections>
                                                     <outlet property="textField" destination="SAp-tQ-4zM" id="eFo-5O-XFh"/>
+                                                </connections>
+                                            </tableViewCell>
+                                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="EnvCell" id="RvN-cx-18J" customClass="EnvCell" customModule="BitriseClient" customModuleProvider="target">
+                                                <rect key="frame" x="0.0" y="89" width="375" height="44"/>
+                                                <autoresizingMask key="autoresizingMask"/>
+                                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RvN-cx-18J" id="mWT-oP-6lp">
+                                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.666666666666664"/>
+                                                    <autoresizingMask key="autoresizingMask"/>
+                                                    <subviews>
+                                                        <stackView opaque="NO" contentMode="scaleToFill" distribution="equalCentering" alignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="VT9-Kj-yal">
+                                                            <rect key="frame" x="8" y="0.0" width="359" height="43.666666666666664"/>
+                                                            <subviews>
+                                                                <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZZv-bM-YI7">
+                                                                    <rect key="frame" x="0.0" y="6.3333333333333321" width="51" height="30.999999999999996"/>
+                                                                    <color key="onTintColor" red="0.29411764705882354" green="0.61176470588235299" blue="0.74901960784313726" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                                                    <connections>
+                                                                        <action selector="toggle:" destination="RvN-cx-18J" eventType="valueChanged" id="5qb-AT-DY9"/>
+                                                                    </connections>
+                                                                </switch>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uSN-4y-a8K">
+                                                                    <rect key="frame" x="317.33333333333331" y="11.666666666666666" width="41.666666666666686" height="20.333333333333336"/>
+                                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                                    <nil key="textColor"/>
+                                                                    <nil key="highlightedColor"/>
+                                                                </label>
+                                                            </subviews>
+                                                        </stackView>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="VT9-Kj-yal" firstAttribute="leading" secondItem="mWT-oP-6lp" secondAttribute="leadingMargin" id="7QL-Hc-qKG"/>
+                                                        <constraint firstAttribute="trailingMargin" secondItem="VT9-Kj-yal" secondAttribute="trailing" id="BKz-WA-FXa"/>
+                                                        <constraint firstAttribute="bottom" secondItem="VT9-Kj-yal" secondAttribute="bottom" id="T6d-3A-7AP"/>
+                                                        <constraint firstItem="VT9-Kj-yal" firstAttribute="top" secondItem="mWT-oP-6lp" secondAttribute="top" id="gB0-Oy-tnj"/>
+                                                    </constraints>
+                                                </tableViewCellContentView>
+                                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                <connections>
+                                                    <outlet property="label" destination="uSN-4y-a8K" id="PqQ-bx-WkY"/>
                                                 </connections>
                                             </tableViewCell>
                                         </prototypes>

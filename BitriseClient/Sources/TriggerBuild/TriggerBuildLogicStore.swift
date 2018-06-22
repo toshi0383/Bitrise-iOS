@@ -52,7 +52,7 @@ final class TriggerBuildLogicStore {
                 "appSlug": appSlug,
                 "gitObjectValue": gitObject.associatedValue,
                 "gitObjectType": gitObject.type,
-                "environments": [BuildTriggerEnvironmentRealm()]
+                "environments": []
             ]
             let b = BuildTriggerRealm(value: properties)
             try! realm.write {
@@ -110,14 +110,44 @@ final class TriggerBuildLogicStore {
         }
     }
 
-    var environments: List<BuildTriggerEnvironmentRealm> {
+    var environments: [BuildTriggerEnvironment] {
         get {
-            return realmObject.environments
+            return realmObject.environments.map(BuildTriggerEnvironment.init)
         }
-        set {
-            try! Realm.getRealm().write {
-                realmObject.environments = newValue
+    }
+
+    func appendEnvironment(_ value: (key: String, value: String)) {
+        let realm = Realm.getRealm()
+        try! realm.write {
+            let env: BuildTriggerEnvironmentRealm = {
+                if let existing = realm.object(ofType: BuildTriggerEnvironmentRealm.self,
+                                               forPrimaryKey: value.key) {
+                    existing.value = value.value
+                    return existing
+                } else {
+                    let new = BuildTriggerEnvironmentRealm()
+                    new.key = value.key
+                    new.value = value.value
+                    return new
+                }
+            }()
+
+            realmObject.environments.append(env)
+        }
+    }
+
+    func setEnvironmentEnabled(_ enabled: Bool, forKey key: String) {
+        let realm = Realm.getRealm()
+        if let o = realm.object(ofType: BuildTriggerEnvironmentRealm.self, forPrimaryKey: key) {
+            try! realm.write {
+                o.enabled = enabled
             }
+        }
+    }
+
+    func removeEnvironment(at row: Int) {
+        try! Realm.getRealm().write {
+            realmObject.environments.remove(at: row)
         }
     }
 

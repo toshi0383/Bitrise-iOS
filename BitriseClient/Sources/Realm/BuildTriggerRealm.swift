@@ -28,3 +28,13 @@ class BuildTriggerEnvironmentRealm: Object {
         return "key"
     }
 }
+
+extension BuildTriggerEnvironmentRealm {
+    static func create(_ model: BuildTriggerEnvironment) -> BuildTriggerEnvironmentRealm {
+        let e = BuildTriggerEnvironmentRealm()
+        e.enabled = model.enabled
+        e.key = model.key
+        e.value = model.value
+        return e
+    }
+}
