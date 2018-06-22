@@ -7,6 +7,7 @@
 
 import Foundation
 
+// https://devcenter.bitrise.io/api/build-trigger/#specify-environment-variables
 struct BuildTriggerEnvironment: Equatable {
     let enabled: Bool
     let key: String
@@ -20,5 +21,13 @@ struct BuildTriggerEnvironment: Equatable {
 
     var string: String {
         return "\(key):\(value)"
+    }
+
+    var json: JSON {
+        return [
+            "mapped_to": key,
+            "value": value,
+            "is_expand": false,
+        ]
     }
 }
