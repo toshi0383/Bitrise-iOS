@@ -31,13 +31,17 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
     }
 
+    private lazy var apiTokenTextfieldDelegate: TextFieldDelegate = {
+        return TextFieldDelegate { [weak self] apiToken in
+            // NOTE: retaining delegate instance by implicit strong self capture
+            self?.logicStore?.apiToken = apiToken
+        }
+    }()
+
     @IBOutlet private weak var apiTokenTextfield: UITextField! {
         didSet {
             // No Continuum: `UITextField.text` keyPath didn't compile.
-            apiTokenTextfield.delegate = TextFieldDelegate { apiToken in
-                // NOTE: retaining delegate instance by implicit strong self capture
-                self.logicStore?.apiToken = apiToken
-            }
+            apiTokenTextfield.delegate = apiTokenTextfieldDelegate
         }
     }
 

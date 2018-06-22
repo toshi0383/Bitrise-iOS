@@ -11,7 +11,7 @@ final class TextFieldDelegate: NSObject, UITextFieldDelegate {
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if let text = textField.text, textField.isFirstResponder {
+        if let text = textField.text {
             handler(text)
         }
     }

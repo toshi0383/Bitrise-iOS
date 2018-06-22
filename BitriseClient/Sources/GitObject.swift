@@ -11,7 +11,7 @@ enum GitObject {
 
     case branch(String), tag(String), commitHash(String)
 
-    var json: [String: String] {
+    var json: [String: Any] {
         switch self {
         case .branch(let v): return ["branch": v]
         case .tag(let v): return ["tag": v]

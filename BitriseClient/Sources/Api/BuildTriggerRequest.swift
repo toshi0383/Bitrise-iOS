@@ -8,15 +8,32 @@
 
 import Foundation
 
-struct BuildTriggerRequest: Codable {
+struct BuildTriggerRequest {
 
     let hook_info: HookInfo
 
-    struct HookInfo: Codable {
+    struct HookInfo {
         let type: String = "bitrise"
         let api_token: String
+
+        func json() -> [String: Any] {
+            return ["type": type, "api_token": api_token]
+        }
     }
 
-    let build_params: [String: String]
+    let build_params: [String: Any]
     let triggered_by: String = "BitriseClient iOS App"
+
+    enum CustomerKeys: String, CodingKey {
+        case hook_info, build_params, triggered_by
+    }
+
+    func encode() throws -> Data {
+        let json: [String: Any] = [
+            "hook_info": hook_info.json(),
+            "build_params": build_params,
+            "triggered_by": triggered_by
+        ]
+        return try JSONSerialization.data(withJSONObject: json, options: [])
+    }
 }

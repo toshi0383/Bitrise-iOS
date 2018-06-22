@@ -70,13 +70,12 @@ final class BuildPollingManager {
     }
 
     private func callAPIAndUpdateHandler(_ buildSlug: Slug) {
-        let req = BuildRequest(appSlug: appSlug, buildSlug: buildSlug)
+        let req = SingleBuildRequest(appSlug: appSlug, buildSlug: buildSlug)
         session.send(req) { [weak self] result in
             guard let me = self else { return }
-
             switch result {
             case .success(let res):
-                let build = res.data
+                let build = SingleBuild(from: res).data
 
                 me.handlers[buildSlug]?(build)
 

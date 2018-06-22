@@ -122,7 +122,7 @@ final class TriggerBuildLogicStore {
 
         let body = BuildTriggerRequest(hook_info: .init(api_token: token),
                                        build_params: gitObject.json + ["workflow_id": workflowID])
-        req.httpBody = try! JSONEncoder().encode(body)
+        req.httpBody = try! body.encode()
         req.httpMethod = "POST"
 
         return req
@@ -177,7 +177,7 @@ final class TriggerBuildLogicStore {
     }
 }
 
-typealias JSON = [String: String]
+typealias JSON = [String: Any]
 func + (_ lhs: JSON, _ rhs: JSON) -> JSON {
     var r: JSON = [:]
     lhs.forEach { r[$0] = $1 }

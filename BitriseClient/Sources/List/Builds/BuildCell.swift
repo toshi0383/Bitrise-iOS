@@ -98,6 +98,12 @@ final class BuildCell: UITableViewCell {
         subtitleLabel2.text = nil
     }
 
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        accessoryType = .detailButton
+    }
+
     func configure(_ build: AppsBuilds.Build) {
         titleLabel.text = "#\(build.build_number) \(build.status_text) [\(build.triggered_workflow)]"
 
@@ -155,7 +161,5 @@ final class BuildCell: UITableViewCell {
                 // assertionFailure("finished_at should exist")
             }
         }
-
-        accessoryType = build.status == .notFinished ? .detailButton : .none
     }
 }
