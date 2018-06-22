@@ -10,6 +10,7 @@ import UIKit
 final class WorkflowAddNewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet private(set) weak var textField: UITextField! {
         didSet {
+            textField.placeholder = "hoge"
             textField.delegate = self
         }
     }

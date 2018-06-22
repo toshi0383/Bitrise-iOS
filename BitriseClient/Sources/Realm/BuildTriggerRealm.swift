@@ -12,7 +12,19 @@ class BuildTriggerRealm: Object {
 
     var workflowIDs = List<String>()
 
+    var environments = List<BuildTriggerEnvironmentRealm>()
+
     override static func primaryKey() -> String? {
         return "appSlug"
+    }
+}
+
+class BuildTriggerEnvironmentRealm: Object {
+    @objc dynamic var enabled = true
+    @objc dynamic var key = ""
+    @objc dynamic var value = ""
+
+    override static func primaryKey() -> String? {
+        return "key"
     }
 }
