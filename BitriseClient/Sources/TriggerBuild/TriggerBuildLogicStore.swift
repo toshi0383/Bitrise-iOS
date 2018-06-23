@@ -51,7 +51,8 @@ final class TriggerBuildLogicStore {
             let properties: [String: Any?] = [
                 "appSlug": appSlug,
                 "gitObjectValue": gitObject.associatedValue,
-                "gitObjectType": gitObject.type
+                "gitObjectType": gitObject.type,
+                "environments": []
             ]
             let b = BuildTriggerRealm(value: properties)
             try! realm.write {
@@ -109,6 +110,47 @@ final class TriggerBuildLogicStore {
         }
     }
 
+    var environments: [BuildTriggerEnvironment] {
+        get {
+            return realmObject.environments.map(BuildTriggerEnvironment.init)
+        }
+    }
+
+    func appendEnvironment(_ value: (key: String, value: String)) {
+        let realm = Realm.getRealm()
+        try! realm.write {
+            let env: BuildTriggerEnvironmentRealm = {
+                if let existing = realm.object(ofType: BuildTriggerEnvironmentRealm.self,
+                                               forPrimaryKey: value.key) {
+                    existing.value = value.value
+                    return existing
+                } else {
+                    let new = BuildTriggerEnvironmentRealm()
+                    new.key = value.key
+                    new.value = value.value
+                    return new
+                }
+            }()
+
+            realmObject.environments.append(env)
+        }
+    }
+
+    func setEnvironmentEnabled(_ enabled: Bool, forKey key: String) {
+        let realm = Realm.getRealm()
+        if let o = realm.object(ofType: BuildTriggerEnvironmentRealm.self, forPrimaryKey: key) {
+            try! realm.write {
+                o.enabled = enabled
+            }
+        }
+    }
+
+    func removeEnvironment(at row: Int) {
+        try! Realm.getRealm().write {
+            realmObject.environments.remove(at: row)
+        }
+    }
+
     private func urlRequest() -> URLRequest? {
 
         guard let token = apiToken else { return nil }
@@ -120,8 +162,11 @@ final class TriggerBuildLogicStore {
 
         var req = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 5.0)
 
+        let environments: [JSON] = self.environments.compactMap { $0.enabled ? $0.json : nil }
         let body = BuildTriggerRequest(hook_info: .init(api_token: token),
-                                       build_params: gitObject.json + ["workflow_id": workflowID])
+                                       build_params: gitObject.json
+                                        + ["workflow_id": workflowID]
+                                        + ["environments": environments])
         req.httpBody = try! body.encode()
         req.httpMethod = "POST"
 

@@ -189,7 +189,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     // MARK: UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 4
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -197,6 +197,10 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         case 0:
             return logicStore.workflowIDs.count
         case 1:
+            return 1
+        case 2:
+            return logicStore.environments.count
+        case 3:
             return 1
         default:
             fatalError()
@@ -210,12 +214,39 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             cell.textLabel?.text = logicStore.workflowIDs[indexPath.row]
             return cell
         case 1:
-            let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewCell")! as! WorkflowAddNewCell
-            cell.configure { [weak self] text in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewCell")! as! AnyAddNewCell
+            cell.configure(placeholder: "Add new workflowID") { [weak self] text in
                 guard let me = self else { return }
 
-                let ip = IndexPath(row: me.logicStore.workflowIDs.count, section: 0)
+                let ip = IndexPath(row: me.logicStore.workflowIDs.count, section: indexPath.section - 1)
                 me.logicStore.appendWorkflowID(text)
+                me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
+                me.tableView.scrollToRow(at: ip, at: .top, animated: true)
+            }
+            return cell
+
+        case 2:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "EnvCell")! as! EnvCell
+            let env = logicStore.environments[indexPath.row]
+            cell.configure(text: env.string) { [weak self] enabled in
+                guard let me = self else { return }
+
+                me.logicStore.setEnvironmentEnabled(enabled, forKey: env.key)
+            }
+            return cell
+
+        case 3:
+            let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewCell")! as! AnyAddNewCell
+            cell.configure(placeholder: "environment e.g. PLATFORM:tvOS") { [weak self] text in
+                guard let me = self else { return }
+
+                let splitted = text.split(separator: ":").map(String.init)
+                if splitted.count != 2 {
+                    return
+                }
+
+                let ip = IndexPath(row: me.logicStore.environments.count, section: indexPath.section - 1)
+                me.logicStore.appendEnvironment((splitted[0], splitted[1]))
                 me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
                 me.tableView.scrollToRow(at: ip, at: .top, animated: true)
             }
@@ -234,13 +265,22 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     }
 
     func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return indexPath.section == 0
+        return indexPath.section % 2 == 0
     }
 
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
+        if editingStyle != .delete {
+            return
+        }
+        switch indexPath.section {
+        case 0:
             logicStore.removeWorkflowID(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
+        case 2:
+            logicStore.removeEnvironment(at: indexPath.row)
+            tableView.deleteRows(at: [indexPath], with: .automatic)
+        default:
+            break
         }
     }
 }

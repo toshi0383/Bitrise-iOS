@@ -1,5 +1,5 @@
 //
-//  AddNewCell.swift
+//  AnyAddNewCell.swift
 //  BitriseClient
 //
 //  Created by Toshihiro Suzuki on 2018/02/18.
@@ -7,7 +7,8 @@
 
 import UIKit
 
-final class WorkflowAddNewCell: UITableViewCell, UITextFieldDelegate {
+// Add workflowID or environment
+final class AnyAddNewCell: UITableViewCell, UITextFieldDelegate {
     @IBOutlet private(set) weak var textField: UITextField! {
         didSet {
             textField.delegate = self
@@ -16,7 +17,8 @@ final class WorkflowAddNewCell: UITableViewCell, UITextFieldDelegate {
 
     private var handler: ((String) -> ())?
 
-    func configure(_ textUpdateHandler: @escaping (String) -> ()) {
+    func configure(placeholder: String, _ textUpdateHandler: @escaping (String) -> ()) {
+        textField.placeholder = placeholder
         handler = textUpdateHandler
     }
 
