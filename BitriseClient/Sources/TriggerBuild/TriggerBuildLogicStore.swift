@@ -162,7 +162,7 @@ final class TriggerBuildLogicStore {
 
         var req = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 5.0)
 
-        let environments: [JSON] = self.environments.map { $0.json }
+        let environments: [JSON] = self.environments.compactMap { $0.enabled ? $0.json : nil }
         let body = BuildTriggerRequest(hook_info: .init(api_token: token),
                                        build_params: gitObject.json
                                         + ["workflow_id": workflowID]
