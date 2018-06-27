@@ -14,6 +14,21 @@ final class BuildsListViewModel {
 
     // MARK: Type
 
+    enum FetchMode {
+        case new, between, more
+
+        var limit: Int {
+            switch self {
+            case .new:
+                return 50
+            case .between:
+                return 20
+            case .more:
+                return 50
+            }
+        }
+    }
+
     struct AlertAction {
         let title: String
         let style: UIAlertActionStyle
@@ -74,7 +89,8 @@ final class BuildsListViewModel {
 
     let dataChanges: Constant<[Change<AppsBuilds.Build>]>
     let isNewDataIndicatorHidden: Constant<Bool>
-    // let isMoreDataIndicatorHidden: Constant<Bool>
+    let isBetweenDataIndicatorHidden: Constant<Bool>
+    let isMoreDataIndicatorHidden: Constant<Bool>
 
     // MARK: private properties
 
@@ -82,10 +98,13 @@ final class BuildsListViewModel {
     private let _alertActions = Variable<[AlertAction]>(value: [])
     private let _dataChanges = Variable<[Change<AppsBuilds.Build>]>(value: [])
     private(set) var builds: [AppsBuilds.Build] = []
-    let _isNewDataIndicatorHidden = Variable<Bool>(value: true)
-    // let isMoreDataIndicatorHidden = Variable<Bool>(value: true)
+    private let _isNewDataIndicatorHidden = Variable<Bool>(value: true)
+    private let _isBetweenDataIndicatorHidden = Variable<Bool>(value: true)
+    private let _scrollRemainingRatio = Variable<CGFloat>(value: 10000)
+    private let _isMoreDataIndicatorHidden = Variable<Bool>(value: true)
+    private let _isLoading = Variable<Bool>(value: false)
 
-    private let nextTokenNew = Variable<String?>(value: nil)
+    private let nextTokenNew = Variable<(next: String, offset: Int)?>(value: nil)
     private let nextTokenMore = Variable<String?>(value: nil)
 
     private let session: Session
@@ -112,6 +131,8 @@ final class BuildsListViewModel {
         self.alertActions = Constant(variable: _alertActions)
         self.dataChanges = Constant(variable: _dataChanges)
         self.isNewDataIndicatorHidden = Constant(variable: _isNewDataIndicatorHidden)
+        self.isBetweenDataIndicatorHidden = Constant(variable: _isBetweenDataIndicatorHidden)
+        self.isMoreDataIndicatorHidden = Constant(variable: _isMoreDataIndicatorHidden)
 
         let buildPollingManager = BuildPollingManagerPool.shared.manager(for: appSlug)
         self.buildPollingManager = buildPollingManager
@@ -141,6 +162,14 @@ final class BuildsListViewModel {
                 }
             }
             .disposed(by: disposeBag)
+
+        notificationCenter.continuum
+            .observe(_scrollRemainingRatio, on: OperationQueue()) { [weak self] remainingRatio in
+                if remainingRatio < 0.02 {
+                    self?.triggerPaging()
+                }
+            }
+            .disposed(by: disposeBag)
     }
 
     // MARK: LifeCycle & Update
@@ -163,6 +192,10 @@ final class BuildsListViewModel {
     // TODO: paging
     // FIXME: avoid dropping existing data
     func fetchDataAndReloadTable() {
+
+        if _isLoading.value { return }
+        _isLoading.value = true
+
         let req = AppsBuildsRequest(appSlug: appSlug)
 
         session.send(req) { [weak self] result in
@@ -179,18 +212,62 @@ final class BuildsListViewModel {
             case .failure(let error):
                 print(error)
             }
+
+            me._isLoading.value = false
         }
     }
 
-    func triggerPullToRefresh() {
-        _isNewDataIndicatorHidden.value = false
+    /// - parameter offset: Index where you want to load new data at.
+    ///      It should be current last index plus 1.
+    func fetchBuilds(_ fetchMode: FetchMode) {
 
-        let req = AppsBuildsRequest(appSlug: appSlug, limit: 10)
+        if _isLoading.value { return }
+        _isLoading.value = true
+
+        let setIndicatorIsHidden: (Bool) -> () = { [weak self] isHidden in
+
+            guard let me = self else { return }
+
+            switch fetchMode {
+            case .new:
+                me._isNewDataIndicatorHidden.value = isHidden
+            case .between:
+                me._isBetweenDataIndicatorHidden.value = isHidden
+            case .more:
+                me._isMoreDataIndicatorHidden.value = isHidden
+            }
+        }
+
+        setIndicatorIsHidden(false)
+
+        let next: String? = {
+            switch fetchMode {
+            case .between:
+                return nextTokenNew.value!.next
+            case .more:
+                return nextTokenMore.value
+            case .new:
+                return nil
+            }
+        }()
+
+        let offset: Int = {
+            switch fetchMode {
+            case .between:
+                return nextTokenNew.value!.offset
+            case .more:
+                return builds.count
+            case .new:
+                return 0
+            }
+        }()
+
+        let req = AppsBuildsRequest(appSlug: appSlug, limit: fetchMode.limit, next: next)
 
         session.send(req) { [weak self] result in
             guard let me = self else { return }
 
-            me._isNewDataIndicatorHidden.value = true
+            setIndicatorIsHidden(true)
 
             switch result {
             case .success(let res):
@@ -204,24 +281,54 @@ final class BuildsListViewModel {
                         reachedCurrent = true
                         break
                     }
-                    newBuilds.insert(new, at: i)
-                }
 
-                if !reachedCurrent {
-                    print("FIXME: there is new data in between")
+                    if i + offset <= newBuilds.count {
+                        newBuilds.insert(new, at: i + offset)
+                    }
                 }
-
-                me.nextTokenNew.value = !reachedCurrent ? appsBuilds.paging.next : nil
 
                 let changes = diff(old: me.builds, new: newBuilds)
                 me.builds = newBuilds
                 me._dataChanges.value = changes
 
+                switch fetchMode {
+                case .between:
+                    if !reachedCurrent, let next = appsBuilds.paging.next {
+                        me.nextTokenNew.value = (next: next, offset: appsBuilds.data.count)
+                    } else {
+                        me.nextTokenNew.value = nil
+                    }
+                case .more:
+                    if let next = appsBuilds.paging.next {
+                        me.nextTokenMore.value = next
+                    } else {
+                        me.nextTokenMore.value = nil
+                    }
+                case .new:
+                    break
+                }
+
             case .failure(let error):
                 print(error)
 
             }
+
+            me._isLoading.value = false
         }
+    }
+
+    func triggerPaging() {
+        if let next = nextTokenMore.value {
+            fetchBuilds(.more)
+        }
+    }
+
+    func updateScrollInfo(contentHeight: CGFloat, contentOffsetY: CGFloat, frameHeight: CGFloat, adjustedContentInsetBottom: CGFloat) {
+        if contentHeight <= 0 {
+            return
+        }
+        let frameVisibleHeight = frameHeight - adjustedContentInsetBottom
+        _scrollRemainingRatio.value = (contentHeight - contentOffsetY - frameVisibleHeight) / contentHeight
     }
 
     func reserveNotification(forBuild build: AppsBuilds.Build) {
