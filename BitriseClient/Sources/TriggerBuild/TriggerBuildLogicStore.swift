@@ -156,7 +156,7 @@ final class TriggerBuildLogicStore {
         guard let token = apiToken else { return nil }
         guard let workflowID = workflowID else { return nil }
 
-        guard let url = URL(string: "https://www.bitrise.io/app/\(realmObject.appSlug)/build/start.json") else {
+        guard let url = URL(string: "https://app.bitrise.io/app/\(realmObject.appSlug)/build/start.json") else {
             return nil
         }
 

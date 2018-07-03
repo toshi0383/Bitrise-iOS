@@ -19,7 +19,7 @@ final class TriggerBuildAction {
             return
         }
 
-        guard let url = URL(string: "https://www.bitrise.io/app/\(appSlug)/build/start.json") else {
+        guard let url = URL(string: "https://app.bitrise.io/app/\(appSlug)/build/start.json") else {
             return
         }
 
