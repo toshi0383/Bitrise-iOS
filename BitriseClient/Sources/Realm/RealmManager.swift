@@ -18,8 +18,11 @@ final class RealmManager {
             let objects = Config.workflowIDsMap
                 .map { (arg: (AppSlug, [WorkflowID])) -> BuildTriggerRealm in
                     let (appSlug, workflowIDs) = arg
+                    let gitObject = GitObject.branch("")
                     let properties: [String: Any?] = [
                         "appSlug": appSlug,
+                        "gitObjectValue": gitObject.associatedValue,
+                        "gitObjectType": gitObject.type,
                         "workflowIDs": workflowIDs,
                         "apiToken": NSNull(),
                     ]
