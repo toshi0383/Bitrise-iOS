@@ -274,14 +274,33 @@ final class BuildsListViewModel {
 
                 let appsBuilds = AppsBuilds(from: res)
                 var newBuilds: [AppsBuilds.Build] = me.builds
-                var reachedCurrent = false
 
-                for (i, new) in appsBuilds.data.enumerated() {
-                    if newBuilds.containsByBuildNumber(new) {
-                        reachedCurrent = true
-                        break
+                switch fetchMode {
+                case .new,
+                     .between:
+
+                    if let newLast = appsBuilds.data.last?.build_number,
+                        let currentFirst = newBuilds.first?.build_number {
+                        if newLast > currentFirst + 1 {
+                            // More data exists in between. Set nextToken for new data.
+                            if let next = appsBuilds.paging.next {
+                                me.nextTokenNew.value = (next, appsBuilds.data.count)
+                            }
+                        } else if currentFirst >= newLast {
+                            // Caught-up to current. nil-out the nextToken for new data.
+                            me.nextTokenNew.value = nil
+                        }
                     }
 
+                case .more:
+                    if let next = appsBuilds.paging.next {
+                        me.nextTokenMore.value = next
+                    } else {
+                        me.nextTokenMore.value = nil
+                    }
+                }
+
+                for (i, new) in appsBuilds.data.enumerated() {
                     if i + offset <= newBuilds.count {
                         newBuilds.insert(new, at: i + offset)
                     }
@@ -290,23 +309,6 @@ final class BuildsListViewModel {
                 let changes = diff(old: me.builds, new: newBuilds)
                 me.builds = newBuilds
                 me._dataChanges.value = changes
-
-                switch fetchMode {
-                case .between:
-                    if !reachedCurrent, let next = appsBuilds.paging.next {
-                        me.nextTokenNew.value = (next: next, offset: appsBuilds.data.count)
-                    } else {
-                        me.nextTokenNew.value = nil
-                    }
-                case .more:
-                    if let next = appsBuilds.paging.next {
-                        me.nextTokenMore.value = next
-                    } else {
-                        me.nextTokenMore.value = nil
-                    }
-                case .new:
-                    break
-                }
 
             case .failure(let error):
                 print(error)
@@ -318,7 +320,7 @@ final class BuildsListViewModel {
     }
 
     func triggerPaging() {
-        if let next = nextTokenMore.value {
+        if nextTokenMore.value != nil {
             fetchBuilds(.more)
         }
     }
