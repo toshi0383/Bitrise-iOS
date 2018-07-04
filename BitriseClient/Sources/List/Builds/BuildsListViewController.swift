@@ -58,6 +58,8 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
         viewModel.viewDidLoad()
 
+        tableView.register(LoadingFooterView.self, forHeaderFooterViewReuseIdentifier: "LoadingFooterView")
+
         notificationCenter.continuum
             .observe(viewModel.alertMessage, on: .main) { [weak self] msg in
                 if !msg.isEmpty { // skip initial value
@@ -140,6 +142,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     // MARK: UITableViewDataSource & UITableViewDelegate
 
     func numberOfSections(in tableView: UITableView) -> Int {
+        // TODO: group by date and show header
         return 1
     }
 
@@ -151,6 +154,16 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildCell") as! BuildCell
         cell.configure(viewModel.builds[indexPath.row])
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        let v = tableView.dequeueReusableHeaderFooterView(withIdentifier: "LoadingFooterView") as! LoadingFooterView
+        v.configure(viewModel)
+        return v
+    }
+
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return 50
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
