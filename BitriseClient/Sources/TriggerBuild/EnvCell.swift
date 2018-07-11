@@ -13,6 +13,13 @@ final class EnvCell: UITableViewCell {
     @IBOutlet private(set) weak var value: UITextField!
     @IBOutlet private(set) weak var enabledSwitch: UISwitch!
     
+    private lazy var textFieldDelegate: TextFieldDelegate = {
+        return TextFieldDelegate { [weak self] _ in
+            // NOTE: retaining delegate instance by implicit strong self capture
+            self?.toggle(nil)
+        }
+    }()
+
     private var pkey = ""
 
     @IBAction func toggle(_ anySender: AnyObject!) {
@@ -27,6 +34,13 @@ final class EnvCell: UITableViewCell {
     }
 
     private var switchHandler: ((BuildTriggerEnvironment) -> ())?
+
+    override func awakeFromNib() {
+        super.awakeFromNib()
+
+        key.delegate = textFieldDelegate
+        value.delegate = textFieldDelegate
+    }
 
     func configure(_ env: BuildTriggerEnvironment, switchHandler: @escaping (BuildTriggerEnvironment) -> ()) {
         pkey = env.pkey
