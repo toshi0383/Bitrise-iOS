@@ -23,10 +23,6 @@ class BuildTriggerEnvironmentRealm: Object {
     @objc dynamic var enabled = true
     @objc dynamic var key = ""
     @objc dynamic var value = ""
-
-    override static func primaryKey() -> String? {
-        return "key"
-    }
 }
 
 extension BuildTriggerEnvironmentRealm {

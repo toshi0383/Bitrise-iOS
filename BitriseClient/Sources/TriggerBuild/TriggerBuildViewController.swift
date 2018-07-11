@@ -228,10 +228,10 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "EnvCell")! as! EnvCell
             let env = logicStore.environments[indexPath.row]
-            cell.configure(text: env.string) { [weak self] enabled in
+            cell.configure(env) { [weak self] newEnv in
                 guard let me = self else { return }
 
-                me.logicStore.setEnvironmentEnabled(enabled, forKey: env.key)
+                me.logicStore.setEnvironment(newEnv)
             }
             return cell
 

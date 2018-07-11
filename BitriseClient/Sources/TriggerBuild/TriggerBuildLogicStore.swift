@@ -136,11 +136,13 @@ final class TriggerBuildLogicStore {
         }
     }
 
-    func setEnvironmentEnabled(_ enabled: Bool, forKey key: String) {
+    func setEnvironment(_ env: BuildTriggerEnvironment) {
         let realm = Realm.getRealm()
-        if let o = realm.object(ofType: BuildTriggerEnvironmentRealm.self, forPrimaryKey: key) {
+        if let o = realm.object(ofType: BuildTriggerEnvironmentRealm.self, forPrimaryKey: env.key) {
             try! realm.write {
-                o.enabled = enabled
+                o.enabled = env.enabled
+                o.key = env.key
+                o.value = env.value
             }
         }
     }

@@ -13,6 +13,12 @@ struct BuildTriggerEnvironment: Equatable {
     let key: String
     let value: String
 
+    init(enabled: Bool, key: String, value: String) {
+        self.enabled = enabled
+        self.key = key
+        self.value = value
+    }
+
     init(realmObject: BuildTriggerEnvironmentRealm) {
         self.enabled = realmObject.enabled
         self.key = realmObject.key

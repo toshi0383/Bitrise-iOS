@@ -49,6 +49,7 @@ extension Realm {
                 return try Realm(configuration: config)
 
             } catch {
+                print("Failed to open realm with error: \(error)")
 
                 let fm = FileManager.default
                 if let fileURL = fileURL, fm.fileExists(atPath: fileURL.path) {
