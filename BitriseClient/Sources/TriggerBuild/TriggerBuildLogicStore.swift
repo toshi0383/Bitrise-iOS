@@ -126,6 +126,7 @@ final class TriggerBuildLogicStore {
                     return existing
                 } else {
                     let new = BuildTriggerEnvironmentRealm()
+                    new.pkey = UUID().uuidString
                     new.key = value.key
                     new.value = value.value
                     return new
@@ -138,7 +139,7 @@ final class TriggerBuildLogicStore {
 
     func setEnvironment(_ env: BuildTriggerEnvironment) {
         let realm = Realm.getRealm()
-        if let o = realm.object(ofType: BuildTriggerEnvironmentRealm.self, forPrimaryKey: env.key) {
+        if let o = realm.object(ofType: BuildTriggerEnvironmentRealm.self, forPrimaryKey: env.pkey) {
             try! realm.write {
                 o.enabled = env.enabled
                 o.key = env.key
