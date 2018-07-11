@@ -126,7 +126,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         notificationCenter.continuum
             .observe(logicStore.buildDidTriggerRelay) { [weak viewModel] trigger in
                 if trigger != nil {
-                    viewModel?.triggerPullToRefresh()
+                    viewModel?.fetchBuilds(.new)
                 }
             }
             .disposed(by: disposeBag)
@@ -134,7 +134,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     }
 
     @objc private func pullToRefresh() {
-        viewModel.triggerPullToRefresh()
+        viewModel.fetchBuilds(.new)
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate
@@ -198,5 +198,12 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5,
                                       execute: workItem)
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        viewModel.updateScrollInfo(contentHeight: scrollView.contentSize.height,
+                                   contentOffsetY: scrollView.contentOffset.y,
+                                   frameHeight: scrollView.frame.height,
+                                   adjustedContentInsetBottom: scrollView.adjustedContentInset.bottom)
     }
 }

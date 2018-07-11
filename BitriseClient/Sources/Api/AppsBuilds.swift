@@ -14,14 +14,22 @@ struct AppsBuildsRequest: BitriseAPIRequest {
 
     let path: String
     private let limit: Int
+    private let next: String?
 
     var queryParameters: [String : Any]? {
-        return ["limit": limit]
+        var params: [String: Any] = ["limit": limit]
+
+        if let next = next {
+            params["next"] = next
+        }
+
+        return params
     }
 
-    init(appSlug: String, limit: Int = 50) {
+    init(appSlug: String, limit: Int = 50, next: String? = nil) {
         self.path = "/apps/\(appSlug)/builds"
         self.limit = limit
+        self.next = next
     }
 }
 
