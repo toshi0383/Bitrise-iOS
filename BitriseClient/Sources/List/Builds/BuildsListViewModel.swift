@@ -189,8 +189,6 @@ final class BuildsListViewModel {
 
     // MARK: API Call
 
-    // TODO: paging
-    // FIXME: avoid dropping existing data
     func fetchDataAndReloadTable() {
 
         if _isLoading.value { return }
@@ -219,6 +217,11 @@ final class BuildsListViewModel {
 
     /// - parameter offset: Index where you want to load new data at.
     ///      It should be current last index plus 1.
+    ///
+    /// - FIXME:
+    ///     When data is loaded partially like this: [(900...851), (800...751)]
+    ///     triggering pull-to-refresh causes droppping the next token for (850...801).
+    ///
     func fetchBuilds(_ fetchMode: FetchMode) {
 
         if _isLoading.value { return }
