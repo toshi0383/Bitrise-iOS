@@ -176,10 +176,7 @@
                                                                             </constraints>
                                                                             <nil key="textColor"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                            <textInputTraits key="textInputTraits"/>
-                                                                            <connections>
-                                                                                <action selector="toggle:" destination="RvN-cx-18J" eventType="valueChanged" id="XqM-iz-Rc4"/>
-                                                                            </connections>
+                                                                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                                                         </textField>
                                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=":" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="uSN-4y-a8K">
                                                                             <rect key="frame" x="99.999999999999972" y="0.0" width="4.6666666666666714" height="30"/>
@@ -194,10 +191,7 @@
                                                                             <rect key="frame" x="104.66666666666666" y="0.0" width="100" height="30"/>
                                                                             <nil key="textColor"/>
                                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                            <textInputTraits key="textInputTraits"/>
-                                                                            <connections>
-                                                                                <action selector="toggle:" destination="RvN-cx-18J" eventType="valueChanged" id="uyO-VT-Kut"/>
-                                                                            </connections>
+                                                                            <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                                                         </textField>
                                                                     </subviews>
                                                                     <constraints>
