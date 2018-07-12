@@ -20,12 +20,13 @@ class BuildTriggerRealm: Object {
 }
 
 class BuildTriggerEnvironmentRealm: Object {
+    @objc dynamic var pkey = ""
     @objc dynamic var enabled = true
     @objc dynamic var key = ""
     @objc dynamic var value = ""
 
     override static func primaryKey() -> String? {
-        return "key"
+        return "pkey"
     }
 }
 
@@ -33,6 +34,7 @@ extension BuildTriggerEnvironmentRealm {
     static func create(_ model: BuildTriggerEnvironment) -> BuildTriggerEnvironmentRealm {
         let e = BuildTriggerEnvironmentRealm()
         e.enabled = model.enabled
+        e.pkey = model.pkey
         e.key = model.key
         e.value = model.value
         return e
