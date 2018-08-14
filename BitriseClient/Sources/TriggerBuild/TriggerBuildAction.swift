@@ -10,13 +10,20 @@ import RealmSwift
 
 final class TriggerBuildAction {
 
+    enum Error: Swift.Error, CustomStringConvertible {
+        case missingApiToken
+        var description: String {
+             return "Build Trigger Token is required. Please trigger build once to register a record in database."
+        }
+    }
+
     static let shared = TriggerBuildAction()
 
-    func sendRebuildRequest(appSlug: AppSlug, _ build: AppsBuilds.Build) {
+    func sendRebuildRequest(appSlug: AppSlug, _ build: AppsBuilds.Build) throws {
 
         let realm = Realm.getRealm()
         guard let token = realm.object(ofType: BuildTriggerRealm.self, forPrimaryKey: appSlug)?.apiToken else {
-            return
+            throw Error.missingApiToken
         }
 
         guard let url = URL(string: "https://app.bitrise.io/app/\(appSlug)/build/start.json") else {
