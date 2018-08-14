@@ -18,6 +18,10 @@ struct AppsBuildsAbortRequest: BitriseAPIRequest {
     init(appSlug: String, buildSlug: String) {
         self.path = "/apps/\(appSlug)/builds/\(buildSlug)/abort"
     }
+
+    var bodyParameters: BodyParameters? {
+        return JSONBodyParameters(JSONObject: [:])
+    }
 }
 
 struct AppsBuildsAbort: Decodable {
