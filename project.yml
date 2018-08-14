@@ -14,7 +14,7 @@ targets:
     dependencies:
       - target: ActionPopoverButton
       - carthage: APIKit
-      - carthage: Continuum
+      - carthage: RxSwift
       - carthage: DeepDiff
       - carthage: Highlightr
       - carthage: Result
