@@ -69,7 +69,11 @@ final class BuildsListViewModel {
             alertActions.append(AlertAction.init(title: "Rebuild", handler: { [weak self] _ in
                 guard let me = self else { return }
 
-                TriggerBuildAction.shared.sendRebuildRequest(appSlug: me.appSlug, build)
+                do {
+                    try TriggerBuildAction.shared.sendRebuildRequest(appSlug: me.appSlug, build)
+                } catch {
+                    me._alertMessage.value = "\(error)"
+                }
             }))
         }
 
