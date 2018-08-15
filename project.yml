@@ -17,12 +17,13 @@ targets:
     dependencies:
       - target: ActionPopoverButton
       - carthage: APIKit
-      - carthage: RxSwift
       - carthage: DeepDiff
       - carthage: Highlightr
       - carthage: Result
       - carthage: Realm
       - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
       - carthage: TKKeyboardControl
     prebuildScripts:
       - name: sourcery
