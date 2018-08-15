@@ -1,6 +1,6 @@
 import APIKit
-import Continuum
 import DeepDiff
+import RxSwift
 import UIKit
 
 final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
@@ -12,6 +12,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     static func makeFromStoryboard(_ dependency: Dependency) -> BuildsListViewController {
         let vc = BuildsListViewController.unsafeMakeFromStoryboard()
         vc.viewModel = dependency.viewModel
+        vc.viewModel.lifecycle = vc.lifecycle
         return vc
     }
 
@@ -47,7 +48,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         return refreshControl
     }()
 
-    private let disposeBag = NotificationCenterContinuum.Bag()
+    private let disposeBag = DisposeBag()
 
     // MARK: LifeCycle
 
@@ -56,35 +57,31 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
         navigationItem.title = viewModel.navigationBarTitle
 
-        viewModel.viewDidLoad()
-
-        notificationCenter.continuum
-            .observe(viewModel.alertMessage, on: .main) { [weak self] msg in
-                if !msg.isEmpty { // skip initial value
-                    self?.alert(msg)
-                }
-            }
+        viewModel.alertMessage
+            .observeOn(ConcurrentMainScheduler.instance)
+            .subscribe(onNext: { [weak self] msg in
+                self?.alert(msg)
+            })
             .disposed(by: disposeBag)
 
-        notificationCenter.continuum
-            .observe(viewModel.alertActions, on: .main) { [weak self] alertActions in
-                if alertActions.isEmpty {
-                    return
-                }
+        viewModel.alertActions.asObservable()
+            .filterEmpty()
+            .observeOn(ConcurrentMainScheduler.instance)
+            .subscribe(onNext: { [weak self] alertActions in
                 self?.showActionSheet(actions: alertActions)
-            }
+            })
             .disposed(by: disposeBag)
 
-        notificationCenter.continuum
-            .observe(viewModel.dataChanges, on: .main) { [weak self] changes in
-                if !changes.isEmpty { // skip initial value
-                    self?.tableView.reload(changes: changes, completion: { _ in })
-                }
-            }
+        viewModel.dataChanges.changed
+            .observeOn(ConcurrentMainScheduler.instance)
+            .subscribe(onNext: { [weak self] changes in
+                self?.tableView.reload(changes: changes, completion: { _ in })
+            })
             .disposed(by: disposeBag)
 
-        notificationCenter.continuum
-            .observe(viewModel.isNewDataIndicatorHidden, on: .main) { [weak self] isHidden in
+        viewModel.isNewDataIndicatorHidden.asObservable()
+            .observeOn(ConcurrentMainScheduler.instance)
+            .subscribe(onNext: { [weak self] isHidden in
                 guard let me = self else { return }
 
                 if isHidden {
@@ -92,14 +89,8 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
                 } else {
                     me.refreshControl.beginRefreshing()
                 }
-            }
+            })
             .disposed(by: disposeBag)
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-
-        viewModel.viewWillDisappear()
     }
 
     // MARK: IBAction
@@ -123,14 +114,11 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
 
         navigationController?.present(vc, animated: true, completion: nil)
 
-        notificationCenter.continuum
-            .observe(logicStore.buildDidTriggerRelay) { [weak viewModel] trigger in
-                if trigger != nil {
-                    viewModel?.fetchBuilds(.new)
-                }
-            }
+        logicStore.buildDidTrigger
+            .subscribe(onNext: { [weak viewModel] _ in
+                viewModel?.fetchBuilds(.new)
+            })
             .disposed(by: disposeBag)
-
     }
 
     @objc private func pullToRefresh() {

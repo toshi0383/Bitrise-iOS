@@ -10,6 +10,7 @@ targets:
     type: application
     sources:
       - BitriseClient
+      - RxProperty/RxProperty.swift
     configFiles:
       Debug: configs/BitriseClient-Debug.xcconfig
       Release: configs/BitriseClient-Release.xcconfig

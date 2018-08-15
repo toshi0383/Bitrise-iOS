@@ -1,4 +1,5 @@
-import Continuum
+import RxCocoa
+import RxSwift
 import Highlightr
 import UIKit
 
@@ -7,7 +8,7 @@ final class BitriseYmlViewController: UIViewController {
 
     private let viewModel: BitriseYmlViewModel
 
-    private let disposeBag = NotificationCenterContinuum.Bag()
+    private let disposeBag = DisposeBag()
 
     private let buttonSize: CGSize = CGSize(width: 30, height: 30)
 
@@ -91,8 +92,9 @@ final class BitriseYmlViewController: UIViewController {
                 textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             ])
 
-            notificationCenter.continuum
-                .observe(viewModel.ymlPayload, on: .main, bindTo: textView, \.text)
+            viewModel.ymlPayload.changed
+                .observeOn(ConcurrentMainScheduler.instance)
+                .bind(to: textView.rx.text)
                 .disposed(by: disposeBag)
         }
 
@@ -125,8 +127,9 @@ final class BitriseYmlViewController: UIViewController {
 
             editSaveButton.addTarget(self, action: #selector(editSaveButtonTap), for: .touchUpInside)
 
-            notificationCenter.continuum
-                .observe(viewModel.editState, on: .main) { [weak self] in
+            viewModel.editState.asObservable()
+                .observeOn(ConcurrentMainScheduler.instance)
+                .subscribe(onNext: { [weak self] in
                     guard let me = self else { return }
 
                     switch $0 {
@@ -143,7 +146,7 @@ final class BitriseYmlViewController: UIViewController {
                         me.textView.isEditable = false
                     }
 
-                }
+                })
                 .disposed(by: disposeBag)
 
             // buttonStackView
@@ -157,13 +160,11 @@ final class BitriseYmlViewController: UIViewController {
             buttonStackView.addArrangedSubview(editSaveButton)
             buttonStackView.addArrangedSubview(closeButton)
         }
-
-        notificationCenter.continuum
-            .observe(viewModel.alertMessage, on: .main) { [weak self] msg in
-                if !msg.isEmpty {
-                    self?.alert(msg)
-                }
-            }
+        viewModel.alertMessage
+            .observeOn(ConcurrentMainScheduler.instance)
+            .subscribe(onNext: { [weak self] msg in
+                self?.alert(msg)
+            })
             .disposed(by: disposeBag)
     }
 

@@ -6,7 +6,8 @@
 //
 
 import ActionPopoverButton
-import Continuum
+import RxSwift
+import RxCocoa
 import UIKit
 
 private extension GitObject {
@@ -108,16 +109,9 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
     }
 
-    /// Use this method to set initial value.
-    func updateUI(_ gitObject: GitObject) {
-        objectTextField.text = gitObject.text
-        objectTextField.placeholder = Placeholder(gitObject).text
-        objectTypeButton.imageView.image = gitObject.image
-    }
-
     // Input result
-    // Observed by using Continuum
-    let newInput = Variable<GitObject?>(value: nil)
+    let newInput: Observable<GitObject>
+    private let _newInput = BehaviorRelay<GitObject>(value: .branch(""))
 
     private let objectTypeButton: GitObjectTypeButton = {
         let button = GitObjectTypeButton()
@@ -144,6 +138,16 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
     }
 
+    override init(frame: CGRect) {
+        self.newInput = _newInput.changed
+        super.init(frame: frame)
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        self.newInput = _newInput.changed
+        super.init(coder: aDecoder)
+    }
+
     override func awakeFromNib() {
         super.awakeFromNib()
 
@@ -155,7 +159,7 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
                 me.objectTypeButton.imageView.image = gitObject.image
 
-                me.newInput.value = gitObject.updateAssociatedValue(me.objectTextField.text ?? "")
+                me._newInput.accept(gitObject.updateAssociatedValue(me.objectTextField.text ?? ""))
                 me.updatePlaceholder()
 
                 Haptic.generate(.heavy)
@@ -184,15 +188,20 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
         let str = objectTextField.text ?? ""
-        newInput.value = newInput.value?.updateAssociatedValue(str) ?? .branch(str)
+        _newInput.accept(_newInput.value.updateAssociatedValue(str))
         updatePlaceholder()
     }
 
     // MARK: Utilities
 
+    /// Use this method to set initial value.
+    func updateUI(_ gitObject: GitObject) {
+        objectTextField.text = gitObject.text
+        objectTextField.placeholder = Placeholder(gitObject).text
+        objectTypeButton.imageView.image = gitObject.image
+    }
+
     private func updatePlaceholder() {
-        if let value = newInput.value {
-            objectTextField.placeholder = Placeholder(value).text
-        }
+        objectTextField.placeholder = Placeholder(_newInput.value).text
     }
 }

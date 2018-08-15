@@ -1,12 +1,4 @@
-//
-//  TriggerBuildViewController.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2017/12/19.
-//  Copyright © 2017 toshi0383. All rights reserved.
-//
-
-import Continuum
+import RxSwift
 import TKKeyboardControl
 import UIKit
 
@@ -40,7 +32,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     @IBOutlet private weak var apiTokenTextfield: UITextField! {
         didSet {
-            // No Continuum: `UITextField.text` keyPath didn't compile.
             apiTokenTextfield.delegate = apiTokenTextfieldDelegate
         }
     }
@@ -57,7 +48,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     private weak var lastFirstResponder: UIResponder?
     private var logicStore: TriggerBuildLogicStore!
-    private let bag = ContinuumBag()
+    private let disposeBag = DisposeBag()
 
     // MARK: LifeCycle
 
@@ -80,13 +71,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         // Currently apiToken is not changed outside this view.
         apiTokenTextfield.text = logicStore.apiToken
 
-        notificationCenter.continuum
-            .observe(gitObjectInputView.newInput) { [weak self] value in
-                if let value = value {
-                    self?.logicStore.gitObject = value
-                }
-            }
-            .disposed(by: bag)
+        gitObjectInputView.newInput
+            .subscribe(onNext: { [weak logicStore] gitObject in
+                logicStore?.gitObject = gitObject
+            })
+            .disposed(by: disposeBag)
 
         gitObjectInputView.updateUI(logicStore.gitObject)
 
