@@ -19,9 +19,7 @@ typealias AppSlug = String
 /// - performs database update
 /// - publish states for view
 /// - triggers new builds via network
-///
-/// Let's say it's a fat viewcontroller but is testable.
-final class TriggerBuildLogicStore {
+final class TriggerBuildViewModel {
 
     // MARK: Output
 

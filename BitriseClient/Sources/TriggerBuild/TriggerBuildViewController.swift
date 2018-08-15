@@ -5,11 +5,11 @@ import UIKit
 // TODO: Refactoring
 final class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
 
-    typealias Dependency = TriggerBuildLogicStore
+    typealias Dependency = TriggerBuildViewModel
 
-    static func makeFromStoryboard(_ logicStore: TriggerBuildLogicStore) -> TriggerBuildViewController {
+    static func makeFromStoryboard(_ viewModel: TriggerBuildViewModel) -> TriggerBuildViewController {
         let vc = TriggerBuildViewController.unsafeMakeFromStoryboard()
-        vc.logicStore = logicStore
+        vc.viewModel = viewModel
         return vc
     }
 
@@ -26,7 +26,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     private lazy var apiTokenTextfieldDelegate: TextFieldDelegate = {
         return TextFieldDelegate { [weak self] apiToken in
             // NOTE: retaining delegate instance by implicit strong self capture
-            self?.logicStore?.apiToken = apiToken
+            self?.viewModel?.apiToken = apiToken
         }
     }()
 
@@ -47,7 +47,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     // MARK: Private
 
     private weak var lastFirstResponder: UIResponder?
-    private var logicStore: TriggerBuildLogicStore!
+    private var viewModel: TriggerBuildViewModel!
     private let disposeBag = DisposeBag()
 
     // MARK: LifeCycle
@@ -69,15 +69,15 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
         // No need to perform reactive update for apiTokenTextField.
         // Currently apiToken is not changed outside this view.
-        apiTokenTextfield.text = logicStore.apiToken
+        apiTokenTextfield.text = viewModel.apiToken
 
         gitObjectInputView.newInput
-            .subscribe(onNext: { [weak logicStore] gitObject in
-                logicStore?.gitObject = gitObject
+            .subscribe(onNext: { [weak viewModel] gitObject in
+                viewModel?.gitObject = gitObject
             })
             .disposed(by: disposeBag)
 
-        gitObjectInputView.updateUI(logicStore.gitObject)
+        gitObjectInputView.updateUI(viewModel.gitObject)
 
         // PullToDismiss
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
@@ -172,7 +172,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         gitObjectInputView.resignFirstResponder()
         apiTokenTextfield.resignFirstResponder()
 
-        logicStore.triggerBuild()
+        viewModel.triggerBuild()
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate
@@ -184,11 +184,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 0:
-            return logicStore.workflowIDs.count
+            return viewModel.workflowIDs.count
         case 1:
             return 1
         case 2:
-            return logicStore.environments.count
+            return viewModel.environments.count
         case 3:
             return 1
         default:
@@ -200,15 +200,15 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         switch indexPath.section {
         case 0:
             let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
-            cell.textLabel?.text = logicStore.workflowIDs[indexPath.row]
+            cell.textLabel?.text = viewModel.workflowIDs[indexPath.row]
             return cell
         case 1:
             let cell = tableView.dequeueReusableCell(withIdentifier: "AddNewCell")! as! AnyAddNewCell
             cell.configure(placeholder: "Add new workflowID") { [weak self] text in
                 guard let me = self else { return }
 
-                let ip = IndexPath(row: me.logicStore.workflowIDs.count, section: indexPath.section - 1)
-                me.logicStore.appendWorkflowID(text)
+                let ip = IndexPath(row: me.viewModel.workflowIDs.count, section: indexPath.section - 1)
+                me.viewModel.appendWorkflowID(text)
                 me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
                 me.tableView.scrollToRow(at: ip, at: .top, animated: true)
             }
@@ -216,11 +216,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
         case 2:
             let cell = tableView.dequeueReusableCell(withIdentifier: "EnvCell")! as! EnvCell
-            let env = logicStore.environments[indexPath.row]
+            let env = viewModel.environments[indexPath.row]
             cell.configure(env) { [weak self] newEnv in
                 guard let me = self else { return }
 
-                me.logicStore.setEnvironment(newEnv)
+                me.viewModel.setEnvironment(newEnv)
             }
             return cell
 
@@ -234,8 +234,8 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
                     return
                 }
 
-                let ip = IndexPath(row: me.logicStore.environments.count, section: indexPath.section - 1)
-                me.logicStore.appendEnvironment((splitted[0], splitted[1]))
+                let ip = IndexPath(row: me.viewModel.environments.count, section: indexPath.section - 1)
+                me.viewModel.appendEnvironment((splitted[0], splitted[1]))
                 me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
                 me.tableView.scrollToRow(at: ip, at: .top, animated: true)
             }
@@ -248,7 +248,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard indexPath.section == 0 else { return }
 
-        logicStore.workflowID = logicStore.workflowIDs[indexPath.row]
+        viewModel.workflowID = viewModel.workflowIDs[indexPath.row]
 
         lastFirstResponder?.resignFirstResponder()
     }
@@ -263,10 +263,10 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
         switch indexPath.section {
         case 0:
-            logicStore.removeWorkflowID(at: indexPath.row)
+            viewModel.removeWorkflowID(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         case 2:
-            logicStore.removeEnvironment(at: indexPath.row)
+            viewModel.removeEnvironment(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
         default:
             break

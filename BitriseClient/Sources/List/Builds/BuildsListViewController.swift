@@ -107,7 +107,7 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
     @IBAction func triggerBuildButtonTap() {
         Haptic.generate(.light)
 
-        let logicStore = TriggerBuildLogicStore(appSlug: viewModel.appSlug)
+        let logicStore = TriggerBuildViewModel(appSlug: viewModel.appSlug)
         let vc = TriggerBuildViewController.makeFromStoryboard(logicStore)
 
         vc.modalPresentationStyle = .overCurrentContext
