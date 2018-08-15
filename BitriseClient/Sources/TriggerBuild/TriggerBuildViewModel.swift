@@ -1,11 +1,4 @@
-//
-//  TriggerBuildLogicStore.swift
-//  BitriseClient
-//
-//  Created by 鈴木 俊裕 on 2018/02/05.
-//  Copyright © 2018 toshi0383. All rights reserved.
-//
-
+import Core
 import Foundation
 import RealmSwift
 import RxCocoa
@@ -14,7 +7,7 @@ import RxSwift
 typealias WorkflowID = String
 typealias AppSlug = String
 
-/// LogicStore
+/// TriggerBuildViewModel
 ///
 /// - performs database update
 /// - publish states for view
@@ -224,7 +217,6 @@ final class TriggerBuildViewModel {
     }
 }
 
-typealias JSON = [String: Any]
 func + (_ lhs: JSON, _ rhs: JSON) -> JSON {
     var r: JSON = [:]
     lhs.forEach { r[$0] = $1 }

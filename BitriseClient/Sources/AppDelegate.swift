@@ -7,6 +7,7 @@
 //
 
 import ActionPopoverButton
+import Core
 import UIKit
 
 @UIApplicationMain
@@ -19,6 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if ProcessInfo.processInfo.environment["TEST"] == "YESS" {
             return true
         }
+
+        Core.APIConfig.getToken = { Config.personalAccessToken }
 
         // [ActionPopoverButton]
         UIView.hth.exchangeMethods()

@@ -1,11 +1,5 @@
-//
-//  LocalNotificationAction.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/03/11.
-//
-
 import APIKit
+import Core
 import Foundation
 import UserNotifications
 

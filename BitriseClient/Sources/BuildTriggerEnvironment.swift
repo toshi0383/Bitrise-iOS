@@ -1,10 +1,4 @@
-//
-//  BuildTriggerEnvironment.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/06/22.
-//
-
+import Core
 import Foundation
 
 // https://devcenter.bitrise.io/api/build-trigger/#specify-environment-variables

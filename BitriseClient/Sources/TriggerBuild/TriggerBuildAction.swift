@@ -1,10 +1,4 @@
-//
-//  TriggerBuildAction.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/06/10.
-//
-
+import Core
 import Foundation
 import RealmSwift
 

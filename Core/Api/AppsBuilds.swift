@@ -1,22 +1,15 @@
-//
-//  AppsBuilds.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/11.
-//
-
 import APIKit
 import Foundation
 
-struct AppsBuildsRequest: BitriseAPIRequest {
+public struct AppsBuildsRequest: BitriseAPIRequest {
 
-    typealias Response = JSON
+    public typealias Response = JSON
 
-    let path: String
+    public let path: String
     private let limit: Int
     private let next: String?
 
-    var queryParameters: [String : Any]? {
+    public var queryParameters: [String : Any]? {
         var params: [String: Any] = ["limit": limit]
 
         if let next = next {
@@ -26,54 +19,54 @@ struct AppsBuildsRequest: BitriseAPIRequest {
         return params
     }
 
-    init(appSlug: String, limit: Int = 50, next: String? = nil) {
+    public init(appSlug: String, limit: Int = 50, next: String? = nil) {
         self.path = "/apps/\(appSlug)/builds"
         self.limit = limit
         self.next = next
     }
 }
 
-struct AppsBuilds {
+public struct AppsBuilds {
 
-    let data: [Build]
+    public let data: [Build]
 
-    struct Build: Hashable, AutoEquatable {
+    public struct Build: Hashable, AutoEquatable {
 
-        typealias Slug = String
+        public typealias Slug = String
 
-        let abort_reason: String?
-        let branch: String?
-        let build_number: Int
-        let commit_hash: String?
-        let commit_message: String?
-        let commit_view_url: String?
-        let environment_prepare_finished_at: Date?
-        let finished_at: Date?
-        let is_on_hold: Bool
-        let original_build_params: [String: Any]
-        let pull_request_id: Int?
-        let pull_request_target_branch: String?
-        let pull_request_view_url: String?
-        let slug: Slug
-        let stack_config_type: String?
-        let stack_identifier: String?
-        let started_on_worker_at: Date?
-        let status: Status
+        public let abort_reason: String?
+        public let branch: String?
+        public let build_number: Int
+        public let commit_hash: String?
+        public let commit_message: String?
+        public let commit_view_url: String?
+        public let environment_prepare_finished_at: Date?
+        public let finished_at: Date?
+        public let is_on_hold: Bool
+        public let original_build_params: [String: Any]
+        public let pull_request_id: Int?
+        public let pull_request_target_branch: String?
+        public let pull_request_view_url: String?
+        public let slug: Slug
+        public let stack_config_type: String?
+        public let stack_identifier: String?
+        public let started_on_worker_at: Date?
+        public let status: Status
 
-        enum Status: Int, Decodable {
+        public enum Status: Int, Decodable {
             case notFinished = 0
             case finished = 1
             case error = 2
             case aborted = 3
         }
 
-        let status_text: String
-        let tag: String?
-        let triggered_at: Date
-        let triggered_by: String?
-        let triggered_workflow: String
+        public let status_text: String
+        public let tag: String?
+        public let triggered_at: Date
+        public let triggered_by: String?
+        public let triggered_workflow: String
 
-        init(from json: JSON) {
+        public init(from json: JSON) {
             func decodeDate(from string: String?) -> Date? {
                 guard let string = string else { return nil }
                 let f = DateFormatter()
@@ -108,9 +101,9 @@ struct AppsBuilds {
         }
     }
 
-    let paging: Paging
+    public let paging: Paging
 
-    init(from json: JSON) {
+    public init(from json: JSON) {
         let dataJSONs = json["data"] as! [JSON]
         self.data = dataJSONs.map(Build.init)
         let pagingJSON = json["paging"] as! JSON
@@ -119,7 +112,7 @@ struct AppsBuilds {
 }
 
 extension AppsBuilds.Build {
-    var hashValue: Int {
+    public var hashValue: Int {
         return build_number
     }
 }

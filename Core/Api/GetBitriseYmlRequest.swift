@@ -8,10 +8,10 @@
 import APIKit
 import Foundation
 
-struct BitriseYmlDataParser: DataParser {
-    let contentType: String? = nil
+public struct BitriseYmlDataParser: DataParser {
+    public let contentType: String? = nil
 
-    func parse(data: Data) throws -> Any {
+    public func parse(data: Data) throws -> Any {
         if let str = String(data: data, encoding: .utf8) {
             return BitriseYml(ymlPayload: str)
         }
@@ -20,22 +20,22 @@ struct BitriseYmlDataParser: DataParser {
     }
 }
 
-struct GetBitriseYmlRequest: BitriseAPIRequest {
+public struct GetBitriseYmlRequest: BitriseAPIRequest {
 
-    typealias Response = BitriseYml
+    public typealias Response = BitriseYml
 
-    let path: String
-    var method: HTTPMethod {
+    public let path: String
+    public var method: HTTPMethod {
         return .get
     }
 
-    init(appSlug: String) {
+    public init(appSlug: String) {
         self.path = "apps/\(appSlug)/bitrise.yml"
     }
 
-    let dataParser: DataParser = BitriseYmlDataParser()
+    public let dataParser: DataParser = BitriseYmlDataParser()
 
-    func response(from object: Any, urlResponse: HTTPURLResponse) throws -> BitriseYml {
+    public func response(from object: Any, urlResponse: HTTPURLResponse) throws -> BitriseYml {
         if let yml = object as? BitriseYml {
             return yml
         }
@@ -44,7 +44,7 @@ struct GetBitriseYmlRequest: BitriseAPIRequest {
 }
 
 // TODO: implement detailed structure of bitrise.yml
-struct BitriseYml: Decodable {
+public struct BitriseYml: Decodable {
 
-    let ymlPayload: String
+    public let ymlPayload: String
 }

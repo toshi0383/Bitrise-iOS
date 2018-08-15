@@ -16,6 +16,7 @@ targets:
       Release: configs/BitriseClient-Release.xcconfig
     dependencies:
       - target: ActionPopoverButton
+      - target: Core
       - carthage: APIKit
       - carthage: DeepDiff
       - carthage: Highlightr
@@ -25,9 +26,6 @@ targets:
       - carthage: RxCocoa
       - carthage: RxSwift
       - carthage: TKKeyboardControl
-    prebuildScripts:
-      - name: sourcery
-        script: if [ -z $CI ];then sourcery;fi
   BitriseClientTests:
     platform: iOS
     type: bundle.unit-test
@@ -45,6 +43,19 @@ targets:
         - variable: TEST
           value: YESS
           isEnabled: true
+  Core:
+    platform: iOS
+    type: framework
+    sources:
+      - Core/
+    dependencies:
+      - carthage: APIKit
+    prebuildScripts:
+      - name: sourcery
+        script: if [ -z $CI ];then sourcery;fi
+    configFiles:
+      Debug: configs/Core.xcconfig
+      Release: configs/Core.xcconfig
   ActionPopoverButton:
     platform: iOS
     type: framework

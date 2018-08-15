@@ -1,10 +1,4 @@
-//
-//  AppCell.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/11.
-//
-
+import Core
 import UIKit
 
 final class AppCell: UITableViewCell {
