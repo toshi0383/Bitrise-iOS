@@ -1,10 +1,4 @@
-//
-//  AppsManager.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/12.
-//
-
+import Core
 import Foundation
 
 final class AppsManager {

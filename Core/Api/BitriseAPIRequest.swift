@@ -1,35 +1,37 @@
-//
-//  BitriseAPIRequest.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/11.
-//
-
 import APIKit
 import Foundation
 
-protocol BitriseAPIRequest: Request { }
+public protocol BitriseAPIRequest: Request {
+    var personalAccessToken: String? { get }
+}
+
+public typealias JSON = [String: Any]
 
 extension BitriseAPIRequest {
-    var baseURL: URL {
+
+    public var personalAccessToken: String? {
+        return APIConfig.getToken()
+    }
+
+    public var baseURL: URL {
         return URL(string: "https://api.bitrise.io/v0.1")!
     }
 
-    var method: HTTPMethod {
+    public var method: HTTPMethod {
         return .get
     }
 
-    var headerFields: [String : String] {
+    public var headerFields: [String : String] {
         var fields: [String: String] = [:]
 
-        if let token = Config.personalAccessToken {
+        if let token = personalAccessToken {
             fields["Authorization"] = "token \(token)"
         }
 
         return fields
     }
 
-    func intercept(urlRequest: URLRequest) throws -> URLRequest {
+    public func intercept(urlRequest: URLRequest) throws -> URLRequest {
         #if DEBUG
 //            print(urlRequest)
             if let headers = urlRequest.allHTTPHeaderFields {
@@ -41,11 +43,11 @@ extension BitriseAPIRequest {
 }
 
 extension BitriseAPIRequest where Response: Decodable {
-    var dataParser: DataParser {
+    public var dataParser: DataParser {
         return _DataParser()
     }
 
-    func response(from object: Any, urlResponse: HTTPURLResponse) throws -> Response {
+    public func response(from object: Any, urlResponse: HTTPURLResponse) throws -> Response {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         if let data = object as? Data {
@@ -57,11 +59,11 @@ extension BitriseAPIRequest where Response: Decodable {
 }
 
 extension BitriseAPIRequest where Response == JSON {
-    var dataParser: DataParser {
+    public var dataParser: DataParser {
         return _DataParser()
     }
 
-    func response(from object: Any, urlResponse: HTTPURLResponse) throws -> Response {
+    public func response(from object: Any, urlResponse: HTTPURLResponse) throws -> Response {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         if let data = object as? Data,
@@ -81,10 +83,10 @@ private class _DataParser: DataParser {
     }
 }
 
-struct Paging: Decodable {
-    let page_item_limit: Int
-    let total_item_count: Int
-    let next: String?
+public struct Paging: Decodable {
+    public let page_item_limit: Int
+    public let total_item_count: Int
+    public let next: String?
 
     init(from json: JSON) {
         self.next = json["next"] as? String

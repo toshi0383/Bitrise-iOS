@@ -26,7 +26,7 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - AutoEquatable for classes, protocols, structs
 // MARK: - AppsBuilds.Build AutoEquatable
 extension AppsBuilds.Build: Equatable {} 
-internal func == (lhs: AppsBuilds.Build, rhs: AppsBuilds.Build) -> Bool {
+public func == (lhs: AppsBuilds.Build, rhs: AppsBuilds.Build) -> Bool {
     guard compareOptionals(lhs: lhs.abort_reason, rhs: rhs.abort_reason, compare: ==) else { return false }
     guard compareOptionals(lhs: lhs.branch, rhs: rhs.branch, compare: ==) else { return false }
     guard lhs.build_number == rhs.build_number else { return false }

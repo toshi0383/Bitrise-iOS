@@ -1,11 +1,5 @@
-//
-//  BuildsListViewModel.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/23.
-//
-
 import APIKit
+import Core
 import DeepDiff
 import Foundation
 import RxSwift
