@@ -1,0 +1,3 @@
+[submodule "RxProperty"]
+	path = RxProperty
+	url = git@github.com:inamiy/RxProperty.git

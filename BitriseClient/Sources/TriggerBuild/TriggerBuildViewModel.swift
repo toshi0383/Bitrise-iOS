@@ -6,9 +6,10 @@
 //  Copyright © 2018 toshi0383. All rights reserved.
 //
 
-import Continuum
 import Foundation
 import RealmSwift
+import RxCocoa
+import RxSwift
 
 typealias WorkflowID = String
 typealias AppSlug = String
@@ -18,19 +19,17 @@ typealias AppSlug = String
 /// - performs database update
 /// - publish states for view
 /// - triggers new builds via network
-///
-/// Let's say it's a fat viewcontroller but is testable.
-final class TriggerBuildLogicStore {
+final class TriggerBuildViewModel {
 
     // MARK: Output
 
-    let buildDidTriggerRelay: Constant<Void?>
-    let alertMessage: Constant<String>
+    let buildDidTrigger: Observable<Void>
+    let alertMessage: Observable<String>
 
     // MARK: Private
 
-    private let _buildDidTriggerRelay = Variable<Void?>(value: nil)
-    private let _alertMessage = Variable<String>(value: "")
+    private let _buildDidTrigger = PublishRelay<Void>()
+    private let _alertMessage = PublishRelay<String>()
 
     private var realmObject: BuildTriggerRealm!
 
@@ -39,8 +38,8 @@ final class TriggerBuildLogicStore {
     /// NOTE: Accesses to realm in current thread.
     init(appSlug: String) {
 
-        buildDidTriggerRelay = Constant(variable: _buildDidTriggerRelay)
-        alertMessage = Constant(variable: _alertMessage)
+        buildDidTrigger = _buildDidTrigger.asObservable()
+        alertMessage = _alertMessage.asObservable()
 
         let realm = Realm.getRealm()
 
@@ -212,7 +211,7 @@ final class TriggerBuildLogicStore {
                 }
             }()
 
-            me._buildDidTriggerRelay.value = ()
+            me._buildDidTrigger.accept(())
 
             me.alert("Success\n\(str)")
         }
@@ -221,7 +220,7 @@ final class TriggerBuildLogicStore {
     }
 
     private func alert(_ string: String) {
-        _alertMessage.value = string
+        _alertMessage.accept(string)
     }
 }
 

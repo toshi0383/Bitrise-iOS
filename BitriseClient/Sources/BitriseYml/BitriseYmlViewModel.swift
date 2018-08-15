@@ -6,8 +6,9 @@
 //
 
 import APIKit
-import Continuum
 import Foundation
+import RxCocoa
+import RxSwift
 
 final class BitriseYmlViewModel {
 
@@ -19,14 +20,14 @@ final class BitriseYmlViewModel {
 
     // MARK: Output
 
-    let ymlPayload: Constant<String>
-    private let _ymlPayload = Variable<String>(value: "")
+    let ymlPayload: Property<String>
+    private let _ymlPayload = BehaviorRelay<String>(value: "")
 
-    let editState: Constant<EditState>
-    private let _editState = Variable<EditState>(value: .initial)
+    let editState: Property<EditState>
+    private let _editState = BehaviorRelay<EditState>(value: .initial)
 
-    let alertMessage: Constant<String>
-    private let _alertMessage = Variable<String>(value: "")
+    let alertMessage: Observable<String>
+    private let _alertMessage = PublishRelay<String>()
 
     let appName: String
 
@@ -39,9 +40,9 @@ final class BitriseYmlViewModel {
     init(appSlug: AppSlug, appName: String) {
         self.appSlug = appSlug
         self.appName = appName
-        self.ymlPayload = Constant(variable: _ymlPayload)
-        self.editState = Constant(variable: _editState)
-        self.alertMessage = Constant(variable: _alertMessage)
+        self.ymlPayload = Property(_ymlPayload)
+        self.editState = Property(_editState)
+        self.alertMessage = _alertMessage.asObservable()
 
         let req = GetBitriseYmlRequest(appSlug: appSlug)
         Session.shared.send(req) { [weak self] r in
@@ -49,7 +50,7 @@ final class BitriseYmlViewModel {
 
             switch r {
             case .success(let value):
-                me._ymlPayload.value = value.ymlPayload
+                me._ymlPayload.accept(value.ymlPayload)
             case .failure(let error):
                 fatalError("ERROR: \(error)")
             }
@@ -62,14 +63,14 @@ final class BitriseYmlViewModel {
         switch editState.value {
         case .initial:
             // start editing
-            _editState.value = .editing
+            _editState.accept(.editing)
             break
         case .saving:
             // ignore
             break
         case .editing:
 
-            _editState.value = .saving
+            _editState.accept(.saving)
 
             // TODO: fetch, compare and check for any conflicts
             let req = PostBitriseYmlRequest(appSlug: appSlug, ymlString: ymlPayload.value)
@@ -78,11 +79,11 @@ final class BitriseYmlViewModel {
 
                 switch result {
                 case .success:
-                    // me._alertMessage.value = "Yml Upload Success!"
-                    me._editState.value = .initial
+                    // me._alertMessage.accept("Yml Upload Success!")
+                    me._editState.accept(.initial)
 
                 case .failure(let error):
-                    me._alertMessage.value = "Yml Upload Error: \(error)"
+                    me._alertMessage.accept("Yml Upload Error: \(error)")
                 }
             }
         }

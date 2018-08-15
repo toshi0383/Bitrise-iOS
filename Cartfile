@@ -1,6 +1,6 @@
 github "cokaholic/TKKeyboardControl" "master"
 github "ishkawa/APIKit"
-github "marty-suzuki/Continuum"
+github "ReactiveX/RxSwift"
 github "onmyway133/DeepDiff"
 github "realm/realm-cocoa"
 github "raspu/Highlightr"

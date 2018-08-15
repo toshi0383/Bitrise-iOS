@@ -1,4 +1,6 @@
 name: BitriseClient
+options:
+  minimumXcodeGenVersion: 1.10.3
 configFiles:
   Debug: configs/Debug.xcconfig
   Release: configs/Release.xcconfig
@@ -8,18 +10,20 @@ targets:
     type: application
     sources:
       - BitriseClient
+      - RxProperty/RxProperty.swift
     configFiles:
       Debug: configs/BitriseClient-Debug.xcconfig
       Release: configs/BitriseClient-Release.xcconfig
     dependencies:
       - target: ActionPopoverButton
       - carthage: APIKit
-      - carthage: Continuum
       - carthage: DeepDiff
       - carthage: Highlightr
       - carthage: Result
       - carthage: Realm
       - carthage: RealmSwift
+      - carthage: RxCocoa
+      - carthage: RxSwift
       - carthage: TKKeyboardControl
     prebuildScripts:
       - name: sourcery
