@@ -20,66 +20,47 @@ Bitrise iOS Client app 🚀
   + download / upload
   + Syntax Highlight
 
-Feel free to contrbute👌 I'm going to move these TODOs to GitHub issues.
-
-# Getting Started
+# Building Project
 
 ## Setup Carthage
 Install the latest version of Carthage.
-```
+```console
 brew install carthage
 ```
 
 Run following to build dependency frameworks.
-```
+```console
 carthage bootstrap --platform iOS
 ```
 
 ## Generate xcodeproj
 
-Please install the latest version of [XcodeGen](https://github.com/yonaskolb/XcodeGen) on your own.
-```
-mint install yonaskolb/XcodeGen
-```
+Install the latest version of [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
-Generate xcodeproj by running command below.
-```
-mint run xcodegen
+Then generate xcodeproj.
+```console
+xcodegen
 ```
 
-Now you can open the xcodeproj, build it, and run.👌
+Open the xcodeproj, build and run.
 
-## Set credentials in app
-You need to set credentials below to use full feature of this app.
+## Set `DEVELOPMENT_TEAM` in `configs/user.xcconfig`
+So you don't have to modify it from Xcode everytime after you run `xcodegen`.
 
-All tokens are securely stored in encrypted database using Realm. Encrypted key is stored in your keychain. Don't worry, it's safe.😉
+# Required Credentials
+You need credentials below to use full feature of this app.
 
-https://realm.io/docs/swift/latest/#encryption
+All tokens are securely stored in encrypted Realm database. Corresponding encryption key is stored in your keychain. [It's the way Realm recommends.](https://realm.io/docs/swift/latest/#encryption)
 
-### Bitrise Personal Access Token
+## Bitrise Personal Access Token
 Required to access Bitrise v0.1 API.
 
 SeeAlso: http://devcenter.bitrise.io/api/v0.1/#authentication
 
-### API Token for Build Trigger API
+## Build Trigger Token
 This is different for each app.
 
 SeeAlso: http://devcenter.bitrise.io/api/build-trigger
-
-### Pro tip: use `configs/user.xcconfig` to pre-define workflows.
-
-You can define workflowIDs preset for each apps by using `TRIGGER_BUILD_WORKFLOW_IDS`. This way you don't have to manually add workflowIDs.
-
-The format is in JSON. Use AppSlug as a key and set **whitespace separated string** as workflowIDs.
-
-e.g.
-```
-TRIGGER_BUILD_WORKFLOW_IDS={ "fdc3abbc325071dd": "beta danger release test" }
-```
-
-Put this in `configs/user.xcconfig`, so the app can read and store parsed values in database at initial launch. Make sure you clean install for this config to take effect.
-
-`user.xcconfig` is ignored by git. (listed in `.gitignore`)
 
 # License
 MIT
