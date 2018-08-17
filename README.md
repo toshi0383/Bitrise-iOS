@@ -53,12 +53,16 @@ You need credentials below to use full feature of this app.
 All tokens are securely stored in encrypted Realm database. Corresponding encryption key is stored in your keychain. [It's the way Realm recommends.](https://realm.io/docs/swift/latest/#encryption)
 
 ## Bitrise Personal Access Token
-Required to access Bitrise v0.1 API.
+Required to access Bitrise v0.1 API. Generate one in the setting page.
+
+![Personal Access Token](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/personal-access-token.png)
 
 SeeAlso: http://devcenter.bitrise.io/api/v0.1/#authentication
 
 ## Build Trigger Token
-This is different for each app.
+This is different for each app. Get one from dashboard.
+
+![Build Trigger Token](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/build-trigger-token.png)
 
 SeeAlso: http://devcenter.bitrise.io/api/build-trigger
 

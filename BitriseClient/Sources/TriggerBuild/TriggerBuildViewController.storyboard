@@ -80,15 +80,27 @@
                                                             <outlet property="stackView" destination="bPj-x8-7ea" id="tIk-iM-5Ai"/>
                                                         </connections>
                                                     </view>
-                                                    <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="API token" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1oX-LG-GSH">
-                                                        <rect key="frame" x="76.333333333333343" y="109" width="82.666666666666657" height="25"/>
-                                                        <nil key="textColor"/>
-                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                        <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
-                                                    </textField>
+                                                    <stackView opaque="NO" contentMode="scaleToFill" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="fTE-bd-Utb">
+                                                        <rect key="frame" x="0.0" y="109" width="235" height="25"/>
+                                                        <subviews>
+                                                            <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Build Trigger Token" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1oX-LG-GSH">
+                                                                <rect key="frame" x="0.0" y="0.0" width="204" height="25"/>
+                                                                <nil key="textColor"/>
+                                                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                                <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
+                                                            </textField>
+                                                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y4w-Z8-7la">
+                                                                <rect key="frame" x="213" y="0.0" width="22" height="25"/>
+                                                                <connections>
+                                                                    <action selector="tokenInfoButton" destination="KGZ-dF-ioA" eventType="touchUpInside" id="5Uf-JL-EAw"/>
+                                                                </connections>
+                                                            </button>
+                                                        </subviews>
+                                                    </stackView>
                                                 </subviews>
                                                 <constraints>
                                                     <constraint firstAttribute="height" constant="134" id="Jvj-hQ-s9L"/>
+                                                    <constraint firstItem="fTE-bd-Utb" firstAttribute="width" secondItem="bLt-zh-8Sn" secondAttribute="width" id="NXD-U8-9vl"/>
                                                 </constraints>
                                             </stackView>
                                         </subviews>
@@ -171,7 +183,7 @@
                                                                     </connections>
                                                                 </switch>
                                                                 <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="6Qc-s0-iEy">
-                                                                    <rect key="frame" x="59" y="6.6666666666666679" width="300" height="30.000000000000004"/>
+                                                                    <rect key="frame" x="59" y="7" width="300" height="30"/>
                                                                     <subviews>
                                                                         <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="KEY" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="ubw-P3-24Y">
                                                                             <rect key="frame" x="0.0" y="0.0" width="148" height="30"/>
