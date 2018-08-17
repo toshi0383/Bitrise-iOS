@@ -1,4 +1,5 @@
 import RxSwift
+import SafariServices
 import TKKeyboardControl
 import UIKit
 
@@ -173,6 +174,12 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         apiTokenTextfield.resignFirstResponder()
 
         viewModel.triggerBuild()
+    }
+
+    @IBAction private func tokenInfoButton() {
+        let url = URL(string: "https://github.com/toshi0383/Bitrise-iOS/blob/master/README.md#build-trigger-token")!
+        let vc = SFSafariViewController(url: url)
+        self.present(vc, animated: true, completion: nil)
     }
 
     // MARK: UITableViewDataSource & UITableViewDelegate
