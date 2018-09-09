@@ -20,6 +20,7 @@ public struct SingleBuildRequest: BitriseAPIRequest {
 }
 
 public struct SingleBuild {
+
     public let data: AppsBuilds.Build
 
     public init(from json: JSON) {
