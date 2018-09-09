@@ -1,12 +1,3 @@
-//
-//  BuildPollingManagerPool.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/03/08.
-//
-
-import Foundation
-
 final class BuildPollingManagerPool {
     static let shared = BuildPollingManagerPool()
 

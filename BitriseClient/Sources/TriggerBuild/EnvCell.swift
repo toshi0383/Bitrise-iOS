@@ -1,10 +1,3 @@
-//
-//  EnvCell.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/06/22.
-//
-
 import UIKit
 
 final class EnvCell: UITableViewCell {

@@ -1,12 +1,4 @@
-//
-//  UIViewExtensions.swift
-//  ActionPopoverButton
-//
-//  Created by Toshihiro Suzuki on 2018/02/10.
-//
-
 import UIKit
-
 
 public struct HitTestHooking<Base> {
     /// Base object to extend.

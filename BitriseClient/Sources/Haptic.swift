@@ -1,10 +1,3 @@
-//
-//  Haptic.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/22.
-//
-
 import UIKit
 
 final class Haptic {

@@ -1,10 +1,3 @@
-//
-//  SingleBuildRequest.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/03/08.
-//
-
 import APIKit
 import Foundation
 

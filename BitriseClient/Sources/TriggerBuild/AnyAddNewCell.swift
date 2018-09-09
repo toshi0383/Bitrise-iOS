@@ -1,10 +1,3 @@
-//
-//  AnyAddNewCell.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/18.
-//
-
 import UIKit
 
 // Add workflowID or environment

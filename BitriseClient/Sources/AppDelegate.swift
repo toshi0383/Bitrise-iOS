@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2017/12/19.
-//  Copyright © 2017 toshi0383. All rights reserved.
-//
-
 import ActionPopoverButton
 import Core
 import UIKit
