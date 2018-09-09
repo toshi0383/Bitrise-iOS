@@ -1,10 +1,3 @@
-//
-//  ActionPopoverButton.h
-//  ActionPopoverButton
-//
-//  Created by Toshihiro Suzuki on 2018/02/10.
-//
-
 #import <UIKit/UIKit.h>
 
 //! Project version number for ActionPopoverButton.

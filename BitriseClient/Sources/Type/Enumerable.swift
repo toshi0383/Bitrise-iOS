@@ -1,11 +1,3 @@
-//
-//  Enumerable.swift
-//  AbemaTV
-//
-//  Created by Yuji Hato on 6/10/16.
-//  Copyright © 2016 Abema TV, Inc. All rights reserved.
-//
-
 public protocol Enumerable {
     associatedtype Element = Self
 }

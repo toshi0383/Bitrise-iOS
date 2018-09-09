@@ -1,10 +1,3 @@
-//
-//  UIViewExtension.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/12.
-//
-
 import UIKit
 
 extension UIView {

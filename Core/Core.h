@@ -1,10 +1,3 @@
-//
-//  Core.h
-//  Core
-//
-//  Created by 鈴木俊裕 on 2018/08/15.
-//
-
 #import <UIKit/UIKit.h>
 
 //! Project version number for Core.

@@ -160,8 +160,8 @@ final class TriggerBuildViewModel {
         let environments: [JSON] = self.environments.compactMap { $0.enabled ? $0.json : nil }
         let body = BuildTriggerRequest(hook_info: .init(api_token: token),
                                        build_params: gitObject.json
-                                        + ["workflow_id": workflowID]
-                                        + ["environments": environments])
+                                        |+| ["workflow_id": workflowID]
+                                        |+| ["environments": environments])
         req.httpBody = try! body.encode()
         req.httpMethod = "POST"
 
@@ -215,11 +215,4 @@ final class TriggerBuildViewModel {
     private func alert(_ string: String) {
         _alertMessage.accept(string)
     }
-}
-
-func + (_ lhs: JSON, _ rhs: JSON) -> JSON {
-    var r: JSON = [:]
-    lhs.forEach { r[$0] = $1 }
-    rhs.forEach { r[$0] = $1 }
-    return r
 }

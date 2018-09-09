@@ -2,6 +2,7 @@ import APIKit
 import Foundation
 
 public struct AppsBuildsAbortRequest: BitriseAPIRequest {
+
     public typealias Response = AppsBuildsAbort
 
     public let path: String

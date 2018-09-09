@@ -5,8 +5,6 @@ public protocol BitriseAPIRequest: Request {
     var personalAccessToken: String? { get }
 }
 
-public typealias JSON = [String: Any]
-
 extension BitriseAPIRequest {
 
     public var personalAccessToken: String? {

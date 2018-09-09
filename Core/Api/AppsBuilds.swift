@@ -6,6 +6,7 @@ public struct AppsBuildsRequest: BitriseAPIRequest {
     public typealias Response = JSON
 
     public let path: String
+
     private let limit: Int
     private let next: String?
 

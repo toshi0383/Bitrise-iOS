@@ -1,11 +1,4 @@
-//
-//  UIDeviceExtensions.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/12.
-//
-
-import UIKit
+import Foundation
 
 private func getVersionCode() -> String {
     var systemInfo = utsname()

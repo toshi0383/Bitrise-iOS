@@ -1,10 +1,3 @@
-//
-//  SingleBuildRequest.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/03/08.
-//
-
 import APIKit
 import Foundation
 
@@ -20,6 +13,7 @@ public struct SingleBuildRequest: BitriseAPIRequest {
 }
 
 public struct SingleBuild {
+
     public let data: AppsBuilds.Build
 
     public init(from json: JSON) {

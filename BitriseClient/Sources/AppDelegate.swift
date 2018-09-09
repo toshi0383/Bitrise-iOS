@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2017/12/19.
-//  Copyright © 2017 toshi0383. All rights reserved.
-//
-
 import ActionPopoverButton
 import Core
 import UIKit
@@ -17,7 +9,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
 
-        if ProcessInfo.processInfo.environment["TEST"] == "YESS" {
+        if isTest() {
             return true
         }
 

@@ -1,11 +1,3 @@
-//
-//  Config.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/09.
-//  Copyright © 2018 toshi0383. All rights reserved.
-//
-
 import Foundation
 import RealmSwift
 import UIKit

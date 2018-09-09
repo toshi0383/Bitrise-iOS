@@ -1,10 +1,3 @@
-//
-//  GitObjectInputView.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/09.
-//
-
 import ActionPopoverButton
 import RxSwift
 import RxCocoa

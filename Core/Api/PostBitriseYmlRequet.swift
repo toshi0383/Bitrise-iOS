@@ -1,10 +1,3 @@
-//
-//  PostBitriseYmlRequet.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/04/28.
-//
-
 import APIKit
 import Foundation
 
@@ -15,6 +8,8 @@ public struct PostBitriseYmlRequest: BitriseAPIRequest {
 
     public let path: String
     public let ymlString: String
+    public let dataParser: DataParser = BitriseYmlDataParser()
+
     public var method: HTTPMethod {
         return .post
     }
@@ -28,8 +23,6 @@ public struct PostBitriseYmlRequest: BitriseAPIRequest {
         return JSONBodyParameters(JSONObject:
             ["app_config_datastore_yaml": ymlString])
     }
-
-    public let dataParser: DataParser = BitriseYmlDataParser()
 
     public func response(from object: Any, urlResponse: HTTPURLResponse) throws -> BitriseYml {
         if let yml = object as? BitriseYml {

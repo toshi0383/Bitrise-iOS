@@ -1,12 +1,3 @@
-//
-//  GitObject.swift
-//  BitriseClient
-//
-//  Created by Toshihiro Suzuki on 2018/02/10.
-//
-
-import Foundation
-
 enum GitObject {
 
     case branch(String), tag(String), commitHash(String)
