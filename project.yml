@@ -32,17 +32,14 @@ targets:
     configFiles:
       Debug: configs/BitriseClientTests-Debug.xcconfig
     sources:
-      - Tests/BitriseClientTests
+      - Tests/
     dependencies:
       - target: BitriseClient
+      - target: Core
     scheme:
       testTargets:
         - BitriseClientTests
       gatherCoverageData: true
-      environmentVariables:
-        - variable: TEST
-          value: YESS
-          isEnabled: true
   Core:
     platform: iOS
     type: framework
