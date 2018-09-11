@@ -8,7 +8,7 @@ final class TutorialViewController: UIViewController, Storyboardable, UITextFiel
     @IBOutlet private weak var textField: UITextField! {
         didSet {
             textField.delegate = self
-            textField.text = Config.personalAccessToken
+            textField.text = Config.shared.personalAccessToken
         }
     }
 
@@ -73,7 +73,8 @@ final class TutorialViewController: UIViewController, Storyboardable, UITextFiel
         guard let text = textField.text, !text.isEmpty else {
             return
         }
-        Config.personalAccessToken = text
+
+        Config.shared.personalAccessToken = text
         Haptic.generate(.light)
         Router.shared.showAppsList()
     }

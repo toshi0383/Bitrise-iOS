@@ -1,67 +1,75 @@
 import APIKit
 import Core
 import Foundation
+import RxCocoa
+import RxSwift
 import UIKit
 
 final class Router {
     static let shared = Router()
 
-    var appWindow: UIWindow?
+    private static var fetchMeApps: (MeAppsRequest) -> Observable<MeAppsRequest.Response> {
+        return Session.shared.rx.send
+    }
+
+    private let fetchMeApps: (MeAppsRequest) -> Observable<MeAppsRequest.Response>
+    private let appsManager: AppsManager
+    private let config: ConfigType
+
+    init(fetchMeApps: @escaping (MeAppsRequest) -> Observable<MeAppsRequest.Response> = Router.fetchMeApps,
+         appsManager: AppsManager = .shared,
+         config: ConfigType = Config.shared) {
+        self.fetchMeApps = fetchMeApps
+        self.appsManager = appsManager
+        self.config = config
+    }
+
+    let route = BehaviorRelay<[Route]>(value: [.launch])
+
+    private let disposeBag = DisposeBag()
 
     func showTutorial() {
-        let vc = TutorialViewController.makeFromStoryboard()
-        let nc = UINavigationController(rootViewController: vc)
-        nc.isNavigationBarHidden = true
-        appWindow?.rootViewController = nc
-        appWindow?.makeKeyAndVisible()
+        route.accept([.tutorial])
     }
 
     func showAppsList() {
 
-        do {
-            let vc = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateInitialViewController()
-            self.appWindow?.rootViewController = vc
-            self.appWindow?.makeKeyAndVisible()
-        }
+        route.accept([.launch])
 
-        let req = MeAppsRequest()
-        Session.shared.send(req) { [unowned self] result in
+        fetchMeApps(MeAppsRequest())
+            .subscribe(
+                onNext: { [weak self] res in
+                    guard let me = self else { return }
 
-            switch result {
-            case .success(let res):
+                    me.appsManager.apps = res.data
 
-                AppsManager.shared.apps = res.data
-
-                let cond: (MeApps.App) -> Bool = {
-                    if let appname = Config.lastAppNameVisited {
-                        return $0.title == appname
-                    } else {
-                        return true
+                    let cond: (MeApps.App) -> Bool = {
+                        if let appname = me.config.lastAppNameVisited {
+                            return $0.title == appname
+                        } else {
+                            return true
+                        }
                     }
-                }
 
-                if let fst = res.data.first(where: cond) {
-                    DispatchQueue.main.async { [unowned self] in
-
+                    if let fst = res.data.first(where: cond) {
                         // buildvc on top of appvc
-                        let appvc = AppsListViewController.makeFromStoryboard(.init())
-                        let buildvc = BuildsListViewController.makeFromStoryboard(
-                            .init(viewModel: .init(appSlug: fst.slug, appName: fst.title))
-                        )
-                        let nc = UINavigationController()
-
-                        nc.setViewControllers([appvc, buildvc], animated: false)
-                        self.appWindow?.rootViewController = nc
+                        me.route.accept([.appsList, .buildsList(fst)])
                     }
+                },
+
+                onError: { [weak self] _ in
+                    guard let me = self else { return }
+
+                    me.showTutorial()
                 }
-            case .failure(let error):
-                #if DEBUG
-                    print(error)
-                #endif
+            )
+            .disposed(by: disposeBag)
 
-                self.showTutorial()
-            }
-        }
+    }
+}
 
+extension Router {
+    enum Route: Equatable {
+        case appsList, buildsList(MeApps.App), launch, tutorial
     }
 }

@@ -1,49 +1,22 @@
-import Foundation
 import RealmSwift
 import UIKit
 
-// - MARK: InfoPlist
+// - MARK: ConfigType
 
-private let InfoPlist = _InfoPlist()
-
-private class _InfoPlist {
-    private let _Plist = Bundle.main.infoDictionary!
-
-    enum OptionalDictionaryKey: String {
-        case TRIGGER_BUILD_WORKFLOW_IDS
-    }
-
-    subscript(key: OptionalDictionaryKey) -> [String: String]? {
-        if let s = _Plist["\(key)"] as? String, !s.isEmpty {
-            return try! JSONDecoder().decode([String: String].self, from: s.data(using: .utf8)!)
-        } else {
-            return nil
-        }
-    }
+protocol ConfigType {
+    var personalAccessToken: String? { get }
+    var lastAppNameVisited: String? { get }
 }
 
 // - MARK: Config
 
-final class Config {
+final class Config: ConfigType {
 
-    static var workflowIDsMap: [AppSlug: [WorkflowID]] {
-        guard let dictionary = InfoPlist[.TRIGGER_BUILD_WORKFLOW_IDS] else {
-            return [:]
-        }
-
-        return dictionary.mapValues(stringToStrArray)
-    }
-
-    private static func stringToStrArray(_ string: String) -> [String] {
-        return string
-            .split(separator: " ")
-            .filter { !$0.isEmpty }
-            .map { String($0) }
-    }
+    static let shared = Config()
 
     // MARK: PersonalAccessToken
 
-    static var personalAccessToken: String? {
+    var personalAccessToken: String? {
         get {
             let realm = Realm.getRealm()
             return realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1")?.personalAccessToken
@@ -60,7 +33,7 @@ final class Config {
 
     // MARK: lastAppNameVisited
 
-    static var lastAppNameVisited: String? {
+    var lastAppNameVisited: String? {
         get {
             let realm = Realm.getRealm()
             return realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1")?.lastAppNameVisited

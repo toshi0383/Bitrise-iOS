@@ -10,10 +10,10 @@ public struct MeAppsRequest: BitriseAPIRequest {
     public init() { }
 }
 
-public struct MeApps: Decodable {
+public struct MeApps: Decodable, Equatable {
     public let data: [App]
 
-    public struct App: Decodable {
+    public struct App: Decodable, Equatable {
         public let is_disabled: Bool
         public let project_type: String
         public let provider: String

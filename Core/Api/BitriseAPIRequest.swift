@@ -81,11 +81,13 @@ private class _DataParser: DataParser {
     }
 }
 
-public struct Paging: Decodable {
+public struct Paging: Decodable, Equatable {
     public let page_item_limit: Int
     public let total_item_count: Int
     public let next: String?
+}
 
+extension Paging {
     init(from json: JSON) {
         self.next = json["next"] as? String
         self.page_item_limit = json["page_item_limit"] as! Int

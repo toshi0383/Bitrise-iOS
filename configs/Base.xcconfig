@@ -1,7 +1,7 @@
 // Generated using xcconfig-extractor 0.4.0 by Toshihiro Suzuki - https://github.com/toshi0383/xcconfig-extractor
 #include "user.xcconfig"
 PRODUCT_NAME = $(TARGET_NAME)
-SWIFT_VERSION = 4.0
+SWIFT_VERSION = 4.1
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks
 INFOPLIST_FILE = BitriseClient/Info.plist
 TARGETED_DEVICE_FAMILY = 1,2

@@ -48,7 +48,7 @@ final class BuildsListViewModel {
                     guard let me = self else { return }
 
                     // save app-title
-                    Config.lastAppNameVisited = me.appName
+                    Config.shared.lastAppNameVisited = me.appName
 
                     me.fetchDataAndReloadTable()
                 })
