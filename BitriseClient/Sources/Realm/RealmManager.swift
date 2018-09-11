@@ -3,38 +3,6 @@ import Realm
 import RealmSwift
 import Security
 
-//protocol RealmConvertible {
-//    var allProperties: [String: Any?] { get }
-//}
-
-final class RealmManager {
-    static let shared = RealmManager()
-    private init() { }
-
-    func initialize() {
-        let realm = Realm.getRealm()
-
-        if realm.objects(BuildTriggerRealm.self).isEmpty {
-            let objects = Config.workflowIDsMap
-                .map { (arg: (AppSlug, [WorkflowID])) -> BuildTriggerRealm in
-                    let (appSlug, workflowIDs) = arg
-                    let gitObject = GitObject.branch("")
-                    let properties: [String: Any?] = [
-                        "appSlug": appSlug,
-                        "gitObjectValue": gitObject.associatedValue,
-                        "gitObjectType": gitObject.type,
-                        "workflowIDs": workflowIDs,
-                        "apiToken": NSNull(),
-                    ]
-                    return BuildTriggerRealm(value: properties)
-                }
-            try! realm.write {
-                realm.add(objects)
-            }
-        }
-    }
-}
-
 extension Realm {
 
     static func getRealm() -> Realm {

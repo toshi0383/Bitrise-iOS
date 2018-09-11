@@ -16,17 +16,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
 
-        Core.APIConfig.getToken = { Config.personalAccessToken }
+        Core.APIConfig.getToken = { Config.shared.personalAccessToken }
 
         // [ActionPopoverButton]
         UIView.hth.exchangeMethods()
 
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-
-        DispatchQueue.global().async {
-            RealmManager.shared.initialize()
-        }
 
         Router.shared.route
             .filterEmpty()
@@ -71,7 +67,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             })
             .disposed(by: disposeBag)
 
-         if Config.personalAccessToken == nil {
+         if Config.shared.personalAccessToken == nil {
             Router.shared.showTutorial()
          } else {
              Router.shared.showAppsList()

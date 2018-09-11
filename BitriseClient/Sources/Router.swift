@@ -14,11 +14,14 @@ final class Router {
 
     private let fetchMeApps: (MeAppsRequest) -> Observable<MeAppsRequest.Response>
     private let appsManager: AppsManager
+    private let config: ConfigType
 
     init(fetchMeApps: @escaping (MeAppsRequest) -> Observable<MeAppsRequest.Response> = Router.fetchMeApps,
-         appsManager: AppsManager = .shared) {
+         appsManager: AppsManager = .shared,
+         config: ConfigType = Config.shared) {
         self.fetchMeApps = fetchMeApps
         self.appsManager = appsManager
+        self.config = config
     }
 
     let route = BehaviorRelay<[Route]>(value: [.launch])
@@ -41,7 +44,7 @@ final class Router {
                     me.appsManager.apps = res.data
 
                     let cond: (MeApps.App) -> Bool = {
-                        if let appname = Config.lastAppNameVisited {
+                        if let appname = me.config.lastAppNameVisited {
                             return $0.title == appname
                         } else {
                             return true
@@ -66,7 +69,7 @@ final class Router {
 }
 
 extension Router {
-    enum Route {
+    enum Route: Equatable {
         case appsList, buildsList(MeApps.App), launch, tutorial
     }
 }
