@@ -196,7 +196,7 @@ final class BitriseYmlViewController: UIViewController {
     }
 
     private lazy var loadingView: UIView = {
-        let v = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+        let v = UIActivityIndicatorView(style: .whiteLarge)
         v.translatesAutoresizingMaskIntoConstraints = false
         let base = UIView()
         base.translatesAutoresizingMaskIntoConstraints = false

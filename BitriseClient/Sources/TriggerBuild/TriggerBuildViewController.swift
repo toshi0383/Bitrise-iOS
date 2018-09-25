@@ -216,7 +216,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
                 let ip = IndexPath(row: me.viewModel.workflowIDs.count, section: indexPath.section - 1)
                 me.viewModel.appendWorkflowID(text)
-                me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
+                me.tableView.insertRows(at: [ip], with: UITableView.RowAnimation.automatic)
                 me.tableView.scrollToRow(at: ip, at: .top, animated: true)
             }
             return cell
@@ -243,7 +243,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
                 let ip = IndexPath(row: me.viewModel.environments.count, section: indexPath.section - 1)
                 me.viewModel.appendEnvironment((splitted[0], splitted[1]))
-                me.tableView.insertRows(at: [ip], with: UITableViewRowAnimation.automatic)
+                me.tableView.insertRows(at: [ip], with: UITableView.RowAnimation.automatic)
                 me.tableView.scrollToRow(at: ip, at: .top, animated: true)
             }
             return cell
@@ -264,7 +264,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         return indexPath.section % 2 == 0
     }
 
-    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle != .delete {
             return
         }

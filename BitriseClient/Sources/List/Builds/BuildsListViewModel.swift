@@ -27,11 +27,11 @@ final class BuildsListViewModel {
 
     struct AlertAction {
         let title: String
-        let style: UIAlertActionStyle
+        let style: UIAlertAction.Style
         let handler: ((UIAlertAction) -> ())?
 
         init(title: String,
-             style: UIAlertActionStyle = .default,
+             style: UIAlertAction.Style = .default,
              handler: ((UIAlertAction) -> ())?) {
             self.title = title
             self.style = style
