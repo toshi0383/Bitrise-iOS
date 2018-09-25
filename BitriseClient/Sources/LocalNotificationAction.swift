@@ -29,7 +29,7 @@ class LocalNotificationAction: NSObject, UNUserNotificationCenterDelegate {
         let content = UNMutableNotificationContent()
         let not = Notification(build: build)
         content.title = not.title
-        content.sound = UNNotificationSound.default()
+        content.sound = UNNotificationSound.default
 
         let request = UNNotificationRequest(identifier: "normal",
                                             content: content,

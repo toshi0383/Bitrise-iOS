@@ -30,12 +30,6 @@ extension BitriseAPIRequest {
     }
 
     public func intercept(urlRequest: URLRequest) throws -> URLRequest {
-        #if DEBUG
-//            print(urlRequest)
-            if let headers = urlRequest.allHTTPHeaderFields {
-//                print(headers)
-            }
-        #endif
         return urlRequest
     }
 }
