@@ -1,3 +1,4 @@
+import os.signpost
 import APIKit
 import Core
 import DeepDiff
@@ -5,6 +6,8 @@ import Foundation
 import RxSwift
 import RxCocoa
 import UIKit
+
+private let log = OSLog(subsystem: "jp.toshi0383.BitriseClient.BuildList", category: "User")
 
 final class BuildsListViewModel {
 
@@ -215,7 +218,9 @@ final class BuildsListViewModel {
                 me.nextTokenMore.accept(appsBuilds.paging.next)
 
             case .failure(let error):
-                print(error)
+                if #available(iOS 12.0, *) {
+                    os_log(.error, "error %@", error.localizedDescription)
+                }
             }
 
             me._isLoading.accept(false)
@@ -230,7 +235,6 @@ final class BuildsListViewModel {
     ///     triggering pull-to-refresh causes droppping the next token for (850...801).
     ///
     func fetchBuilds(_ fetchMode: FetchMode) {
-
         if _isLoading.value { return }
         _isLoading.accept(true)
 
@@ -321,8 +325,9 @@ final class BuildsListViewModel {
                 me._dataChanges.accept(changes)
 
             case .failure(let error):
-                print(error)
-
+                if #available(iOS 12.0, *) {
+                    os_log(.error, "error %@", error.localizedDescription)
+                }
             }
 
             me._isLoading.accept(false)
@@ -336,6 +341,10 @@ final class BuildsListViewModel {
     }
 
     func updateScrollInfo(contentHeight: CGFloat, contentOffsetY: CGFloat, frameHeight: CGFloat, adjustedContentInsetBottom: CGFloat) {
+        if #available(iOS 12.0, *) {
+            os_signpost(.event, log: log, name: "updateScrollInfo")
+        }
+
         if contentHeight <= 0 {
             return
         }

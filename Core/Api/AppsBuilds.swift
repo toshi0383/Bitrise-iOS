@@ -1,3 +1,4 @@
+import os.signpost
 import APIKit
 import Foundation
 
@@ -9,6 +10,14 @@ public struct AppsBuildsRequest: BitriseAPIRequest {
 
     private let limit: Int
     private let next: String?
+
+    public let spid: Any? = {
+        if #available(iOS 12.0, *) {
+            return OSSignpostID(log: .network)
+        } else {
+            return nil
+        }
+    }()
 
     public var queryParameters: [String : Any]? {
         var params: [String: Any] = ["limit": limit]

@@ -1,3 +1,4 @@
+import os.signpost
 import APIKit
 import Foundation
 
@@ -21,6 +22,14 @@ public struct GetBitriseYmlRequest: BitriseAPIRequest {
     public var method: HTTPMethod {
         return .get
     }
+
+    public let spid: Any? = {
+        if #available(iOS 12.0, *) {
+            return OSSignpostID(log: .network)
+        } else {
+            return nil
+        }
+    }()
 
     public init(appSlug: String) {
         self.path = "apps/\(appSlug)/bitrise.yml"
