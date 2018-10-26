@@ -45,7 +45,7 @@ extension BitriseAPIRequest {
         if #available(iOS 12.0, *) {
             if let data = object as? Data {
                 if let spid = self.spid as? OSSignpostID {
-                    os_signpost(.end, log: .network, name: "BitriseAPIRequest", signpostID: spid, "%{iec-bytes}d", data.count)
+                    os_signpost(.end, log: .network, name: "BitriseAPIRequest", signpostID: spid, "Finished with size %{xcode:size-in-bytes}llu", data.count)
                 }
             }
         }
