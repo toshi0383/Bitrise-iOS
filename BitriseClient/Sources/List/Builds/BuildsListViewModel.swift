@@ -206,25 +206,24 @@ final class BuildsListViewModel {
 
         let req = AppsBuildsRequest(appSlug: appSlug)
 
-        session.send(req) { [weak self] result in
-            guard let me = self else { return }
+        session.rx.send(req)
+            .catchError({ [weak self] _ in
+                self?._isLoading.accept(false)
+                return .empty()
+            })
+            .subscribe(onNext: { [weak self] res in
+                guard let me = self else { return }
 
-            switch result {
-            case .success(let res):
                 let appsBuilds = AppsBuilds(from: res)
                 let changes = diff(old: me.builds, new: appsBuilds.data)
+
                 me.builds = appsBuilds.data
+
                 me._dataChanges.accept(changes)
                 me.nextTokenMore.accept(appsBuilds.paging.next)
-
-            case .failure(let error):
-                if #available(iOS 12.0, *) {
-                    os_log(.error, "error %@", error.localizedDescription)
-                }
-            }
-
-            me._isLoading.accept(false)
-        }
+                me._isLoading.accept(false)
+            })
+            .disposed(by: disposeBag)
     }
 
     /// - parameter offset: Index where you want to load new data at.
@@ -278,13 +277,15 @@ final class BuildsListViewModel {
 
         let req = AppsBuildsRequest(appSlug: appSlug, limit: fetchMode.limit, next: next)
 
-        session.send(req) { [weak self] result in
-            guard let me = self else { return }
+        session.rx.send(req)
+            .catchError({ [weak self] _ in
+                self?._isLoading.accept(false)
+                return .empty()
+            })
+            .subscribe(onNext: { [weak self] res in
+                guard let me = self else { return }
 
-            setIndicatorIsHidden(true)
-
-            switch result {
-            case .success(let res):
+                setIndicatorIsHidden(true)
 
                 let appsBuilds = AppsBuilds(from: res)
                 var newBuilds: [AppsBuilds.Build] = me.builds
@@ -324,14 +325,9 @@ final class BuildsListViewModel {
                 me.builds = newBuilds
                 me._dataChanges.accept(changes)
 
-            case .failure(let error):
-                if #available(iOS 12.0, *) {
-                    os_log(.error, "error %@", error.localizedDescription)
-                }
-            }
-
-            me._isLoading.accept(false)
-        }
+                me._isLoading.accept(false)
+            })
+            .disposed(by: disposeBag)
     }
 
     func triggerPaging() {
@@ -364,20 +360,21 @@ final class BuildsListViewModel {
         let buildNumber = build.build_number
         let req = AppsBuildsAbortRequest(appSlug: appSlug, buildSlug: buildSlug)
 
-        session.send(req) { [weak self] result in
-            guard let me = self else { return }
-
-            switch result {
-            case .success(let res):
+        session.rx.send(req)
+            .catchError({ [weak self] error in
+                self?._isLoading.accept(false)
+                self?._alertMessage.accept("Abort failed: \(error.localizedDescription)")
+                return .empty()
+            })
+            .map { res in
                 if let msg = res.error_msg {
-                    me._alertMessage.accept(msg)
+                    return msg
                 } else {
-                    me._alertMessage.accept("Aborted: #\(buildNumber)")
+                    return "Aborted: #\(buildNumber)"
                 }
-            case .failure(let error):
-                me._alertMessage.accept("Abort failed: \(error.localizedDescription)")
             }
-        }
+            .bind(to: _alertMessage)
+            .disposed(by: disposeBag)
     }
 }
 

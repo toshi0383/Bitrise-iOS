@@ -1,3 +1,4 @@
+import os.log
 import APIKit
 import RxSwift
 
@@ -11,8 +12,11 @@ extension Reactive where Base: Session {
                 case .success(let res):
                     o.onNext(res)
                     o.onCompleted()
-                case .failure(let err):
-                    o.onError(err)
+                case .failure(let error):
+                    if #available(iOS 12.0, *) {
+                        os_log(.error, log: .network, "%{public}@ error: %{public}@", req.path, error.localizedDescription)
+                    }
+                    o.onError(error)
                 }
             }
             return Disposables.create { [weak task] in

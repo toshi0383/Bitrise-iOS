@@ -1,6 +1,7 @@
 import APIKit
 import Core
 import Foundation
+import RxSwift
 
 final class BuildPollingManager {
 
@@ -17,6 +18,7 @@ final class BuildPollingManager {
     let appSlug: String // accessed from pool
     private let session: Session
     private let localNotificationAction: LocalNotificationAction
+    private let disposeBag = DisposeBag()
 
     init(appSlug: String,
          session: Session = .shared,
@@ -65,10 +67,11 @@ final class BuildPollingManager {
 
     private func callAPIAndUpdateHandler(_ buildSlug: Slug) {
         let req = SingleBuildRequest(appSlug: appSlug, buildSlug: buildSlug)
-        session.send(req) { [weak self] result in
-            guard let me = self else { return }
-            switch result {
-            case .success(let res):
+
+        session.rx.send(req)
+            .subscribe(onNext: { [weak self] res in
+                guard let me = self else { return }
+
                 let build = SingleBuild(from: res).data
 
                 me.handlers[buildSlug]?(build)
@@ -86,9 +89,7 @@ final class BuildPollingManager {
                     me.removeTarget(buildSlug: buildSlug)
                 }
 
-            case .failure(let error):
-                print("\(error)")
-            }
-        }
+        })
+        .disposed(by: disposeBag)
     }
 }
