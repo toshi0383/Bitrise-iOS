@@ -1,3 +1,4 @@
+import os.signpost
 import APIKit
 import Foundation
 
@@ -9,6 +10,14 @@ public struct PostBitriseYmlRequest: BitriseAPIRequest {
     public let path: String
     public let ymlString: String
     public let dataParser: DataParser = BitriseYmlDataParser()
+
+    public let spid: Any? = {
+        if #available(iOS 12.0, *) {
+            return OSSignpostID(log: .network)
+        } else {
+            return nil
+        }
+    }()
 
     public var method: HTTPMethod {
         return .post

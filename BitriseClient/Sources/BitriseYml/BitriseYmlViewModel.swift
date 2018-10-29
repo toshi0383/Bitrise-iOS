@@ -1,3 +1,4 @@
+import os.log
 import APIKit
 import Core
 import Foundation
@@ -29,6 +30,10 @@ final class BitriseYmlViewModel {
 
     private let appSlug: AppSlug
 
+    // MARK: Private
+
+    private let disposeBag = DisposeBag()
+
     // MARK: Initialize
 
     init(appSlug: AppSlug, appName: String) {
@@ -39,16 +44,11 @@ final class BitriseYmlViewModel {
         self.alertMessage = _alertMessage.asObservable()
 
         let req = GetBitriseYmlRequest(appSlug: appSlug)
-        Session.shared.send(req) { [weak self] r in
-            guard let me = self else { return }
 
-            switch r {
-            case .success(let value):
-                me._ymlPayload.accept(value.ymlPayload)
-            case .failure(let error):
-                fatalError("ERROR: \(error)")
-            }
-        }
+        Session.shared.rx.send(req)
+            .map {$0.ymlPayload }
+            .bind(to: _ymlPayload)
+            .disposed(by: disposeBag)
     }
 
     // MARK: API
@@ -66,20 +66,18 @@ final class BitriseYmlViewModel {
 
             _editState.accept(.saving)
 
-            // TODO: fetch, compare and check for any conflicts
+            // TODO: fetch, compare and check for any conflicts?
             let req = PostBitriseYmlRequest(appSlug: appSlug, ymlString: ymlPayload.value)
-            Session.shared.send(req) { [weak self] result in
-                guard let me = self else { return }
 
-                switch result {
-                case .success:
-                    // me._alertMessage.accept("Yml Upload Success!")
-                    me._editState.accept(.initial)
-
-                case .failure(let error):
-                    me._alertMessage.accept("Yml Upload Error: \(error)")
-                }
-            }
+            Session.shared.rx.send(req)
+                .take(1)
+                .catchError({ [weak self] error in
+                    self?._alertMessage.accept("Yml Upload Error: \(error)")
+                    return .empty()
+                })
+                .map { _ in .initial }
+                .bind(to: _editState)
+                .disposed(by: disposeBag)
         }
     }
 }

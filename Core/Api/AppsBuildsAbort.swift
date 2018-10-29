@@ -1,3 +1,4 @@
+import os.signpost
 import APIKit
 import Foundation
 
@@ -8,6 +9,14 @@ public struct AppsBuildsAbortRequest: BitriseAPIRequest {
     public let path: String
 
     public let method: HTTPMethod = .post
+
+    public let spid: Any? = {
+        if #available(iOS 12.0, *) {
+            return OSSignpostID(log: .network)
+        } else {
+            return nil
+        }
+    }()
 
     public init(appSlug: String, buildSlug: String) {
         self.path = "/apps/\(appSlug)/builds/\(buildSlug)/abort"

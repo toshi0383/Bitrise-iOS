@@ -1,3 +1,4 @@
+import os.signpost
 import APIKit
 import Foundation
 
@@ -6,6 +7,14 @@ public struct MeAppsRequest: BitriseAPIRequest {
     public typealias Response = MeApps
 
     public let path: String = "/me/apps"
+
+    public let spid: Any? = {
+        if #available(iOS 12.0, *) {
+            return OSSignpostID(log: .network)
+        } else {
+            return nil
+        }
+    }()
 
     public init() { }
 }

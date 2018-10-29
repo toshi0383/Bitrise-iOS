@@ -1,7 +1,9 @@
+import os.signpost
 import APIKit
 import Foundation
 
 public protocol BitriseAPIRequest: Request {
+    var spid: Any? { get }
     var personalAccessToken: String? { get }
 }
 
@@ -30,7 +32,30 @@ extension BitriseAPIRequest {
     }
 
     public func intercept(urlRequest: URLRequest) throws -> URLRequest {
+        if #available(iOS 12.0, *) {
+            if let spid = self.spid as? OSSignpostID {
+                os_signpost(.begin, log: .network, name: "BitriseAPIRequest", signpostID: spid, "%@", self.path)
+            }
+        }
+
         return urlRequest
+    }
+
+    public func intercept(object: Any, urlResponse: HTTPURLResponse) throws -> Any {
+        if #available(iOS 12.0, *) {
+            if let data = object as? Data {
+                if let spid = self.spid as? OSSignpostID {
+                    os_signpost(.end, log: .network, name: "BitriseAPIRequest", signpostID: spid, "Finished with size %{xcode:size-in-bytes}llu, statusCode %{public}@, -statusCode %{private}@", data.count, urlResponse.statusCode.description, (urlResponse.statusCode * -1).description as NSString)
+                }
+            }
+        }
+
+        // Copy of the default implementation in APIKit
+        guard 200..<300 ~= urlResponse.statusCode else {
+            throw ResponseError.unacceptableStatusCode(urlResponse.statusCode)
+        }
+
+        return object
     }
 }
 
