@@ -42,17 +42,23 @@ extension BitriseAPIRequest {
     }
 
     public func intercept(object: Any, urlResponse: HTTPURLResponse) throws -> Any {
+        // Copy of the default implementation in APIKit
+        guard 200..<300 ~= urlResponse.statusCode else {
+            if #available(iOS 12.0, *) {
+                if let spid = self.spid as? OSSignpostID {
+                    os_signpost(.end, log: .network, name: "BitriseAPIRequest", signpostID: spid, "Finished with error statusCode %{public}@", urlResponse.statusCode.description)
+                }
+            }
+
+            throw ResponseError.unacceptableStatusCode(urlResponse.statusCode)
+        }
+
         if #available(iOS 12.0, *) {
             if let data = object as? Data {
                 if let spid = self.spid as? OSSignpostID {
                     os_signpost(.end, log: .network, name: "BitriseAPIRequest", signpostID: spid, "Finished with size %{xcode:size-in-bytes}llu, statusCode %{public}@, -statusCode %{private}@", data.count, urlResponse.statusCode.description, (urlResponse.statusCode * -1).description as NSString)
                 }
             }
-        }
-
-        // Copy of the default implementation in APIKit
-        guard 200..<300 ~= urlResponse.statusCode else {
-            throw ResponseError.unacceptableStatusCode(urlResponse.statusCode)
         }
 
         return object
