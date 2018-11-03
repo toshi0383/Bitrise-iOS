@@ -191,11 +191,6 @@ final class TriggerBuildViewModel {
                 return
             }
 
-            guard (res as? HTTPURLResponse)?.statusCode == 201 else {
-                me.alert("Fail")
-                return
-            }
-
             let str: String = {
                 if let data = data {
                     return String(data: data, encoding: .utf8) ?? ""
@@ -203,6 +198,11 @@ final class TriggerBuildViewModel {
                     return ""
                 }
             }()
+
+            guard (res as? HTTPURLResponse)?.statusCode == 201 else {
+                me.alert("Fail str: \(str)")
+                return
+            }
 
             me._buildDidTrigger.accept(())
 
