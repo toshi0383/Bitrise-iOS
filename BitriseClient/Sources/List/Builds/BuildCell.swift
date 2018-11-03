@@ -3,52 +3,10 @@ import UIKit
 
 final class BuildCell: UITableViewCell {
 
-    enum StatusColor: String {
-        case inProgress = "in-progress"
-        case success = "success"
-        case aborted = "aborted"
-        case error = "error"
-        case onHold = "on-hold"
-
-        var value: UIColor {
-            switch self {
-            case .inProgress:
-                return .buildInProgress
-            case .success:
-                return .buildSuccess
-            case .aborted:
-                return .buildAborted
-            case .error:
-                return .buildError
-            case .onHold:
-                return .buildOnHold
-            }
-        }
-    }
-
-    @IBOutlet private weak var titleLabel: UILabel! {
-        didSet {
-            titleLabel.text = nil
-        }
-    }
-
-    @IBOutlet private weak var branchLabel: UILabel! {
-        didSet {
-            branchLabel.text = nil
-        }
-    }
-
-    @IBOutlet private weak var subtitleLabel: UILabel! {
-        didSet {
-            subtitleLabel.text = nil
-        }
-    }
-
-    @IBOutlet private weak var subtitleLabel2: UILabel! {
-        didSet {
-            subtitleLabel2.text = nil
-        }
-    }
+    @IBOutlet private weak var titleLabel: UILabel!
+    @IBOutlet private weak var branchLabel: UILabel!
+    @IBOutlet private weak var subtitleLabel: UILabel!
+    @IBOutlet private weak var subtitleLabel2: UILabel!
 
     @IBOutlet private weak var smallSquareView: UIView! {
         didSet {
@@ -58,44 +16,40 @@ final class BuildCell: UITableViewCell {
 
     private weak var timer: Timer?
 
-    struct DateFormatter {
+    private let formatter = DateFormatter()
+}
 
-        enum `Type` {
-            case hourMinuteSecond1
-            case minuteSecond1
-        }
+// MARK: Lifecycle
 
-        private let formatter = Foundation.DateFormatter()
-
-        func string(from date: Date, type: Type) -> String {
-            switch type {
-            case .hourMinuteSecond1:
-                formatter.dateFormat = "HH:mm:ss"
-                return formatter.string(from: date)
-            case .minuteSecond1:
-                formatter.dateFormat = "mm'm' ss's'"
-                return formatter.string(from: date)
-            }
-        }
-    }
-
-    let formatter = DateFormatter()
+extension BuildCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        timer?.invalidate()
-
-        titleLabel.text = nil
-        branchLabel.text = nil
-        subtitleLabel.text = nil
-        subtitleLabel2.text = nil
+        _prepareForReuse()
     }
 
     override func awakeFromNib() {
         super.awakeFromNib()
 
+        _prepareForReuse()
+    }
+
+}
+
+// MARK: Utility
+
+extension BuildCell {
+
+    private func _prepareForReuse() {
+        timer?.invalidate()
+
         accessoryType = .detailButton
+
+        titleLabel.text = nil
+        branchLabel.text = nil
+        subtitleLabel.text = nil
+        subtitleLabel2.text = nil
     }
 
     func configure(_ build: AppsBuilds.Build) {
@@ -156,4 +110,54 @@ final class BuildCell: UITableViewCell {
             }
         }
     }
+}
+
+// MARK: Inner Types
+
+extension BuildCell {
+
+    private enum StatusColor: String {
+        case inProgress = "in-progress"
+        case success = "success"
+        case aborted = "aborted"
+        case error = "error"
+        case onHold = "on-hold"
+
+        var value: UIColor {
+            switch self {
+            case .inProgress:
+                return .buildInProgress
+            case .success:
+                return .buildSuccess
+            case .aborted:
+                return .buildAborted
+            case .error:
+                return .buildError
+            case .onHold:
+                return .buildOnHold
+            }
+        }
+    }
+
+    private struct DateFormatter {
+
+        enum `Type` {
+            case hourMinuteSecond1
+            case minuteSecond1
+        }
+
+        private let formatter = Foundation.DateFormatter()
+
+        func string(from date: Date, type: Type) -> String {
+            switch type {
+            case .hourMinuteSecond1:
+                formatter.dateFormat = "HH:mm:ss"
+                return formatter.string(from: date)
+            case .minuteSecond1:
+                formatter.dateFormat = "mm'm' ss's'"
+                return formatter.string(from: date)
+            }
+        }
+    }
+
 }
