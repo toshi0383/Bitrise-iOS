@@ -1,5 +1,6 @@
 import os.log
 import APIKit
+import Core
 import DeepDiff
 import RxSwift
 import UIKit
@@ -140,6 +141,40 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildCell") as! BuildCell
         cell.configure(viewModel.builds[indexPath.row])
         return cell
+    }
+
+    private var visibleBuilds: [AppsBuilds.Build] {
+        guard let indexPaths = tableView.indexPathsForVisibleRows else { return [] }
+
+        return indexPaths.map { viewModel.builds[$0.row] }
+    }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+
+        // Reset BuildPollingManager.targets
+
+        let visibleBuilds = self.visibleBuilds
+        let buildPollingManager = viewModel.buildPollingManager
+
+        for buildSlug in buildPollingManager.targets {
+
+            if !visibleBuilds.contains(where: { $0.slug == buildSlug }) {
+
+                // NOTE: Polling won't be cancelled if localNotification is registered.
+                buildPollingManager.removeTarget(buildSlug: buildSlug)
+
+            }
+        }
+
+        for visibleBuild in visibleBuilds {
+
+            if visibleBuild.status == .notFinished,
+                !buildPollingManager.targets.contains(where: { $0 == visibleBuild.slug }) {
+
+                buildPollingManager.addTarget(buildSlug: visibleBuild.slug)
+
+            }
+        }
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

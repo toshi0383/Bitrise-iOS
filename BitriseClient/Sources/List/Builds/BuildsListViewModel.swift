@@ -138,7 +138,7 @@ final class BuildsListViewModel {
     private let session: Session
     private let localNotificationAction: LocalNotificationAction
     private let disposeBag = DisposeBag()
-    private let buildPollingManager: BuildPollingManager
+    let buildPollingManager: BuildPollingManager
 
     /// lock to avoid race condition
     private let lock = NSLock()
@@ -154,7 +154,7 @@ final class BuildsListViewModel {
         self.navigationBarTitle = appName
         self.localNotificationAction = localNotificationAction
         self.session = session
-
+        self.buildPollingManager = BuildPollingManagerPool.shared.manager(for: appSlug)
         self.alertMessage = _alertMessage.asObservable()
         self.alertActions = Property(_alertActions)
         self.dataChanges = Property(_dataChanges)
@@ -162,28 +162,23 @@ final class BuildsListViewModel {
         self.isBetweenDataIndicatorHidden = Property(_isBetweenDataIndicatorHidden)
         self.isMoreDataIndicatorHidden = Property(_isMoreDataIndicatorHidden)
 
-        let buildPollingManager = BuildPollingManagerPool.shared.manager(for: appSlug)
-        self.buildPollingManager = buildPollingManager
+        buildPollingManager.updatedBuild
+            .subscribe(onNext: { [weak self] build in
+                guard let me = self else { return }
 
-        dataChanges.changed
-            .subscribe(onNext: { [weak self] changes in
-                for c in changes {
-                    if let item = c.insert?.item {
-
-                        buildPollingManager.addTarget(buildSlug: item.slug) { [weak self] build in
-                            guard let me = self else { return }
-                            me.lock.lock(); defer { me.lock.unlock() }
-
-                            var newData = me.builds
-                            if let index = newData.index(where: { $0.slug == build.slug }) {
-                                newData[index] = build
-                            }
-
-                            let changes = diff(old: me.builds, new: newData)
-                            me.builds = newData
-                            me._dataChanges.accept(changes)
-                        }
+                if let index = me.builds.firstIndex(of: build) {
+                    if me.builds[index] == build {
+                        return
                     }
+
+                    var newBuilds = me.builds
+                    newBuilds[index] = build
+
+                    let changes = diff(old: me.builds, new: newBuilds)
+
+                    me.builds = newBuilds
+
+                    me._dataChanges.accept(changes)
                 }
             })
             .disposed(by: disposeBag)

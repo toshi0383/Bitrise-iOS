@@ -1,21 +1,26 @@
 import APIKit
 import Core
 import Foundation
+import RxCocoa
 import RxSwift
 
 final class BuildPollingManager {
 
     typealias Build = AppsBuilds.Build
     typealias Slug = Build.Slug
-    typealias UpdateHandler = (Build) -> ()
+
+    let updatedBuild: Observable<Build>
+    private let _updatedBuild = PublishRelay<Build>()
+
+    let appSlug: String // accessed from pool
+
+    private(set) var targets = Set<AppsBuilds.Build.Slug>()
 
     private let interval: Double = 8.0
 
-    private var handlers: [Slug: UpdateHandler] = [:]
     private var localNotificationTargets: Set<Slug> = []
     private var workItemMap: [Slug: DispatchWorkItem] = [:]
 
-    let appSlug: String // accessed from pool
     private let session: Session
     private let localNotificationAction: LocalNotificationAction
     private let disposeBag = DisposeBag()
@@ -26,21 +31,19 @@ final class BuildPollingManager {
         self.appSlug = appSlug
         self.session = session
         self.localNotificationAction = localNotificationAction
+        self.updatedBuild = _updatedBuild.asObservable()
     }
 
-    var targets: [AppsBuilds.Build.Slug] {
-        return handlers.keys.map { $0 }
-    }
-
-    func addTarget(buildSlug: Slug, completion: @escaping UpdateHandler) {
-        handlers[buildSlug] = completion
+    func addTarget(buildSlug: Slug) {
+        targets.insert(buildSlug)
 
         // start polling
         startPolling(buildSlug)
     }
 
     func removeTarget(buildSlug: Slug) {
-        handlers.removeValue(forKey: buildSlug)
+        targets.remove(buildSlug)
+
         if !localNotificationTargets.contains(buildSlug) {
             workItemMap.removeValue(forKey: buildSlug)?.cancel()
         }
@@ -48,12 +51,10 @@ final class BuildPollingManager {
 
     func addLocalNotification(buildSlug: Slug) {
         localNotificationTargets.insert(buildSlug)
-        if !handlers.keys.contains(buildSlug) {
-            fatalError("Polling should have already started.")
-        }
     }
 
     // MARK: Utilities
+
     private func startPolling(_ buildSlug: Slug) {
         let workItem = DispatchWorkItem { [weak self] in
             self?.callAPIAndUpdateHandler(buildSlug)
@@ -74,9 +75,10 @@ final class BuildPollingManager {
 
                 let build = SingleBuild(from: res).data
 
-                me.handlers[buildSlug]?(build)
+                me._updatedBuild.accept(build)
 
                 if build.status == .notFinished {
+
                     me.startPolling(buildSlug)
 
                 } else {
@@ -86,10 +88,8 @@ final class BuildPollingManager {
                         me.localNotificationTargets.remove(build.slug)
                     }
 
-                    me.removeTarget(buildSlug: buildSlug)
                 }
-
-        })
-        .disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 }
