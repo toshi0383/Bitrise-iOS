@@ -2,7 +2,7 @@ Bitrise iOS Client app 🚀
 ---
 ![screen-shots.png](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/screen-shots.png)
 
-[![Build Status](https://app.bitrise.io/app/a438cf48a72e2a1e/status.svg?token=63jRo8jI-419K26Bo3OrQw&branch=master)](https://app.bitrise.io/app/a438cf48a72e2a1e)
+[![Build Status](https://app.bitrise.io/app/f74e0c84d3865a2f/status.svg?token=m5WvEi3nznlg64vry5qyRA&branch=master)](https://app.bitrise.io/app/f74e0c84d3865a2f)
 [![codecov](https://codecov.io/gh/toshi0383/Bitrise-iOS/branch/master/graph/badge.svg)](https://codecov.io/gh/toshi0383/Bitrise-iOS)
 
 # Features
