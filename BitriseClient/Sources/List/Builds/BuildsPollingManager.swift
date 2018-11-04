@@ -41,6 +41,12 @@ final class BuildPollingManager {
         startPolling(buildSlug)
     }
 
+    func removeAllTargets() {
+        for target in targets {
+            removeTarget(buildSlug: target)
+        }
+    }
+
     func removeTarget(buildSlug: Slug) {
         targets.remove(buildSlug)
 

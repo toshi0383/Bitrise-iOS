@@ -11,38 +11,9 @@ private let log = OSLog(subsystem: "jp.toshi0383.BitriseClient.BuildList", categ
 
 final class BuildsListViewModel {
 
-    // MARK: Type
+    let buildPollingManager: BuildPollingManager
 
-    enum FetchMode {
-        case new, between, more
-
-        var limit: Int {
-            switch self {
-            case .new:
-                return 50
-            case .between:
-                return 20
-            case .more:
-                return 50
-            }
-        }
-    }
-
-    struct AlertAction {
-        let title: String
-        let style: UIAlertAction.Style
-        let handler: ((UIAlertAction) -> ())?
-
-        init(title: String,
-             style: UIAlertAction.Style = .default,
-             handler: ((UIAlertAction) -> ())?) {
-            self.title = title
-            self.style = style
-            self.handler = handler
-        }
-    }
-
-    // MARK: Input
+    private let appName: String
 
     var lifecycle: ViewControllerLifecycle! {
         didSet {
@@ -61,15 +32,11 @@ final class BuildsListViewModel {
                 .subscribe(onNext: { [weak self] _ in
                     guard let me = self else { return }
 
-                    for buildSlug in me.buildPollingManager.targets {
-                        me.buildPollingManager.removeTarget(buildSlug: buildSlug)
-                    }
+                    me.buildPollingManager.removeAllTargets()
                 })
                 .disposed(by: disposeBag)
         }
     }
-
-    private let appName: String
 
     func tappedAccessoryButtonIndexPath(_ indexPath: IndexPath) {
 
@@ -106,8 +73,6 @@ final class BuildsListViewModel {
         _alertActions.accept(alertActions)
     }
 
-    // MARK: Output
-
     let appSlug: String
     let navigationBarTitle: String
     let alertMessage: Observable<String>
@@ -120,12 +85,13 @@ final class BuildsListViewModel {
     let isBetweenDataIndicatorHidden: Property<Bool>
     let isMoreDataIndicatorHidden: Property<Bool>
 
+    private(set) var builds: [AppsBuilds.Build] = []
+
     // MARK: private properties
 
     private let _alertMessage = PublishRelay<String>()
     private let _alertActions = BehaviorRelay<[AlertAction]>(value: [])
     private let _dataChanges = BehaviorRelay<[Change<AppsBuilds.Build>]>(value: [])
-    private(set) var builds: [AppsBuilds.Build] = []
     private let _isNewDataIndicatorHidden = BehaviorRelay<Bool>(value: true)
     private let _isBetweenDataIndicatorHidden = BehaviorRelay<Bool>(value: true)
     private let _scrollRemainingRatio = BehaviorRelay<CGFloat>(value: 10000)
@@ -138,10 +104,6 @@ final class BuildsListViewModel {
     private let session: Session
     private let localNotificationAction: LocalNotificationAction
     private let disposeBag = DisposeBag()
-    let buildPollingManager: BuildPollingManager
-
-    /// lock to avoid race condition
-    private let lock = NSLock()
 
     // MARK: Initializer
 
@@ -371,6 +333,41 @@ final class BuildsListViewModel {
             .bind(to: _alertMessage)
             .disposed(by: disposeBag)
     }
+}
+
+// MARK: Type
+
+extension BuildsListViewModel {
+
+    enum FetchMode {
+        case new, between, more
+
+        var limit: Int {
+            switch self {
+            case .new:
+                return 50
+            case .between:
+                return 20
+            case .more:
+                return 50
+            }
+        }
+    }
+
+    struct AlertAction {
+        let title: String
+        let style: UIAlertAction.Style
+        let handler: ((UIAlertAction) -> ())?
+
+        init(title: String,
+             style: UIAlertAction.Style = .default,
+             handler: ((UIAlertAction) -> ())?) {
+            self.title = title
+            self.style = style
+            self.handler = handler
+        }
+    }
+
 }
 
 private extension Array where Element == AppsBuilds.Build {
