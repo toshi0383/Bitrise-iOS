@@ -51,12 +51,12 @@ final class BuildsListViewModel {
             alertActions.append(AlertAction.init(title: "Abort", handler: { [weak self] _ in
                 self?.sendAbortRequest(forBuild: build)
             }))
+
             alertActions.append(AlertAction.init(title: "Set Notification", handler: { [weak self] _ in
                 self?.reserveNotification(forBuild: build)
             }))
-        }
+        } else {
 
-        if build.status != .notFinished {
             alertActions.append(AlertAction.init(title: "Rebuild", handler: { [weak self] _ in
                 guard let me = self else { return }
 
@@ -66,6 +66,7 @@ final class BuildsListViewModel {
                     me._alertMessage.accept("\(error)")
                 }
             }))
+
         }
 
         alertActions.append(.init(title: "Cancel", style: .cancel, handler: nil))
@@ -78,7 +79,7 @@ final class BuildsListViewModel {
     let alertMessage: Observable<String>
 
     /// alert from accessory button
-    let alertActions: Property<[AlertAction]>
+    let alertActions: Observable<[AlertAction]>
 
     let dataChanges: Property<[Change<AppsBuilds.Build>]>
     let isNewDataIndicatorHidden: Property<Bool>
@@ -90,7 +91,7 @@ final class BuildsListViewModel {
     // MARK: private properties
 
     private let _alertMessage = PublishRelay<String>()
-    private let _alertActions = BehaviorRelay<[AlertAction]>(value: [])
+    private let _alertActions = PublishRelay<[AlertAction]>()
     private let _dataChanges = BehaviorRelay<[Change<AppsBuilds.Build>]>(value: [])
     private let _isNewDataIndicatorHidden = BehaviorRelay<Bool>(value: true)
     private let _isBetweenDataIndicatorHidden = BehaviorRelay<Bool>(value: true)
@@ -118,7 +119,7 @@ final class BuildsListViewModel {
         self.session = session
         self.buildPollingManager = BuildPollingManagerPool.shared.manager(for: appSlug)
         self.alertMessage = _alertMessage.asObservable()
-        self.alertActions = Property(_alertActions)
+        self.alertActions = _alertActions.asObservable()
         self.dataChanges = Property(_dataChanges)
         self.isNewDataIndicatorHidden = Property(_isNewDataIndicatorHidden)
         self.isBetweenDataIndicatorHidden = Property(_isBetweenDataIndicatorHidden)

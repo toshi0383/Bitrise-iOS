@@ -5,23 +5,23 @@ import DeepDiff
 import RxSwift
 import UIKit
 
-final class BuildsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
+final class BuildsListViewController: UIViewController, Storyboardable {
 
-    struct Dependency {
-        let viewModel: BuildsListViewModel
+    private var dataSource: BuildsListDataSource!
+
+    private var viewModel: BuildsListViewModel! {
+        didSet {
+            dataSource = BuildsListDataSource(viewModel: viewModel)
+        }
     }
 
-    static func makeFromStoryboard(_ dependency: Dependency) -> BuildsListViewController {
-        let vc = BuildsListViewController.unsafeMakeFromStoryboard()
-        vc.viewModel = dependency.viewModel
-        vc.viewModel.lifecycle = vc.lifecycle
-        return vc
+    // MARK: UI components
+
+    @IBOutlet private weak var tableView: UITableView! {
+        didSet {
+            tableView.dataSource = dataSource
+        }
     }
-
-    private var viewModel: BuildsListViewModel!
-
-    // animation dispatch after
-    private var workItem: DispatchWorkItem?
 
     @IBOutlet private weak var triggerBuildButton: UIButton! {
         didSet {
@@ -35,13 +35,6 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         }
     }
 
-    @IBOutlet private weak var tableView: UITableView! {
-        didSet {
-            tableView.dataSource = self
-            tableView.delegate = self
-        }
-    }
-
     private lazy var refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -50,7 +43,17 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
         return refreshControl
     }()
 
-    private let disposeBag = DisposeBag()
+    // MARK: Utilities
+
+    private var visibleBuilds: [AppsBuilds.Build] {
+        guard let indexPaths = tableView.indexPathsForVisibleRows else { return [] }
+
+        return indexPaths.map { viewModel.builds[$0.row] }
+    }
+
+    private var alphaChangingViews: [UIView] {
+        return [triggerBuildButton, bitriseYmlButton]
+    }
 
     // MARK: LifeCycle
 
@@ -64,22 +67,30 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
             .subscribe(onNext: { [weak self] msg in
                 self?.alert(msg)
             })
-            .disposed(by: disposeBag)
+            .disposed(by: rx.disposeBag)
 
         viewModel.alertActions.asObservable()
-            .filterEmpty()
             .observeOn(ConcurrentMainScheduler.instance)
             .subscribe(onNext: { [weak self] alertActions in
-                self?.showActionSheet(actions: alertActions)
+                let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+
+                for action in alertActions {
+                    actionSheet.addAction(UIAlertAction(title: action.title,
+                                                        style: action.style,
+                                                        handler: action.handler))
+                }
+
+                self?.present(actionSheet, animated: true, completion: nil)
+
             })
-            .disposed(by: disposeBag)
+            .disposed(by: rx.disposeBag)
 
         viewModel.dataChanges.changed
             .observeOn(ConcurrentMainScheduler.instance)
             .subscribe(onNext: { [weak self] changes in
                 self?.tableView.reload(changes: changes, completion: { _ in })
             })
-            .disposed(by: disposeBag)
+            .disposed(by: rx.disposeBag)
 
         viewModel.isNewDataIndicatorHidden.asObservable()
             .observeOn(ConcurrentMainScheduler.instance)
@@ -92,10 +103,87 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
                     me.refreshControl.beginRefreshing()
                 }
             })
-            .disposed(by: disposeBag)
+            .disposed(by: rx.disposeBag)
+
+        // Make buttons transparent while scrolling.
+
+        let didEndDragging = tableView.rx.didEndDragging
+
+        tableView.rx.willBeginDragging
+            .map { _ in CGFloat(0.1) }
+            .flatMapLatest {
+                Observable.just($0)
+                    .concat(
+                        didEndDragging
+                            .map { _ in CGFloat(1.0) }
+                            .delay(0.5, scheduler: ConcurrentMainScheduler.instance)
+                    )
+            }
+            .observeOn(ConcurrentMainScheduler.instance)
+            .subscribe(onNext: { [weak self] alpha in
+                self?.alphaChangingViews.forEach { $0.alpha = alpha }
+            })
+            .disposed(by: rx.disposeBag)
+
+        tableView.rx.itemAccessoryButtonTapped
+            .subscribe(onNext: { [weak self] indexPath in
+                self?.viewModel.tappedAccessoryButtonIndexPath(indexPath)
+            })
+            .disposed(by: rx.disposeBag)
+
+        tableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                self?.tableView.deselectRow(at: indexPath, animated: true)
+            })
+            .disposed(by: rx.disposeBag)
+
+        tableView.rx.didScroll
+            .subscribe(onNext: { [weak self] _ in
+                guard let viewModel = self?.viewModel, let tableView = self?.tableView else {
+                    return
+                }
+
+                viewModel.updateScrollInfo(contentHeight: tableView.contentSize.height,
+                                           contentOffsetY: tableView.contentOffset.y,
+                                           frameHeight: tableView.frame.height,
+                                           adjustedContentInsetBottom: tableView.adjustedContentInset.bottom)
+            })
+            .disposed(by: rx.disposeBag)
+
+        // Reset BuildPollingManager.targets
+
+        tableView.rx.willDisplayCell
+            .subscribe(onNext: { [weak self] event in
+                guard let me = self else { return }
+
+                let visibleBuilds = me.visibleBuilds
+                let buildPollingManager = me.viewModel.buildPollingManager
+
+                for buildSlug in buildPollingManager.targets {
+
+                    if !visibleBuilds.contains(where: { $0.slug == buildSlug }) {
+
+                        // NOTE: Polling won't be cancelled if localNotification is registered.
+                        buildPollingManager.removeTarget(buildSlug: buildSlug)
+
+                    }
+                }
+
+                for visibleBuild in visibleBuilds.filter({ $0.status == .notFinished }) {
+
+                    if !buildPollingManager.targets.contains(where: { $0 == visibleBuild.slug }) {
+
+                        buildPollingManager.addTarget(buildSlug: visibleBuild.slug)
+
+                    }
+
+                }
+            })
+            .disposed(by: rx.disposeBag)
+
     }
 
-    // MARK: IBAction
+    // MARK: Action
 
     @IBAction func bitriseYmlButtonTap() {
         let vm = BitriseYmlViewModel(appSlug: viewModel.appSlug, appName: viewModel.navigationBarTitle)
@@ -120,114 +208,28 @@ final class BuildsListViewController: UIViewController, Storyboardable, UITableV
             .subscribe(onNext: { [weak viewModel] _ in
                 viewModel?.fetchBuilds(.new)
             })
-            .disposed(by: disposeBag)
+            .disposed(by: vc.rx.disposeBag)
     }
 
     @objc private func pullToRefresh() {
         viewModel.fetchBuilds(.new)
     }
 
-    // MARK: UITableViewDataSource & UITableViewDelegate
+}
 
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
+// - MARK: Storyboardable
+
+extension BuildsListViewController {
+
+    struct Dependency {
+        let viewModel: BuildsListViewModel
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel.builds.count
+    static func makeFromStoryboard(_ dependency: Dependency) -> BuildsListViewController {
+        let vc = BuildsListViewController.unsafeMakeFromStoryboard()
+        vc.viewModel = dependency.viewModel
+        vc.viewModel.lifecycle = vc.lifecycle
+        return vc
     }
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "BuildCell") as! BuildCell
-        cell.configure(viewModel.builds[indexPath.row])
-        return cell
-    }
-
-    private var visibleBuilds: [AppsBuilds.Build] {
-        guard let indexPaths = tableView.indexPathsForVisibleRows else { return [] }
-
-        return indexPaths.map { viewModel.builds[$0.row] }
-    }
-
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-
-        // Reset BuildPollingManager.targets
-
-        let visibleBuilds = self.visibleBuilds
-        let buildPollingManager = viewModel.buildPollingManager
-
-        for buildSlug in buildPollingManager.targets {
-
-            if !visibleBuilds.contains(where: { $0.slug == buildSlug }) {
-
-                // NOTE: Polling won't be cancelled if localNotification is registered.
-                buildPollingManager.removeTarget(buildSlug: buildSlug)
-
-            }
-        }
-
-        for visibleBuild in visibleBuilds {
-
-            if visibleBuild.status == .notFinished,
-                !buildPollingManager.targets.contains(where: { $0 == visibleBuild.slug }) {
-
-                buildPollingManager.addTarget(buildSlug: visibleBuild.slug)
-
-            }
-        }
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-    }
-
-    func tableView(_ tableView: UITableView, accessoryButtonTappedForRowWith indexPath: IndexPath) {
-
-        viewModel.tappedAccessoryButtonIndexPath(indexPath)
-
-    }
-
-    func showActionSheet(actions: [BuildsListViewModel.AlertAction]) {
-
-        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
-        for action in actions {
-            actionSheet.addAction(UIAlertAction(title: action.title,
-                                                style: action.style,
-                                                handler: action.handler))
-        }
-
-        present(actionSheet, animated: true, completion: nil)
-    }
-
-    private var alphaChangingViews: [UIView] {
-        return [triggerBuildButton, bitriseYmlButton]
-    }
-
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        alphaChangingViews.forEach { $0.alpha = 0.1 }
-    }
-
-    func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
-
-        self.workItem?.cancel()
-
-        let workItem = DispatchWorkItem { [weak self] in
-            UIView.animate(withDuration: 0.3) {
-                self?.alphaChangingViews.forEach { $0.alpha = 1.0 }
-            }
-        }
-
-        self.workItem = workItem
-
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.5,
-                                      execute: workItem)
-    }
-
-    func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        viewModel.updateScrollInfo(contentHeight: scrollView.contentSize.height,
-                                   contentOffsetY: scrollView.contentOffset.y,
-                                   frameHeight: scrollView.frame.height,
-                                   adjustedContentInsetBottom: scrollView.adjustedContentInset.bottom)
-    }
 }
