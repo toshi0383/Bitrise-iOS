@@ -1,37 +1,33 @@
 import APIKit
 import UIKit
 
-final class AppsListViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate {
-
-    struct Dependency {
-        let appsManager: AppsManager
-        init(appsManager: AppsManager = .shared) {
-            self.appsManager = appsManager
-        }
-    }
+final class AppsListViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
     private var appsManager: AppsManager!
-
-    static func makeFromStoryboard(_ dependency: AppsListViewController.Dependency) -> AppsListViewController {
-        let vc = unsafeMakeFromStoryboard()
-        vc.appsManager = dependency.appsManager
-        return vc
-    }
 
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
             tableView.dataSource = self
-            tableView.delegate = self
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tableView.reloadData()
+        tableView.rx.itemSelected
+            .subscribe(onNext: { [weak self] indexPath in
+                guard let me = self else { return }
+
+                me.tableView.deselectRow(at: indexPath, animated: true)
+                let app = me.appsManager.apps[indexPath.row]
+                let vc = BuildsListViewController.makeFromStoryboard(
+                    .init(viewModel: .init(appSlug: app.slug, appName: app.title)))
+                me.navigationController?.pushViewController(vc, animated: true)
+            })
+            .disposed(by: rx.disposeBag)
     }
 
-    // MARK: UITableViewDataSource & UITableViewDelegate
+    // MARK: UITableViewDataSource
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -46,13 +42,23 @@ final class AppsListViewController: UIViewController, Storyboardable, UITableVie
         cell.configure(appsManager.apps[indexPath.row])
         return cell
     }
+}
 
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+// - MARK: Storyboardable
 
-        let app = appsManager.apps[indexPath.row]
-        let vc = BuildsListViewController.makeFromStoryboard(
-            .init(viewModel: .init(appSlug: app.slug, appName: app.title)))
-        navigationController?.pushViewController(vc, animated: true)
+extension AppsListViewController: Storyboardable {
+
+    struct Dependency {
+        let appsManager: AppsManager
+        init(appsManager: AppsManager = .shared) {
+            self.appsManager = appsManager
+        }
     }
+
+    static func makeFromStoryboard(_ dependency: AppsListViewController.Dependency) -> AppsListViewController {
+        let vc = unsafeMakeFromStoryboard()
+        vc.appsManager = dependency.appsManager
+        return vc
+    }
+
 }
