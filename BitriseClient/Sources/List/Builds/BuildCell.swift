@@ -69,8 +69,13 @@ extension BuildCell {
                     assertionFailure("For PRs build.branch should exist, or not?")
                 }
             }
-            else if let tagOrbranch = (build.tag ?? build.branch) {
-                text = "\(tagOrbranch)"
+            else if let commitOrTagOrbranch =
+                (build.original_build_params["commit"] as? String)
+                    ?? (build.original_build_params["tag"] as? String)
+                    ?? (build.original_build_params["branch"] as? String)
+                    ?? build.tag
+                    ?? build.branch {
+                text = commitOrTagOrbranch
             }
             branchLabel.text = text
         }
