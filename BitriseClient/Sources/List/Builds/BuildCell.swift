@@ -1,4 +1,5 @@
 import Core
+import RxSwift
 import UIKit
 
 final class BuildCell: UITableViewCell {
@@ -17,6 +18,8 @@ final class BuildCell: UITableViewCell {
     private weak var timer: Timer?
 
     private let formatter = DateFormatter()
+
+    private(set) var reuseDisposeBag = DisposeBag()
 }
 
 // MARK: Lifecycle
@@ -42,6 +45,8 @@ extension BuildCell {
 extension BuildCell {
 
     private func _prepareForReuse() {
+        reuseDisposeBag = DisposeBag()
+
         timer?.invalidate()
 
         accessoryType = .detailButton
@@ -79,19 +84,21 @@ extension BuildCell {
         let triggeredTimeString = formatter.string(from: build.triggered_at, type: .hourMinuteSecond1)
         subtitleLabel.text = "Triggered @ \(triggeredTimeString)"
 
-        if build.status == .notFinished {
-            timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
-                guard timer.isValid else { return }
-                guard let me = self else { return }
+        timer?.invalidate()
 
-                if let started_at = build.environment_prepare_finished_at {
+        if build.status == .notFinished {
+            if let started_at = build.environment_prepare_finished_at {
+                timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] timer in
+                    guard timer.isValid else { return }
+                    guard let me = self else { return }
+
                     let timeInterval = Int(Date().timeIntervalSince(started_at))
                     let minutes = Int(timeInterval / 60)
                     let seconds = timeInterval % (max(minutes, 1) * 60)
                     me.subtitleLabel2.text = "\(minutes)m \(seconds)s"
-                } else {
-                    me.subtitleLabel2.text = "preparing"
                 }
+            } else {
+                subtitleLabel2.text = "preparing"
             }
         } else {
             if let finished_at = build.finished_at,

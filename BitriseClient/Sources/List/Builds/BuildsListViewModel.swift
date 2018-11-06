@@ -13,6 +13,9 @@ final class BuildsListViewModel {
 
     let buildPollingManager: BuildPollingManager
 
+    /// lock for updateBuild
+    private let updateBuildLock = NSLock()
+
     private let appName: String
 
     var lifecycle: ViewControllerLifecycle! {
@@ -129,6 +132,8 @@ final class BuildsListViewModel {
             .subscribe(onNext: { [weak self] build in
                 guard let me = self else { return }
 
+                me.updateBuildLock.lock(); defer { me.updateBuildLock.unlock() }
+
                 if let index = me.builds.firstIndex(of: build) {
                     if me.builds[index] == build {
                         return
@@ -155,6 +160,16 @@ final class BuildsListViewModel {
             .disposed(by: disposeBag)
     }
 
+    // MARK: Utilities
+
+    func updateBuild(_ build: AppsBuilds.Build) {
+        updateBuildLock.lock(); defer { updateBuildLock.unlock() }
+
+        if let idx = builds.lastIndex(where: { $0.slug == build.slug }) {
+            builds[idx] = build
+        }
+    }
+
     // MARK: API Call
 
     private func fetchDataAndReloadTable() {
@@ -171,6 +186,8 @@ final class BuildsListViewModel {
             })
             .subscribe(onNext: { [weak self] res in
                 guard let me = self else { return }
+
+                me.updateBuildLock.lock(); defer { me.updateBuildLock.unlock() }
 
                 let appsBuilds = AppsBuilds(from: res)
                 let changes = diff(old: me.builds, new: appsBuilds.data)
@@ -244,6 +261,8 @@ final class BuildsListViewModel {
                 guard let me = self else { return }
 
                 setIndicatorIsHidden(true)
+
+                me.updateBuildLock.lock(); defer { me.updateBuildLock.unlock() }
 
                 let appsBuilds = AppsBuilds(from: res)
                 var newBuilds: [AppsBuilds.Build] = me.builds

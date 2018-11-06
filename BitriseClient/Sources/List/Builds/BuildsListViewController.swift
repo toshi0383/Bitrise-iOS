@@ -178,6 +178,7 @@ final class BuildsListViewController: UIViewController, Storyboardable {
                     }
 
                 }
+
             })
             .disposed(by: rx.disposeBag)
 

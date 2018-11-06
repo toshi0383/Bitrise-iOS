@@ -1,3 +1,4 @@
+import RxSwift
 import UIKit
 
 final class BuildsListDataSource: NSObject, UITableViewDataSource {
@@ -18,7 +19,24 @@ final class BuildsListDataSource: NSObject, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "BuildCell") as! BuildCell
-        cell.configure(viewModel.builds[indexPath.row])
+        let build = viewModel.builds[indexPath.row]
+        cell.configure(build)
+
+        if build.status == .notFinished {
+            viewModel.buildPollingManager.updatedBuild
+                .filter { build.slug == $0.slug }
+                .observeOn(ConcurrentMainScheduler.instance)
+                .subscribe(onNext: { [weak cell, weak self] in
+                    if $0.status == .finished {
+                        self?.viewModel.updateBuild($0)
+                        self?.viewModel.buildPollingManager.removeTarget(buildSlug: $0.slug)
+                    }
+
+                    cell?.configure($0)
+                })
+                .disposed(by: cell.reuseDisposeBag)
+        }
+
         return cell
     }
 
