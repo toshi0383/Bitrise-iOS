@@ -26,6 +26,9 @@ targets:
       - carthage: RxCocoa
       - carthage: RxSwift
       - carthage: TKKeyboardControl
+    scheme:
+      environmentVariables:
+        ENABLE_SIGNPOST: YES
   BitriseClientTests:
     platform: iOS
     type: bundle.unit-test
