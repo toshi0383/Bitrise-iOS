@@ -4,6 +4,7 @@ Bitrise iOS Client app 🚀
 
 [![Build Status](https://app.bitrise.io/app/f74e0c84d3865a2f/status.svg?token=m5WvEi3nznlg64vry5qyRA&branch=master)](https://app.bitrise.io/app/f74e0c84d3865a2f)
 [![codecov](https://codecov.io/gh/toshi0383/Bitrise-iOS/branch/master/graph/badge.svg)](https://codecov.io/gh/toshi0383/Bitrise-iOS)
+[![patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/bePatron?u=13627375)
 
 # Features
 - ✅ App List `GET /me/apps`
@@ -65,6 +66,11 @@ This is different for each app. Get one from dashboard.
 ![Build Trigger Token](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/build-trigger-token.png)
 
 SeeAlso: http://devcenter.bitrise.io/api/build-trigger
+
+# Donate
+If you think it's a useful tool, consider donation to maintain project.
+
+[![patreon](https://img.shields.io/badge/patreon-donate-yellow.svg)](https://www.patreon.com/bePatron?u=13627375)
 
 # License
 MIT
