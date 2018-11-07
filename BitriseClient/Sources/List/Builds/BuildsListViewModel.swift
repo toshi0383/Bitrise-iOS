@@ -7,8 +7,6 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-private let log = OSLog(subsystem: "jp.toshi0383.BitriseClient.BuildList", category: "User")
-
 final class BuildsListViewModel {
 
     let buildPollingManager: BuildPollingManager
@@ -315,7 +313,7 @@ final class BuildsListViewModel {
 
     func updateScrollInfo(contentHeight: CGFloat, contentOffsetY: CGFloat, frameHeight: CGFloat, adjustedContentInsetBottom: CGFloat) {
         if #available(iOS 12.0, *) {
-            os_signpost(.event, log: log, name: "updateScrollInfo")
+            os_signpost(.event, log: .pointsOfInterest, name: "updateScrollInfo")
         }
 
         if contentHeight <= 0 {
