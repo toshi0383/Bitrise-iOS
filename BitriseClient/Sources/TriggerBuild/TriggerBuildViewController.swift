@@ -18,6 +18,15 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     @IBOutlet private weak var rootStackView: UIStackView!
 
+    @IBOutlet
+    private weak var triggerButton: UIButton! {
+        didSet {
+            triggerButton.layer.cornerRadius = 5
+            triggerButton.layer.borderWidth = 0.7
+            triggerButton.layer.borderColor = UIColor.baseGreen.cgColor
+        }
+    }
+
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
             gitObjectInputView.layer.zPosition = 1.0
@@ -168,7 +177,14 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     // MARK: IBAction
 
-    @IBAction private func triggerButton() {
+    @IBAction private func triggerButtonTap() {
+
+        Haptic.generate(.light)
+
+        triggerButton.backgroundColor = .baseGreen
+        UIView.animate(withDuration: 0.2) { [weak self] in
+            self?.triggerButton.backgroundColor = .clear
+        }
 
         gitObjectInputView.resignFirstResponder()
         apiTokenTextfield.resignFirstResponder()

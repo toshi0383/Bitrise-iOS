@@ -9,7 +9,7 @@ extension UIColor {
         self.init(displayP3Red: red, green: green, blue: blue, alpha: alpha)
     }
 
-    static let baseGreen = UIColor(hex: 0x4BBFA8)
+    static let baseGreen = UIColor(hex: 0x40B497)
     static let gitRed = UIColor(hex: 0xFF5500)
     static let gitRedHighlight = UIColor(hex: 0xDB4B02)
 
