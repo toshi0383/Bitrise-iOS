@@ -30,6 +30,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
             gitObjectInputView.layer.zPosition = 1.0
+
+            // Quit Interface-builder to inject this on initialization.
+            gitObjectInputView.getSuggestionForType = { [weak viewModel] type -> [String] in
+                return viewModel?.getSuggestion(forType: type) ?? []
+            }
         }
     }
 

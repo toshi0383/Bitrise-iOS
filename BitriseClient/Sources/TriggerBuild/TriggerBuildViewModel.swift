@@ -102,6 +102,11 @@ final class TriggerBuildViewModel {
         }
     }
 
+    private let gitObjectCache: GitObjectCacheRealm = {
+        let realm = Realm.getRealm()
+        return realm.objects(GitObjectCacheRealm.self).first ?? GitObjectCacheRealm()
+    }()
+
     var environments: [BuildTriggerEnvironment] {
         get {
             return realmObject.environments.map(BuildTriggerEnvironment.init)
@@ -207,9 +212,25 @@ final class TriggerBuildViewModel {
             me._buildDidTrigger.accept(())
 
             me.alert("Success\n\(str)")
+
+            DispatchQueue.main.async { [weak me] in
+                guard let me = me else { return }
+                do {
+                    try Realm.getRealm().write {
+                        me.gitObjectCache.enqueue(me.gitObject)
+                    }
+                } catch {
+                    assertionFailure("Failed to write realm object.")
+                }
+            }
+
         }
 
         task.resume()
+    }
+
+    func getSuggestion(forType type: String) -> [String] {
+        return gitObjectCache.value(forType: type)
     }
 
     private func alert(_ string: String) {

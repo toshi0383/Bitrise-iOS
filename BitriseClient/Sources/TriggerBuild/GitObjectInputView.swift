@@ -106,6 +106,13 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
     let newInput: Observable<GitObject>
     private let _newInput = BehaviorRelay<GitObject>(value: .branch(""))
 
+    var getSuggestionForType: ((String) -> [String])? {
+        didSet {
+            // set once
+            assert(oldValue == nil)
+        }
+    }
+
     private let objectTypeButton: GitObjectTypeButton = {
         let button = GitObjectTypeButton()
         button.backgroundColor = UIColor.baseGreen
@@ -177,6 +184,13 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
 
         return objectTypeButton.hitTest(convert(point, to: objectTypeButton), with: event)
+    }
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        if let f = getSuggestionForType {
+            let suggestion: [String] = f(_newInput.value.type)
+            print(suggestion)
+        }
     }
 
     func textFieldDidEndEditing(_ textField: UITextField) {
