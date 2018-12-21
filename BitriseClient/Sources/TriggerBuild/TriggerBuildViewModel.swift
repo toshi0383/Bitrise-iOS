@@ -229,7 +229,7 @@ final class TriggerBuildViewModel {
         task.resume()
     }
 
-    func getSuggestion(forType type: String) -> [String] {
+    func getSuggestions(forType type: String) -> [String] {
         return gitObjectCache.value(forType: type)
     }
 

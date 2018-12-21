@@ -1,3 +1,4 @@
+import RxCocoa
 import RxSwift
 import SafariServices
 import TKKeyboardControl
@@ -18,8 +19,9 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     @IBOutlet private weak var rootStackView: UIStackView!
 
-    @IBOutlet
-    private weak var triggerButton: UIButton! {
+    @IBOutlet private weak var firstStackView: UIStackView!
+
+    @IBOutlet private weak var triggerButton: UIButton! {
         didSet {
             triggerButton.layer.cornerRadius = 5
             triggerButton.layer.borderWidth = 0.7
@@ -31,12 +33,55 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         didSet {
             gitObjectInputView.layer.zPosition = 1.0
 
-            // Quit Interface-builder to inject this on initialization.
-            gitObjectInputView.getSuggestionForType = { [weak viewModel] type -> [String] in
-                return viewModel?.getSuggestion(forType: type) ?? []
-            }
+            gitObjectInputView.textFieldDidBeginEditing
+                .subscribe(onNext: { [weak self] in
+                    guard let me = self else { return }
+
+                    let currentGitObject = me.gitObjectInputView.newInput.value
+
+                    let suggestions = me.viewModel
+                        .getSuggestions(forType: currentGitObject.type)
+                        .filter { $0 != currentGitObject.associatedValue }
+
+                    me.suggestionTableView.isHidden = suggestions.isEmpty
+
+                    if !suggestions.isEmpty {
+                        me.suggestionTableView.reloadSuggestions(suggestions)
+                    }
+                })
+                .disposed(by: disposeBag)
+
+            gitObjectInputView.textFieldDidEndEditing
+                .subscribe(onNext: { [weak self] in
+                    guard let me = self else { return }
+
+                    me.suggestionTableView.isHidden = true
+                })
+                .disposed(by: disposeBag)
+
         }
     }
+
+    private lazy var suggestionTableView: SuggestionTableView = {
+
+        let tableView = SuggestionTableView(suggestions: []) { [weak self] tappedIndex in
+            guard let me = self else { return }
+
+            let suggestions = me.viewModel
+                .getSuggestions(forType: me.gitObjectInputView.newInput.value.type)
+
+            me.gitObjectInputView.objectTextField.text = suggestions[tappedIndex]
+        }
+
+        firstStackView.addArrangedSubview(tableView)
+
+        NSLayoutConstraint.activate([
+            tableView.widthAnchor.constraint(equalTo: firstStackView.widthAnchor)
+        ])
+
+        return tableView
+
+    }()
 
     private lazy var apiTokenTextfieldDelegate: TextFieldDelegate = {
         return TextFieldDelegate { [weak self] apiToken in
@@ -86,7 +131,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         // Currently apiToken is not changed outside this view.
         apiTokenTextfield.text = viewModel.apiToken
 
-        gitObjectInputView.newInput
+        gitObjectInputView.newInput.changed
             .subscribe(onNext: { [weak viewModel] gitObject in
                 viewModel?.gitObject = gitObject
             })
@@ -123,11 +168,25 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
                 let vMaxY = v.convert(.zero, to: me.view).y + v.frame.height // + 4
 
                 let delta = keyboardY - vMaxY
+
                 if delta < 0 {
-                    me.view.frame.origin.y = delta
+
+                    if v.isDescendant(of: me.firstStackView) {
+                        me.firstStackView.frame.origin.y = delta
+                    } else if v.isDescendant(of: me.tableView) {
+                        me.tableView.frame.origin.y = delta
+                    } else {
+                        me.view.frame.origin.y = delta
+                    }
+
                 }
+
             } else {
+
+                me.firstStackView.frame.origin.y = 0
+                me.tableView.frame.origin.y = 0
                 me.view.frame.origin.y = 0
+
             }
 
             if v.isDescendant(of: me.tableView),
