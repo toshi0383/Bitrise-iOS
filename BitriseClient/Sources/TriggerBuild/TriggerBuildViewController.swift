@@ -115,11 +115,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // safeArea relative margin only for iPhoneX
-        if !Device.isPhoneX {
-            rootStackView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        }
-
         // [ActionPopoverButton]
         // Tell rootStackView the hitTest target.
         rootStackView.isUserInteractionEnabled = true
@@ -171,21 +166,13 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
                 if delta < 0 {
 
-                    if v.isDescendant(of: me.firstStackView) {
-                        me.firstStackView.frame.origin.y = delta
-                    } else if v.isDescendant(of: me.tableView) {
-                        me.tableView.frame.origin.y = delta
-                    } else {
-                        me.view.frame.origin.y = delta
-                    }
+                    me.rootStackView.frame.origin.y = delta
 
                 }
 
             } else {
 
-                me.firstStackView.frame.origin.y = 0
-                me.tableView.frame.origin.y = 0
-                me.view.frame.origin.y = 0
+                me.rootStackView.frame.origin.y = 0
 
             }
 
