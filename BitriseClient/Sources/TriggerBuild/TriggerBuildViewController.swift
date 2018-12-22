@@ -21,11 +21,28 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     @IBOutlet private weak var firstStackView: UIStackView!
 
+    @IBOutlet private weak var firstFixedHeightStackView: UIStackView!
+
     @IBOutlet private weak var triggerButton: UIButton! {
         didSet {
             triggerButton.layer.cornerRadius = 5
             triggerButton.layer.borderWidth = 0.7
             triggerButton.layer.borderColor = UIColor.baseGreen.cgColor
+        }
+    }
+
+    private func reloadSuggestions() {
+
+        let currentGitObject = gitObjectInputView.newInput.value
+
+        let suggestions = viewModel
+            .getSuggestions(forType: currentGitObject.type)
+            .filter { $0 != currentGitObject.associatedValue }
+
+        suggestionTableView.isHidden = suggestions.isEmpty
+
+        if !suggestions.isEmpty {
+            suggestionTableView.reloadSuggestions(suggestions)
         }
     }
 
@@ -35,19 +52,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
             gitObjectInputView.textFieldDidBeginEditing
                 .subscribe(onNext: { [weak self] in
-                    guard let me = self else { return }
-
-                    let currentGitObject = me.gitObjectInputView.newInput.value
-
-                    let suggestions = me.viewModel
-                        .getSuggestions(forType: currentGitObject.type)
-                        .filter { $0 != currentGitObject.associatedValue }
-
-                    me.suggestionTableView.isHidden = suggestions.isEmpty
-
-                    if !suggestions.isEmpty {
-                        me.suggestionTableView.reloadSuggestions(suggestions)
-                    }
+                    self?.reloadSuggestions()
                 })
                 .disposed(by: disposeBag)
 
@@ -70,13 +75,19 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             let suggestions = me.viewModel
                 .getSuggestions(forType: me.gitObjectInputView.newInput.value.type)
 
-            me.gitObjectInputView.objectTextField.text = suggestions[tappedIndex]
+            let currentType = me.gitObjectInputView.newInput.value.type
+
+            let newGitObject = GitObject(type: currentType, value: suggestions[tappedIndex])!
+
+            me.gitObjectInputView.updateUI(newGitObject, relay: true)
+
+            me.reloadSuggestions()
         }
 
         firstStackView.addArrangedSubview(tableView)
 
         NSLayoutConstraint.activate([
-            tableView.widthAnchor.constraint(equalTo: firstStackView.widthAnchor)
+            tableView.topAnchor.constraint(equalTo: firstFixedHeightStackView.bottomAnchor, constant: 10)
         ])
 
         return tableView
@@ -132,7 +143,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             })
             .disposed(by: disposeBag)
 
-        gitObjectInputView.updateUI(viewModel.gitObject)
+        gitObjectInputView.updateUI(viewModel.gitObject, relay: false)
 
         // PullToDismiss
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))

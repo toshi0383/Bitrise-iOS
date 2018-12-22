@@ -10,10 +10,7 @@ enum GitObject {
         }
     }
 
-    init?(realmObject: BuildTriggerRealm) {
-        guard let value = realmObject.gitObjectValue,
-            let type = realmObject.gitObjectType else { return nil }
-
+    init?(type: String, value: String) {
         switch type {
         case "branch":
             self = .branch(value)
@@ -27,6 +24,13 @@ enum GitObject {
         default:
             return nil
         }
+    }
+
+    init?(realmObject: BuildTriggerRealm) {
+        guard let value = realmObject.gitObjectValue,
+            let type = realmObject.gitObjectType else { return nil }
+
+        self.init(type: type, value: value)
     }
 
     static func enumerated() -> [GitObject] {

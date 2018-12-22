@@ -197,11 +197,15 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     // MARK: Utilities
 
-    /// Use this method to set initial value.
-    func updateUI(_ gitObject: GitObject) {
+    /// - relay: False to set initial value without emitting Event via newInput Property.
+    func updateUI(_ gitObject: GitObject, relay: Bool) {
         objectTextField.text = gitObject.text
         objectTextField.placeholder = Placeholder(gitObject).text
         objectTypeButton.imageView.image = gitObject.image
+
+        if relay {
+            _newInput.accept(gitObject)
+        }
     }
 
     private func updatePlaceholder() {
