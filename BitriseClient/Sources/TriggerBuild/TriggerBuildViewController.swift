@@ -72,12 +72,13 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         let tableView = SuggestionTableView(suggestions: []) { [weak self] tappedIndex in
             guard let me = self else { return }
 
+            let currentGitObject = me.gitObjectInputView.newInput.value
+
             let suggestions = me.viewModel
                 .getSuggestions(forType: me.gitObjectInputView.newInput.value.type)
+                .filter { $0 != currentGitObject.associatedValue }
 
-            let currentType = me.gitObjectInputView.newInput.value.type
-
-            let newGitObject = GitObject(type: currentType, value: suggestions[tappedIndex])!
+            let newGitObject = GitObject(type: currentGitObject.type, value: suggestions[tappedIndex])!
 
             me.gitObjectInputView.updateUI(newGitObject, relay: true)
 
@@ -85,10 +86,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
 
         firstStackView.addArrangedSubview(tableView)
-
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: firstFixedHeightStackView.bottomAnchor, constant: 10)
-        ])
 
         return tableView
 
@@ -177,7 +174,21 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
                 if delta < 0 {
 
-                    me.rootStackView.frame.origin.y = delta
+                    if v.isDescendant(of: me.gitObjectInputView) {
+                        if me.traitCollection.verticalSizeClass == .compact {
+
+                            // FIXME:
+                            //   delay workaround for timing issue between suggestionTableView's layout.
+                            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+                                me.rootStackView.frame.origin.y = delta - 44
+                            }
+
+                        } else {
+                            me.rootStackView.frame.origin.y = delta - 44
+                        }
+                    } else {
+                        me.rootStackView.frame.origin.y = delta
+                    }
 
                 }
 
@@ -208,7 +219,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     @objc func panGesture(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .ended:
-            print(gesture.velocity(in: view).y)
             if gesture.translation(in: view).y > view.frame.height / 2
                 || gesture.velocity(in: view).y > 250.0 {
                 self.dismiss(animated: true, completion: nil)

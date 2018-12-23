@@ -2,11 +2,11 @@ import UIKit
 
 final class SuggestionTableView: UITableView {
 
-    private var suggestions: [String] = []
+    private(set) var suggestions: [String] = []
 
     func reloadSuggestions(_ suggestions: [String]) {
         self.suggestions = suggestions
-        heightConstraint.constant = CGFloat(suggestions.count * 44)
+        heightConstraint.constant = CGFloat(min(suggestions.count, 3) * 44)
         reloadData()
     }
 
