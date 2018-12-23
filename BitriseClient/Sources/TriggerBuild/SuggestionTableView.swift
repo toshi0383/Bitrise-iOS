@@ -1,6 +1,7 @@
 import UIKit
 
 final class SuggestionTableView: UITableView {
+
     private var suggestions: [String] = []
 
     func reloadSuggestions(_ suggestions: [String]) {
@@ -22,18 +23,27 @@ final class SuggestionTableView: UITableView {
         delegate = self
         dataSource = self
 
+        translatesAutoresizingMaskIntoConstraints = false
+
         register(UITableViewCell.self, forCellReuseIdentifier: reuseID)
     }
 
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
-    override func updateConstraints() {
+}
+
+// MARK: Lifecycle
+
+extension SuggestionTableView {
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+
         heightConstraint = heightAnchor.constraint(equalToConstant: 0)
         heightConstraint.isActive = true
-
-        super.updateConstraints()
     }
 }
+
+// MARK: TableView
 
 extension SuggestionTableView: UITableViewDataSource {
 

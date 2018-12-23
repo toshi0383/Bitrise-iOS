@@ -102,7 +102,7 @@ final class TriggerBuildViewModel {
         }
     }
 
-    private let gitObjectCache: GitObjectCacheRealm = {
+    private var gitObjectCache: GitObjectCacheRealm = {
         let realm = Realm.getRealm()
         return realm.objects(GitObjectCacheRealm.self).first ?? GitObjectCacheRealm()
     }()
@@ -180,6 +180,8 @@ final class TriggerBuildViewModel {
             return
         }
 
+        let gitObject = self.gitObject!
+
         let task = URLSession.shared.dataTask(with: req) { [weak self] (data, res, err) in
 
             guard let me = self else { return }
@@ -216,8 +218,11 @@ final class TriggerBuildViewModel {
             DispatchQueue.main.async { [weak me] in
                 guard let me = me else { return }
                 do {
-                    try Realm.getRealm().write {
-                        me.gitObjectCache.enqueue(me.gitObject)
+                    let realm = Realm.getRealm()
+                    try realm.write {
+                        me.gitObjectCache.enqueue(gitObject)
+                        realm.add(me.gitObjectCache, update: true)
+
                     }
                 } catch {
                     assertionFailure("Failed to write realm object.")

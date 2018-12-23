@@ -11,7 +11,9 @@ extension Realm {
                 .deletingLastPathComponent()
                 .appendingPathComponent("bitrise-ios.realm")
 
-            let config = Configuration(fileURL: fileURL, encryptionKey: getKey() as Data)
+            let key = getKey() as Data
+            // print("fileURL: \(fileURL!), key: \(key.hexEncodedString(options: .upperCase))")
+            let config = Configuration(fileURL: fileURL, encryptionKey: key)
 
             do {
                 return try Realm(configuration: config)

@@ -2,9 +2,16 @@ import Realm
 import RealmSwift
 
 final class GitObjectCacheRealm: Object {
+
+    @objc dynamic var pkey = ""
+
     var tags = List<String>()
     var branches = List<String>()
     var commits = List<String>()
+
+    override static func primaryKey() -> String? {
+        return "pkey"
+    }
 }
 
 // MARK: Utility
