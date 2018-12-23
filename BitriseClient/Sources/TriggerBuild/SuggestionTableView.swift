@@ -2,7 +2,7 @@ import UIKit
 
 final class SuggestionTableView: UITableView {
 
-    private(set) var suggestions: [String] = []
+    private var suggestions: [String] = []
 
     func reloadSuggestions(_ suggestions: [String]) {
         self.suggestions = suggestions
@@ -12,11 +12,11 @@ final class SuggestionTableView: UITableView {
 
     private var heightConstraint: NSLayoutConstraint!
     private let reuseID = UUID().uuidString
-    private let tappedIndexHandler: (Int) -> ()
+    private let suggestionHandler: (String) -> ()
 
-    init(suggestions: [String], tappedIndexHandler: @escaping (Int) -> ()) {
+    init(suggestions: [String], suggestionHandler: @escaping (String) -> ()) {
         self.suggestions = suggestions
-        self.tappedIndexHandler = tappedIndexHandler
+        self.suggestionHandler = suggestionHandler
 
         super.init(frame: .zero, style: .plain)
 
@@ -62,6 +62,10 @@ extension SuggestionTableView: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        tappedIndexHandler(indexPath.row)
+        guard indexPath.row < suggestions.count else {
+            fatalError()
+        }
+
+        suggestionHandler(suggestions[indexPath.row])
     }
 }

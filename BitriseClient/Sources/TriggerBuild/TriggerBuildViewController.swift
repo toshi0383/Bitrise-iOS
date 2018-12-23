@@ -69,16 +69,12 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     private lazy var suggestionTableView: SuggestionTableView = {
 
-        let tableView = SuggestionTableView(suggestions: []) { [weak self] tappedIndex in
+        let tableView = SuggestionTableView(suggestions: []) { [weak self] suggestion in
             guard let me = self else { return }
 
             let currentGitObject = me.gitObjectInputView.newInput.value
 
-            let suggestions = me.viewModel
-                .getSuggestions(forType: me.gitObjectInputView.newInput.value.type)
-                .filter { $0 != currentGitObject.associatedValue }
-
-            let newGitObject = GitObject(type: currentGitObject.type, value: suggestions[tappedIndex])!
+            let newGitObject = GitObject(type: currentGitObject.type, value: suggestion)!
 
             me.gitObjectInputView.updateUI(newGitObject, relay: true)
 
