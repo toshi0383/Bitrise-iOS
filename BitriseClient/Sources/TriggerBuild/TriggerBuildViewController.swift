@@ -37,7 +37,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
         let suggestions = viewModel
             .getSuggestions(forType: currentGitObject.type)
-            .filter { $0 != currentGitObject.associatedValue }
+            .filter { $0 != currentGitObject.name }
 
         suggestionTableView.isHidden = suggestions.isEmpty
 
@@ -74,7 +74,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
             let currentGitObject = me.gitObjectInputView.newInput.value
 
-            let newGitObject = GitObject(type: currentGitObject.type, value: suggestion)!
+            let newGitObject = GitObject(type: currentGitObject.type, name: suggestion)!
 
             me.gitObjectInputView.updateUI(newGitObject, relay: true)
 

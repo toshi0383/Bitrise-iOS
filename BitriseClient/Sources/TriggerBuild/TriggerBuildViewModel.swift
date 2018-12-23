@@ -42,7 +42,7 @@ final class TriggerBuildViewModel {
             let gitObject = GitObject.branch("")
             let properties: [String: Any?] = [
                 "appSlug": appSlug,
-                "gitObjectValue": gitObject.associatedValue,
+                "gitObjectValue": gitObject.name,
                 "gitObjectType": gitObject.type,
                 "environments": []
             ]
@@ -96,7 +96,7 @@ final class TriggerBuildViewModel {
                 return
             }
             try! Realm.getRealm().write {
-                realmObject.gitObjectValue = newValue.associatedValue
+                realmObject.gitObjectValue = newValue.name
                 realmObject.gitObjectType = newValue.type
             }
         }
@@ -235,7 +235,7 @@ final class TriggerBuildViewModel {
     }
 
     func getSuggestions(forType type: String) -> [String] {
-        return gitObjectCache.value(forType: type)
+        return gitObjectCache.name(forType: type)
     }
 
     private func alert(_ string: String) {

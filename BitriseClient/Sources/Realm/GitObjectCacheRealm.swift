@@ -35,7 +35,7 @@ extension GitObjectCacheRealm {
         }
     }
 
-    func value(forType type: String) -> [String] {
+    func name(forType type: String) -> [String] {
         switch type {
         case "tag":
             return tags.map { $0 }
