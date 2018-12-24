@@ -4,8 +4,23 @@ import SafariServices
 import TKKeyboardControl
 import UIKit
 
-// TODO: Refactoring
+/// Scene to trigger a new build on Bitrise CI.
+///
+/// [Autolayout NOTE]
+///
+///   - DO NOT make a constraint to safe-area layout guide.
+///     Manual frame manipulation with PullToDismiss would cause safe-area
+///     to disappear during pan gesture.
+///
+///   - `rootStackView`'s top (when vertical) and leading (when horizontal)
+///     is tied to superview plus 44.
+///     This way elements are not covered with iPhoneX*'s bezel.
+///     iPhone with no-bezel will sacrifice its screen space a bit,
+///     but not a big issue.
+///
 final class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+
+    // MARK: Storyboardable
 
     typealias Dependency = TriggerBuildViewModel
 
@@ -15,34 +30,23 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         return vc
     }
 
+    // MARK: Private
+
+    private weak var lastFirstResponder: UIResponder?
+    private var viewModel: TriggerBuildViewModel!
+    private let disposeBag = DisposeBag()
+
     @IBOutlet private weak var baseBottomConstraint: NSLayoutConstraint!
 
     @IBOutlet private weak var rootStackView: UIStackView!
 
     @IBOutlet private weak var firstStackView: UIStackView!
 
-    @IBOutlet private weak var firstFixedHeightStackView: UIStackView!
-
     @IBOutlet private weak var triggerButton: UIButton! {
         didSet {
             triggerButton.layer.cornerRadius = 5
             triggerButton.layer.borderWidth = 0.7
             triggerButton.layer.borderColor = UIColor.baseGreen.cgColor
-        }
-    }
-
-    private func reloadSuggestions() {
-
-        let currentGitObject = gitObjectInputView.newInput.value
-
-        let suggestions = viewModel
-            .getSuggestions(forType: currentGitObject.type)
-            .filter { $0 != currentGitObject.name }
-
-        suggestionTableView.isHidden = suggestions.isEmpty
-
-        if !suggestions.isEmpty {
-            suggestionTableView.reloadSuggestions(suggestions)
         }
     }
 
@@ -107,12 +111,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             tableView.allowsMultipleSelectionDuringEditing = false
         }
     }
-
-    // MARK: Private
-
-    private weak var lastFirstResponder: UIResponder?
-    private var viewModel: TriggerBuildViewModel!
-    private let disposeBag = DisposeBag()
 
     // MARK: LifeCycle
 
@@ -363,4 +361,22 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             break
         }
     }
+
+    // MARK: Utilities
+
+    private func reloadSuggestions() {
+
+        let currentGitObject = gitObjectInputView.newInput.value
+
+        let suggestions = viewModel
+            .getSuggestions(forType: currentGitObject.type)
+            .filter { $0 != currentGitObject.name }
+
+        suggestionTableView.isHidden = suggestions.isEmpty
+
+        if !suggestions.isEmpty {
+            suggestionTableView.reloadSuggestions(suggestions)
+        }
+    }
+
 }

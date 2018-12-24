@@ -3,27 +3,6 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-private extension GitObject {
-    var image: UIImage {
-        switch self {
-        case .branch:
-            return UIImage(named: "git-branch")!
-        case .tag:
-            return UIImage(named: "git-tag")!
-        case .commitHash:
-            return UIImage(named: "git-commit")!
-        }
-    }
-
-    var text: String {
-        switch self {
-        case .branch(let v): return v
-        case .tag(let v): return v
-        case .commitHash(let v): return v
-        }
-    }
-}
-
 private final class GitObjectTypeButton: ActionPopoverButton {
 
     let imageView: UIImageView = UIImageView()
@@ -36,10 +15,6 @@ private final class GitObjectTypeButton: ActionPopoverButton {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         configure()
-    }
-
-    private func configure() {
-        addSubview(imageView)
     }
 
     override func updateConstraints() {
@@ -70,6 +45,11 @@ private final class GitObjectTypeButton: ActionPopoverButton {
         super.touchesEnded(touches, with: event)
         backgroundColor = UIColor.gitRed
     }
+
+    private func configure() {
+        addSubview(imageView)
+    }
+
 }
 
 private func _button(_ image: UIImage) -> UIButton {
@@ -128,7 +108,7 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
     }
 
-    @IBOutlet private(set) weak var objectTextField: UITextField! {
+    @IBOutlet private weak var objectTextField: UITextField! {
         didSet {
             objectTextField.delegate = self
         }
