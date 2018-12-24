@@ -103,8 +103,11 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
     }
 
     // Input result
-    let newInput: Observable<GitObject>
+    let newInput: Property<GitObject>
     private let _newInput = BehaviorRelay<GitObject>(value: .branch(""))
+
+    let textFieldDidBeginEditing = PublishRelay<Void>()
+    let textFieldDidEndEditing = PublishRelay<Void>()
 
     private let objectTypeButton: GitObjectTypeButton = {
         let button = GitObjectTypeButton()
@@ -125,19 +128,19 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
     }
 
-    @IBOutlet private weak var objectTextField: UITextField! {
+    @IBOutlet private(set) weak var objectTextField: UITextField! {
         didSet {
             objectTextField.delegate = self
         }
     }
 
     override init(frame: CGRect) {
-        self.newInput = _newInput.changed
+        self.newInput = Property(_newInput)
         super.init(frame: frame)
     }
 
     required init?(coder aDecoder: NSCoder) {
-        self.newInput = _newInput.changed
+        self.newInput = Property(_newInput)
         super.init(coder: aDecoder)
     }
 
@@ -179,7 +182,14 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         return objectTypeButton.hitTest(convert(point, to: objectTypeButton), with: event)
     }
 
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textFieldDidBeginEditing.accept(())
+    }
+
     func textFieldDidEndEditing(_ textField: UITextField) {
+
+        textFieldDidEndEditing.accept(())
+
         let str = objectTextField.text ?? ""
         _newInput.accept(_newInput.value.updateAssociatedValue(str))
         updatePlaceholder()
@@ -187,14 +197,19 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     // MARK: Utilities
 
-    /// Use this method to set initial value.
-    func updateUI(_ gitObject: GitObject) {
+    /// - relay: False to set initial value without emitting Event via newInput Property.
+    func updateUI(_ gitObject: GitObject, relay: Bool) {
         objectTextField.text = gitObject.text
         objectTextField.placeholder = Placeholder(gitObject).text
         objectTypeButton.imageView.image = gitObject.image
+
+        if relay {
+            _newInput.accept(gitObject)
+        }
     }
 
     private func updatePlaceholder() {
         objectTextField.placeholder = Placeholder(_newInput.value).text
     }
 }
+

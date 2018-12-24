@@ -42,7 +42,7 @@ final class TriggerBuildViewModel {
             let gitObject = GitObject.branch("")
             let properties: [String: Any?] = [
                 "appSlug": appSlug,
-                "gitObjectValue": gitObject.associatedValue,
+                "gitObjectValue": gitObject.name,
                 "gitObjectType": gitObject.type,
                 "environments": []
             ]
@@ -96,11 +96,16 @@ final class TriggerBuildViewModel {
                 return
             }
             try! Realm.getRealm().write {
-                realmObject.gitObjectValue = newValue.associatedValue
+                realmObject.gitObjectValue = newValue.name
                 realmObject.gitObjectType = newValue.type
             }
         }
     }
+
+    private var gitObjectCache: GitObjectCacheRealm = {
+        let realm = Realm.getRealm()
+        return realm.objects(GitObjectCacheRealm.self).first ?? GitObjectCacheRealm()
+    }()
 
     var environments: [BuildTriggerEnvironment] {
         get {
@@ -175,6 +180,8 @@ final class TriggerBuildViewModel {
             return
         }
 
+        let gitObject = self.gitObject!
+
         let task = URLSession.shared.dataTask(with: req) { [weak self] (data, res, err) in
 
             guard let me = self else { return }
@@ -207,9 +214,28 @@ final class TriggerBuildViewModel {
             me._buildDidTrigger.accept(())
 
             me.alert("Success\n\(str)")
+
+            DispatchQueue.main.async { [weak me] in
+                guard let me = me else { return }
+                do {
+                    let realm = Realm.getRealm()
+                    try realm.write {
+                        me.gitObjectCache.enqueue(gitObject)
+                        realm.add(me.gitObjectCache, update: true)
+
+                    }
+                } catch {
+                    assertionFailure("Failed to write realm object.")
+                }
+            }
+
         }
 
         task.resume()
+    }
+
+    func getSuggestions(forType type: String) -> [String] {
+        return gitObjectCache.name(forType: type)
     }
 
     private func alert(_ string: String) {

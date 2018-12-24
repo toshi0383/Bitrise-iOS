@@ -1,3 +1,4 @@
+import RxCocoa
 import RxSwift
 import SafariServices
 import TKKeyboardControl
@@ -18,8 +19,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     @IBOutlet private weak var rootStackView: UIStackView!
 
-    @IBOutlet
-    private weak var triggerButton: UIButton! {
+    @IBOutlet private weak var firstStackView: UIStackView!
+
+    @IBOutlet private weak var firstFixedHeightStackView: UIStackView!
+
+    @IBOutlet private weak var triggerButton: UIButton! {
         didSet {
             triggerButton.layer.cornerRadius = 5
             triggerButton.layer.borderWidth = 0.7
@@ -27,11 +31,61 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
     }
 
+    private func reloadSuggestions() {
+
+        let currentGitObject = gitObjectInputView.newInput.value
+
+        let suggestions = viewModel
+            .getSuggestions(forType: currentGitObject.type)
+            .filter { $0 != currentGitObject.name }
+
+        suggestionTableView.isHidden = suggestions.isEmpty
+
+        if !suggestions.isEmpty {
+            suggestionTableView.reloadSuggestions(suggestions)
+        }
+    }
+
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
             gitObjectInputView.layer.zPosition = 1.0
+
+            gitObjectInputView.textFieldDidBeginEditing
+                .subscribe(onNext: { [weak self] in
+                    self?.reloadSuggestions()
+                })
+                .disposed(by: disposeBag)
+
+            gitObjectInputView.textFieldDidEndEditing
+                .subscribe(onNext: { [weak self] in
+                    guard let me = self else { return }
+
+                    me.suggestionTableView.isHidden = true
+                })
+                .disposed(by: disposeBag)
+
         }
     }
+
+    private lazy var suggestionTableView: SuggestionTableView = {
+
+        let tableView = SuggestionTableView(suggestions: []) { [weak self] suggestion in
+            guard let me = self else { return }
+
+            let currentGitObject = me.gitObjectInputView.newInput.value
+
+            let newGitObject = GitObject(type: currentGitObject.type, name: suggestion)!
+
+            me.gitObjectInputView.updateUI(newGitObject, relay: true)
+
+            me.reloadSuggestions()
+        }
+
+        firstStackView.addArrangedSubview(tableView)
+
+        return tableView
+
+    }()
 
     private lazy var apiTokenTextfieldDelegate: TextFieldDelegate = {
         return TextFieldDelegate { [weak self] apiToken in
@@ -65,11 +119,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // safeArea relative margin only for iPhoneX
-        if !Device.isPhoneX {
-            rootStackView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        }
-
         // [ActionPopoverButton]
         // Tell rootStackView the hitTest target.
         rootStackView.isUserInteractionEnabled = true
@@ -81,13 +130,13 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         // Currently apiToken is not changed outside this view.
         apiTokenTextfield.text = viewModel.apiToken
 
-        gitObjectInputView.newInput
+        gitObjectInputView.newInput.changed
             .subscribe(onNext: { [weak viewModel] gitObject in
                 viewModel?.gitObject = gitObject
             })
             .disposed(by: disposeBag)
 
-        gitObjectInputView.updateUI(viewModel.gitObject)
+        gitObjectInputView.updateUI(viewModel.gitObject, relay: false)
 
         // PullToDismiss
         let gesture = UIPanGestureRecognizer(target: self, action: #selector(panGesture))
@@ -118,11 +167,31 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
                 let vMaxY = v.convert(.zero, to: me.view).y + v.frame.height // + 4
 
                 let delta = keyboardY - vMaxY
+
                 if delta < 0 {
-                    me.view.frame.origin.y = delta
+
+                    if v.isDescendant(of: me.gitObjectInputView) {
+                        if me.traitCollection.verticalSizeClass == .compact {
+
+                            // FIXME:
+                            //   delay workaround for timing issue between suggestionTableView's layout.
+                            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.2) {
+                                me.rootStackView.frame.origin.y = delta - 44
+                            }
+
+                        } else {
+                            me.rootStackView.frame.origin.y = delta - 44
+                        }
+                    } else {
+                        me.rootStackView.frame.origin.y = delta
+                    }
+
                 }
+
             } else {
-                me.view.frame.origin.y = 0
+
+                me.rootStackView.frame.origin.y = 0
+
             }
 
             if v.isDescendant(of: me.tableView),
@@ -146,7 +215,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
     @objc func panGesture(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .ended:
-            print(gesture.velocity(in: view).y)
             if gesture.translation(in: view).y > view.frame.height / 2
                 || gesture.velocity(in: view).y > 250.0 {
                 self.dismiss(animated: true, completion: nil)

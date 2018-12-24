@@ -10,38 +10,42 @@ enum GitObject {
         }
     }
 
-    init?(realmObject: BuildTriggerRealm) {
-        guard let value = realmObject.gitObjectValue,
-            let type = realmObject.gitObjectType else { return nil }
-
+    init?(type: String, name: String) {
         switch type {
         case "branch":
-            self = .branch(value)
+            self = .branch(name)
             return
         case "tag":
-            self = .tag(value)
+            self = .tag(name)
             return
         case "commitHash":
-            self = .commitHash(value)
+            self = .commitHash(name)
             return
         default:
             return nil
         }
     }
 
+    init?(realmObject: BuildTriggerRealm) {
+        guard let name = realmObject.gitObjectValue,
+            let type = realmObject.gitObjectType else { return nil }
+
+        self.init(type: type, name: name)
+    }
+
     static func enumerated() -> [GitObject] {
         return [.branch(""), .tag(""), .commitHash("")]
     }
 
-    func updateAssociatedValue(_ value: String) -> GitObject {
+    func updateAssociatedValue(_ name: String) -> GitObject {
         switch self {
-        case .branch: return .branch(value)
-        case .tag: return .tag(value)
-        case .commitHash: return .commitHash(value)
+        case .branch: return .branch(name)
+        case .tag: return .tag(name)
+        case .commitHash: return .commitHash(name)
         }
     }
 
-    var associatedValue: String {
+    var name: String {
         switch self {
         case .branch(let v): return v
         case .tag(let v): return v
