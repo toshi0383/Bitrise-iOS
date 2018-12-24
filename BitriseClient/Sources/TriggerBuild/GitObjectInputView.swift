@@ -86,8 +86,7 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
     let newInput: Property<GitObject>
     private let _newInput = BehaviorRelay<GitObject>(value: .branch(""))
 
-    let textFieldDidBeginEditing = PublishRelay<Void>()
-    let textFieldDidEndEditing = PublishRelay<Void>()
+    let textFieldDelegate = TextFieldDelegate()
 
     private let objectTypeButton: GitObjectTypeButton = {
         let button = GitObjectTypeButton()
@@ -110,7 +109,17 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
 
     @IBOutlet private weak var objectTextField: UITextField! {
         didSet {
-            objectTextField.delegate = self
+            objectTextField.delegate = textFieldDelegate
+
+            textFieldDelegate.didEndEditing
+                .subscribe(onNext: { [weak self] text in
+                    guard let me = self else { return }
+
+                    let str: String = text ?? ""
+                    me._newInput.accept(me._newInput.value.updateAssociatedValue(str))
+                    me.updatePlaceholder()
+                })
+                .disposed(by: rx.disposeBag)
         }
     }
 
@@ -160,19 +169,6 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
 
         return objectTypeButton.hitTest(convert(point, to: objectTypeButton), with: event)
-    }
-
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textFieldDidBeginEditing.accept(())
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-
-        textFieldDidEndEditing.accept(())
-
-        let str = objectTextField.text ?? ""
-        _newInput.accept(_newInput.value.updateAssociatedValue(str))
-        updatePlaceholder()
     }
 
     // MARK: Utilities

@@ -1,31 +1,19 @@
+import RxCocoa
 import UIKit
 
-final class TextFieldDelegate: NSObject, UITextFieldDelegate {
+final class TextFieldDelegate: NSObject {
+    let didBeginEditing = PublishRelay<String?>()
+    let didEndEditing = PublishRelay<String?>()
+}
 
-    typealias Handler = (String) -> ()
-
-    private let handler: Handler
-
-    init(_ handler: @escaping Handler) {
-        self.handler = handler
-    }
+extension TextFieldDelegate: UITextFieldDelegate {
 
     func textFieldDidEndEditing(_ textField: UITextField) {
-        if let text = textField.text {
-            handler(text)
-        }
+        didEndEditing.accept(textField.text)
     }
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        guard let text = textField.text else {
-            return false
-        }
-
-        if !text.isEmpty {
-            handler(text)
-        }
-
-        return true
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        didBeginEditing.accept(textField.text)
     }
 }
 
