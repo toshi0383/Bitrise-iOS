@@ -217,12 +217,12 @@ final class TriggerBuildViewModel {
 
             DispatchQueue.main.async { [weak me] in
                 guard let me = me else { return }
+                let realm = Realm.getRealm()
+
                 do {
-                    let realm = Realm.getRealm()
                     try realm.write {
                         me.gitObjectCache.enqueue(gitObject)
                         realm.add(me.gitObjectCache, update: true)
-
                     }
                 } catch {
                     assertionFailure("Failed to write realm object.")
@@ -235,6 +235,7 @@ final class TriggerBuildViewModel {
     }
 
     func getSuggestions(forType type: String) -> [String] {
+        assert(Thread.current == .main)
         return gitObjectCache.name(forType: type)
     }
 

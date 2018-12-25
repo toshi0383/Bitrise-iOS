@@ -2,17 +2,11 @@ import UIKit
 
 final class SuggestionTableView: UITableView {
 
-    private var suggestions: [String] = []
-
-    func reloadSuggestions(_ suggestions: [String]) {
-        self.suggestions = suggestions
-        heightConstraint.constant = CGFloat(min(suggestions.count, 3) * 44)
-        reloadData()
-    }
-
-    private var heightConstraint: NSLayoutConstraint!
     private let reuseID = UUID().uuidString
     private let suggestionHandler: (String) -> ()
+
+    private var suggestions: [String] = []
+    private var heightConstraint: NSLayoutConstraint!
 
     init(suggestions: [String], suggestionHandler: @escaping (String) -> ()) {
         self.suggestions = suggestions
@@ -68,4 +62,16 @@ extension SuggestionTableView: UITableViewDelegate {
 
         suggestionHandler(suggestions[indexPath.row])
     }
+}
+
+// MARK: Utilities
+
+extension SuggestionTableView {
+
+    func reloadSuggestions(_ suggestions: [String]) {
+        self.suggestions = suggestions
+        heightConstraint.constant = CGFloat(min(suggestions.count, 3) * 44)
+        reloadData()
+    }
+
 }

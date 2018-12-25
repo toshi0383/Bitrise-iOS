@@ -3,27 +3,6 @@ import RxSwift
 import RxCocoa
 import UIKit
 
-private extension GitObject {
-    var image: UIImage {
-        switch self {
-        case .branch:
-            return UIImage(named: "git-branch")!
-        case .tag:
-            return UIImage(named: "git-tag")!
-        case .commitHash:
-            return UIImage(named: "git-commit")!
-        }
-    }
-
-    var text: String {
-        switch self {
-        case .branch(let v): return v
-        case .tag(let v): return v
-        case .commitHash(let v): return v
-        }
-    }
-}
-
 private final class GitObjectTypeButton: ActionPopoverButton {
 
     let imageView: UIImageView = UIImageView()
@@ -36,10 +15,6 @@ private final class GitObjectTypeButton: ActionPopoverButton {
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         configure()
-    }
-
-    private func configure() {
-        addSubview(imageView)
     }
 
     override func updateConstraints() {
@@ -70,6 +45,11 @@ private final class GitObjectTypeButton: ActionPopoverButton {
         super.touchesEnded(touches, with: event)
         backgroundColor = UIColor.gitRed
     }
+
+    private func configure() {
+        addSubview(imageView)
+    }
+
 }
 
 private func _button(_ image: UIImage) -> UIButton {
@@ -106,8 +86,7 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
     let newInput: Property<GitObject>
     private let _newInput = BehaviorRelay<GitObject>(value: .branch(""))
 
-    let textFieldDidBeginEditing = PublishRelay<Void>()
-    let textFieldDidEndEditing = PublishRelay<Void>()
+    let textFieldDelegate = TextFieldDelegate()
 
     private let objectTypeButton: GitObjectTypeButton = {
         let button = GitObjectTypeButton()
@@ -128,9 +107,19 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
     }
 
-    @IBOutlet private(set) weak var objectTextField: UITextField! {
+    @IBOutlet private weak var objectTextField: UITextField! {
         didSet {
-            objectTextField.delegate = self
+            objectTextField.delegate = textFieldDelegate
+
+            textFieldDelegate.didEndEditing
+                .subscribe(onNext: { [weak self] text in
+                    guard let me = self else { return }
+
+                    let str: String = text ?? ""
+                    me._newInput.accept(me._newInput.value.updateAssociatedValue(str))
+                    me.updatePlaceholder()
+                })
+                .disposed(by: rx.disposeBag)
         }
     }
 
@@ -180,19 +169,6 @@ final class GitObjectInputView: UIView, UITextFieldDelegate {
         }
 
         return objectTypeButton.hitTest(convert(point, to: objectTypeButton), with: event)
-    }
-
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textFieldDidBeginEditing.accept(())
-    }
-
-    func textFieldDidEndEditing(_ textField: UITextField) {
-
-        textFieldDidEndEditing.accept(())
-
-        let str = objectTextField.text ?? ""
-        _newInput.accept(_newInput.value.updateAssociatedValue(str))
-        updatePlaceholder()
     }
 
     // MARK: Utilities

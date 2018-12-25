@@ -4,24 +4,30 @@ import SafariServices
 import TKKeyboardControl
 import UIKit
 
-// TODO: Refactoring
-final class TriggerBuildViewController: UIViewController, Storyboardable, UITableViewDataSource, UITableViewDelegate, UIGestureRecognizerDelegate {
+/// Scene to trigger a new build on Bitrise CI.
+///
+/// [Autolayout NOTE]
+///
+///   - DO NOT make a constraint to safe-area layout guide.
+///     Manual frame manipulation with PullToDismiss would cause safe-area
+///     to disappear during pan gesture.
+///
+///   - `rootStackView`'s top (when vertical) and leading (when horizontal)
+///     is tied to superview plus 44.
+///     This way elements are not covered with iPhoneX*'s bezel.
+///     iPhone with no-bezel will sacrifice its screen space a bit,
+///     but not a big issue.
+///
+final class TriggerBuildViewController: UIViewController {
 
-    typealias Dependency = TriggerBuildViewModel
+    private let disposeBag = DisposeBag()
+    private var viewModel: TriggerBuildViewModel!
 
-    static func makeFromStoryboard(_ viewModel: TriggerBuildViewModel) -> TriggerBuildViewController {
-        let vc = TriggerBuildViewController.unsafeMakeFromStoryboard()
-        vc.viewModel = viewModel
-        return vc
-    }
-
-    @IBOutlet private weak var baseBottomConstraint: NSLayoutConstraint!
+    private weak var lastFirstResponder: UIResponder?
 
     @IBOutlet private weak var rootStackView: UIStackView!
 
     @IBOutlet private weak var firstStackView: UIStackView!
-
-    @IBOutlet private weak var firstFixedHeightStackView: UIStackView!
 
     @IBOutlet private weak var triggerButton: UIButton! {
         didSet {
@@ -31,36 +37,19 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
     }
 
-    private func reloadSuggestions() {
-
-        let currentGitObject = gitObjectInputView.newInput.value
-
-        let suggestions = viewModel
-            .getSuggestions(forType: currentGitObject.type)
-            .filter { $0 != currentGitObject.name }
-
-        suggestionTableView.isHidden = suggestions.isEmpty
-
-        if !suggestions.isEmpty {
-            suggestionTableView.reloadSuggestions(suggestions)
-        }
-    }
-
     @IBOutlet private weak var gitObjectInputView: GitObjectInputView! {
         didSet {
             gitObjectInputView.layer.zPosition = 1.0
 
-            gitObjectInputView.textFieldDidBeginEditing
-                .subscribe(onNext: { [weak self] in
+            gitObjectInputView.textFieldDelegate.didBeginEditing
+                .subscribe(onNext: { [weak self] _ in
                     self?.reloadSuggestions()
                 })
                 .disposed(by: disposeBag)
 
-            gitObjectInputView.textFieldDidEndEditing
-                .subscribe(onNext: { [weak self] in
-                    guard let me = self else { return }
-
-                    me.suggestionTableView.isHidden = true
+            gitObjectInputView.textFieldDelegate.didEndEditing
+                .subscribe(onNext: { [weak self] _ in
+                    self?.suggestionTableView.isHidden = true
                 })
                 .disposed(by: disposeBag)
 
@@ -87,16 +76,14 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     }()
 
-    private lazy var apiTokenTextfieldDelegate: TextFieldDelegate = {
-        return TextFieldDelegate { [weak self] apiToken in
-            // NOTE: retaining delegate instance by implicit strong self capture
-            self?.viewModel?.apiToken = apiToken
-        }
-    }()
-
     @IBOutlet private weak var apiTokenTextfield: UITextField! {
         didSet {
-            apiTokenTextfield.delegate = apiTokenTextfieldDelegate
+            apiTokenTextfield.rx.text
+                .filterNil()
+                .subscribe(onNext: { [weak self] apiToken in
+                    self?.viewModel?.apiToken = apiToken
+                })
+                .disposed(by: disposeBag)
         }
     }
 
@@ -108,13 +95,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
     }
 
-    // MARK: Private
+}
 
-    private weak var lastFirstResponder: UIResponder?
-    private var viewModel: TriggerBuildViewModel!
-    private let disposeBag = DisposeBag()
+// MARK: LifeCycle
 
-    // MARK: LifeCycle
+extension TriggerBuildViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -124,6 +109,7 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         rootStackView.isUserInteractionEnabled = true
         rootStackView.hth.targetChildToHitTest = gitObjectInputView
 
+        tableView.register(EnvCell.self, forCellReuseIdentifier: "EnvCell")
         tableView.reloadData()
 
         // No need to perform reactive update for apiTokenTextField.
@@ -210,8 +196,6 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
 
     // MARK: Handle PanGesture
 
-    private var oldViewHeight: CGFloat = 0
-
     @objc func panGesture(_ gesture: UIPanGestureRecognizer) {
         switch gesture.state {
         case .ended:
@@ -229,6 +213,12 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         }
     }
 
+}
+
+// MARK: UIGestureRecognizerDelegate
+
+extension TriggerBuildViewController: UIGestureRecognizerDelegate {
+
     func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 
         let location = gestureRecognizer.location(in: view)
@@ -243,7 +233,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         return true
     }
 
-    // MARK: IBAction
+}
+
+// MARK: IBAction
+
+extension TriggerBuildViewController {
 
     @IBAction private func triggerButtonTap() {
 
@@ -266,7 +260,11 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
         self.present(vc, animated: true, completion: nil)
     }
 
-    // MARK: UITableViewDataSource & UITableViewDelegate
+}
+
+// MARK: UITableViewDataSource & UITableViewDelegate
+
+extension TriggerBuildViewController: UITableViewDataSource, UITableViewDelegate {
 
     func numberOfSections(in tableView: UITableView) -> Int {
         return 4
@@ -363,4 +361,39 @@ final class TriggerBuildViewController: UIViewController, Storyboardable, UITabl
             break
         }
     }
+}
+
+// MARK: Utilities
+
+extension TriggerBuildViewController {
+
+    private func reloadSuggestions() {
+
+        let currentGitObject = gitObjectInputView.newInput.value
+
+        let suggestions = viewModel
+            .getSuggestions(forType: currentGitObject.type)
+            .filter { $0 != currentGitObject.name }
+
+        suggestionTableView.isHidden = suggestions.isEmpty
+
+        if !suggestions.isEmpty {
+            suggestionTableView.reloadSuggestions(suggestions)
+        }
+    }
+
+}
+
+// MARK: Storyboardable
+
+extension TriggerBuildViewController: Storyboardable {
+
+    typealias Dependency = TriggerBuildViewModel
+
+    static func makeFromStoryboard(_ viewModel: TriggerBuildViewModel) -> TriggerBuildViewController {
+        let vc = TriggerBuildViewController.unsafeMakeFromStoryboard()
+        vc.viewModel = viewModel
+        return vc
+    }
+
 }
