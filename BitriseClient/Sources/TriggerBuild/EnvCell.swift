@@ -167,7 +167,7 @@ extension EnvCell {
         enabledSwitch.isOn = env.enabled
 
         Observable
-            .combineLatest(enabledSwitch.rx.observe(Bool.self, #keyPath(UISwitch.isOn)).map { $0 ?? false },
+            .combineLatest(enabledSwitch.rx.value,
                            key.rx.text.asObservable(),
                            value.rx.text.asObservable())
             .subscribe(onNext: { [weak self] (enabled, key, value) in

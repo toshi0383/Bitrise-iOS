@@ -33,7 +33,9 @@ final class EnvCellTests: XCTestCase {
         })
 
         enabledSwitch.isOn = false
+        enabledSwitch.sendActions(for: .valueChanged)
         enabledSwitch.isOn = true
+        enabledSwitch.sendActions(for: .valueChanged)
 
         wait(for: [ex], timeout: 0.5)
 
