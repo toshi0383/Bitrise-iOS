@@ -2,59 +2,9 @@ import RxCocoa
 import RxSwift
 import UIKit
 
-extension UITraitCollection {
-    var isPortrait: Bool {
-        return verticalSizeClass != .compact
-    }
-}
-
-extension UIStackView {
-
-    convenience init(axis: NSLayoutConstraint.Axis,
-                     spacing: CGFloat,
-                     alignment: Alignment,
-                     distribution: Distribution,
-                     arrangedSubviews: [UIView] = []) {
-        self.init(arrangedSubviews: arrangedSubviews)
-
-        self.distribution = distribution
-        self.axis = axis
-        self.spacing = spacing
-        self.alignment = alignment
-    }
-
-}
-
-private func _textField(_ placeholder: String) -> UITextField {
-    let tf = UITextField(frame: .zero)
-    tf.translatesAutoresizingMaskIntoConstraints = false
-    tf.autocapitalizationType = .none
-    tf.backgroundColor = .white
-    tf.spellCheckingType = .no
-    tf.returnKeyType = .default
-    tf.borderStyle = .roundedRect
-    tf.adjustsFontSizeToFitWidth = true
-    tf.font = UIFont.systemFont(ofSize: 14)
-    return tf
-}
-
-
-private func _enabledSwitch() -> UISwitch {
-
-    let s = UISwitch(frame: .zero)
-
-    s.translatesAutoresizingMaskIntoConstraints = false
-    s.onTintColor = UIColor(hex: 0x4B9CBF)
-    s.isEnabled = true
-
-    return s
-}
-
+// MARK: EnvCell
 
 final class EnvCell: UITableViewCell {
-
-    private let key: UITextField = _textField("KEY")
-    private let value: UITextField = _textField("VALUE")
 
     private let colon: UILabel = {
         let l = UILabel(frame: .zero)
@@ -70,6 +20,8 @@ final class EnvCell: UITableViewCell {
     }()
 
     private let enabledSwitch: UISwitch
+    private let key: UITextField
+    private let value: UITextField
 
     private var trailingMargin: NSLayoutConstraint!
     private var pkey = ""
@@ -77,9 +29,13 @@ final class EnvCell: UITableViewCell {
 
     init(style: UITableViewCell.CellStyle,
          reuseIdentifier: String?,
+         key: UITextField = _textField("KEY"),
+         value: UITextField = _textField("VALUE"),
          enabledSwitch: UISwitch) {
 
         self.enabledSwitch = enabledSwitch
+        self.key = key
+        self.value = value
 
         super.init(style: .default, reuseIdentifier: "EnvCell")
 
@@ -186,4 +142,31 @@ extension EnvCell {
             .disposed(by: reuseDisposeBag)
     }
 
+}
+
+// MARK: Factory
+
+private func _textField(_ placeholder: String) -> UITextField {
+    let tf = UITextField(frame: .zero)
+    tf.translatesAutoresizingMaskIntoConstraints = false
+    tf.autocapitalizationType = .none
+    tf.backgroundColor = .white
+    tf.spellCheckingType = .no
+    tf.returnKeyType = .default
+    tf.borderStyle = .roundedRect
+    tf.adjustsFontSizeToFitWidth = true
+    tf.font = UIFont.systemFont(ofSize: 14)
+    return tf
+}
+
+
+private func _enabledSwitch() -> UISwitch {
+
+    let s = UISwitch(frame: .zero)
+
+    s.translatesAutoresizingMaskIntoConstraints = false
+    s.onTintColor = UIColor(hex: 0x4B9CBF)
+    s.isEnabled = true
+
+    return s
 }
