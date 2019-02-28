@@ -57,9 +57,10 @@ final class Router {
                     }
                 },
 
-                onError: { [weak self] _ in
+                onError: { [weak self] error in
                     guard let me = self else { return }
 
+                    print("\(error)")
                     me.showTutorial()
                 }
             )
