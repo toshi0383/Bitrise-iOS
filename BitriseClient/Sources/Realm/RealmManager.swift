@@ -21,10 +21,14 @@ extension Realm {
             } catch {
                 print("Failed to open realm with error: \(error)")
 
+                #if !DEBUG
+                // Only delete realm file in production.
+                // I often make mistake writing migration block, and don't want to lose my data.
                 let fm = FileManager.default
                 if let fileURL = fileURL, fm.fileExists(atPath: fileURL.path) {
                     try fm.removeItem(at: fileURL)
                 }
+                #endif
 
                 return try Realm(configuration: config)
             }
