@@ -80,6 +80,7 @@ final class TriggerBuildViewController: UIViewController {
         didSet {
             apiTokenTextfield.rx.text
                 .filterNil()
+                .filterEmpty()
                 .subscribe(onNext: { [weak self] apiToken in
                     self?.viewModel?.apiToken = apiToken
                 })
