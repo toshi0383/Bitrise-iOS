@@ -43,9 +43,11 @@ final class Router {
 
         route.accept([.launch])
 
-        let appsBuilds: Observable<AppsBuilds?>
+        let appsBuilds: Observable<(AppsBuilds, AppSlug)?>
         if let appslug = config.lastAppSlugVisited {
-            appsBuilds = fetchAppsBuilds(AppsBuildsRequest(appSlug: appslug)).map(AppsBuilds.init)
+            appsBuilds = fetchAppsBuilds(AppsBuildsRequest(appSlug: appslug))
+                .map(AppsBuilds.init)
+                .map { ($0, appslug) }
         } else {
             appsBuilds = Observable.just(nil)
         }
@@ -54,18 +56,23 @@ final class Router {
         Observable.combineLatest(fetchMeApps(MeAppsRequest()), appsBuilds)
             .filter { !$0.0.data.isEmpty }
             .subscribe(
-                onNext: { [weak self] (meApps, appsBuilds) in
+                onNext: { [weak self] (meApps, appsBuildsRes) in
                     guard let me = self else { return }
 
                     me.appsManager.apps = meApps.data
 
                     let origin: BuildsListOrigin = {
 
-                        if let appsBuilds = appsBuilds {
+                        if let appsBuildsRes = appsBuildsRes {
 
-                            let fst = meApps.data.first!
-                            return BuildsListOrigin(appSlug: fst.slug, appName: fst.title, appsBuilds: appsBuilds)
+                            let (appsBuilds, appSlug) = appsBuildsRes
 
+                            if let fst = meApps.data.first(where: { $0.slug == appSlug }) {
+                                return BuildsListOrigin(appSlug: fst.slug, appName: fst.title, appsBuilds: appsBuilds)
+                            } else {
+                                let fst = meApps.data.first!
+                                return BuildsListOrigin(appSlug: fst.slug, appName: fst.title)
+                            }
                         } else {
                             if let savedSlug = me.config.lastAppSlugVisited,
 
