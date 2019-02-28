@@ -16,8 +16,8 @@ final class BuildsListViewModel {
 
     var lifecycle: ViewControllerLifecycle! {
         didSet {
-            lifecycle.viewDidLoad
-                .subscribe(onNext: { [weak self] in
+            lifecycle.viewDidLayoutSubviews
+                .subscribe(onNext: { [weak self] _ in
                     guard let me = self else { return }
 
                     // save app-title
