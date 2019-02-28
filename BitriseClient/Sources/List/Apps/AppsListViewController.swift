@@ -21,7 +21,7 @@ final class AppsListViewController: UIViewController, UITableViewDataSource, UIT
                 me.tableView.deselectRow(at: indexPath, animated: true)
                 let app = me.appsManager.apps[indexPath.row]
                 let vc = BuildsListViewController.makeFromStoryboard(
-                    .init(viewModel: .init(appSlug: app.slug, appName: app.title)))
+                    .init(viewModel: .init(origin: .init(appSlug: app.slug, appName: app.title))))
                 me.navigationController?.pushViewController(vc, animated: true)
             })
             .disposed(by: rx.disposeBag)

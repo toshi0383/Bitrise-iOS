@@ -36,7 +36,7 @@ public struct AppsBuildsRequest: BitriseAPIRequest {
     }
 }
 
-public struct AppsBuilds {
+public struct AppsBuilds: Equatable {
 
     public let data: [Build]
 

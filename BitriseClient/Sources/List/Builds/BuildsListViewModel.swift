@@ -16,14 +16,15 @@ final class BuildsListViewModel {
 
     var lifecycle: ViewControllerLifecycle! {
         didSet {
-            lifecycle.viewDidLoad
-                .subscribe(onNext: { [weak self] in
+            // warning: viewDidLoad was too early so that tableView crashed.
+            lifecycle.viewDidLayoutSubviews
+                .subscribe(onNext: { [weak self] _ in
                     guard let me = self else { return }
 
                     // save app-title
                     Config.shared.lastAppSlugVisited = me.appSlug
 
-                    me.fetchDataAndReloadTable()
+                    me.fetchInitialDataIfNeededAndLoadTable()
                 })
                 .disposed(by: disposeBag)
 
@@ -74,6 +75,7 @@ final class BuildsListViewModel {
     }
 
     let appSlug: String
+    private var initialResponse: AppsBuilds?
     let navigationBarTitle: String
     let alertMessage: Observable<String>
 
@@ -107,15 +109,15 @@ final class BuildsListViewModel {
 
     // MARK: Initializer
 
-    init(appSlug: String,
-         appName: String,
+    init(origin: BuildsListOrigin,
          localNotificationAction: LocalNotificationAction = .shared,
          session: Session = .shared) {
-        self.appSlug = appSlug
-        self.navigationBarTitle = appName
+        self.appSlug = origin.appSlug
+        self.initialResponse = origin.appsBuilds
+        self.navigationBarTitle = origin.appName
         self.localNotificationAction = localNotificationAction
         self.session = session
-        self.buildPollingManager = BuildPollingManagerPool.shared.manager(for: appSlug)
+        self.buildPollingManager = BuildPollingManagerPool.shared.manager(for: origin.appSlug)
         self.alertMessage = _alertMessage.asObservable()
         self.alertActions = _alertActions.asObservable()
         self.dataChanges = Property(_dataChanges)
@@ -167,10 +169,30 @@ final class BuildsListViewModel {
 
     // MARK: API Call
 
-    private func fetchDataAndReloadTable() {
+    private func fetchInitialDataIfNeededAndLoadTable() {
 
         if _isLoading.value { return }
         _isLoading.accept(true)
+
+        let updateNewData = { [weak self] (_ appsBuilds: AppsBuilds) -> Void in
+            guard let me = self else { return }
+
+            me.updateBuildLock.lock(); defer { me.updateBuildLock.unlock() }
+
+            let changes = diff(old: me.builds, new: appsBuilds.data)
+
+            me.builds = appsBuilds.data
+
+            me._dataChanges.accept(changes)
+            me.nextTokenMore.accept(appsBuilds.paging.next)
+            me._isLoading.accept(false)
+        }
+
+        if let appsBuilds = initialResponse {
+            updateNewData(appsBuilds)
+            initialResponse = nil
+            return
+        }
 
         let req = AppsBuildsRequest(appSlug: appSlug)
 
@@ -179,20 +201,8 @@ final class BuildsListViewModel {
                 self?._isLoading.accept(false)
                 return .empty()
             })
-            .subscribe(onNext: { [weak self] res in
-                guard let me = self else { return }
-
-                me.updateBuildLock.lock(); defer { me.updateBuildLock.unlock() }
-
-                let appsBuilds = AppsBuilds(from: res)
-                let changes = diff(old: me.builds, new: appsBuilds.data)
-
-                me.builds = appsBuilds.data
-
-                me._dataChanges.accept(changes)
-                me.nextTokenMore.accept(appsBuilds.paging.next)
-                me._isLoading.accept(false)
-            })
+            .map(AppsBuilds.init)
+            .subscribe(onNext: updateNewData)
             .disposed(by: disposeBag)
     }
 
@@ -382,7 +392,6 @@ extension BuildsListViewModel {
             self.handler = handler
         }
     }
-
 }
 
 private extension Array where Element == AppsBuilds.Build {
