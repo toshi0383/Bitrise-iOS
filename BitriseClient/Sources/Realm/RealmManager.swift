@@ -13,7 +13,23 @@ extension Realm {
 
             let key = getKey() as Data
             // print("fileURL: \(fileURL!), key: \(key.hexEncodedString(options: .upperCase))")
-            let config = Configuration(fileURL: fileURL, encryptionKey: key)
+            let config = Configuration(
+                fileURL: fileURL,
+                encryptionKey: key,
+                schemaVersion: 1,
+                migrationBlock: { migration, oldSchemaVersion in
+
+                    switch oldSchemaVersion {
+                    case 0:
+                        // schemaVersion 1: rename
+                        migration.renameProperty(onType: SettingsRealm.className(),
+                                                 from:  "lastAppNameVisited",
+                                                 to:    "lastAppSlugVisited")
+                    default:
+                        break
+                    }
+                }
+            )
 
             do {
                 return try Realm(configuration: config)

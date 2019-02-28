@@ -44,8 +44,8 @@ final class Router {
                     me.appsManager.apps = res.data
 
                     let cond: (MeApps.App) -> Bool = {
-                        if let appname = me.config.lastAppNameVisited {
-                            return $0.title == appname
+                        if let appslug = me.config.lastAppSlugVisited {
+                            return $0.slug == appslug
                         } else {
                             return true
                         }

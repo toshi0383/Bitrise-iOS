@@ -14,8 +14,6 @@ final class BuildsListViewModel {
     /// lock for updateBuild
     private let updateBuildLock = NSLock()
 
-    private let appName: String
-
     var lifecycle: ViewControllerLifecycle! {
         didSet {
             lifecycle.viewDidLoad
@@ -23,7 +21,7 @@ final class BuildsListViewModel {
                     guard let me = self else { return }
 
                     // save app-title
-                    Config.shared.lastAppNameVisited = me.appName
+                    Config.shared.lastAppSlugVisited = me.appSlug
 
                     me.fetchDataAndReloadTable()
                 })
@@ -114,7 +112,6 @@ final class BuildsListViewModel {
          localNotificationAction: LocalNotificationAction = .shared,
          session: Session = .shared) {
         self.appSlug = appSlug
-        self.appName = appName
         self.navigationBarTitle = appName
         self.localNotificationAction = localNotificationAction
         self.session = session
