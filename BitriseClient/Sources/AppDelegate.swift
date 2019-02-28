@@ -35,9 +35,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     case .appsList:
                         return AppsListViewController.makeFromStoryboard(.init())
 
-                    case .buildsList(let app):
+                    case .buildsList(let buildsListOrigin):
                         return BuildsListViewController.makeFromStoryboard(
-                            .init(viewModel: .init(appSlug: app.slug, appName: app.title))
+                            .init(viewModel: .init(origin: buildsListOrigin))
                         )
 
                     case .launch:
