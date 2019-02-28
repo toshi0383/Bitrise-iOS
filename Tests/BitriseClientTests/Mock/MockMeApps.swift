@@ -10,8 +10,8 @@ extension MeApps {
                        repo_owner: "",
                        repo_slug: "",
                        repo_url: "",
-                       slug: "",
-                       title: "app-name-0")
+                       slug: "app-slug-0",
+                       title: "")
         ]
 
         let paging = Paging(page_item_limit: 25,

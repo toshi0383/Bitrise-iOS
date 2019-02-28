@@ -6,8 +6,8 @@ final class MockConfig: ConfigType {
         return "abcdefg"
     }
 
-    var lastAppNameVisited: String? {
-        return "app-name-0"
+    var lastAppSlugVisited: String? {
+        return "app-slug-0"
     }
 
 }
