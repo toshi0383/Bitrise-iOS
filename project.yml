@@ -1,6 +1,6 @@
 name: BitriseClient
 options:
-  minimumXcodeGenVersion: 2.0.0
+  minimumXcodeGenVersion: 2.2.0
 configFiles:
   Debug: configs/Debug.xcconfig
   Release: configs/Release.xcconfig
