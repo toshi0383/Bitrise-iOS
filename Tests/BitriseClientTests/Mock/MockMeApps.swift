@@ -5,7 +5,7 @@ extension MeApps {
 
         let data: [MeApps.App] = [
             MeApps.App(is_disabled: false,
-                       project_type: "",
+                       project_type: nil,
                        provider: "",
                        repo_owner: "",
                        repo_slug: "",

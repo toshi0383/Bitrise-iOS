@@ -24,7 +24,7 @@ public struct MeApps: Decodable, Equatable {
 
     public struct App: Decodable, Equatable {
         public let is_disabled: Bool
-        public let project_type: String
+        public let project_type: String?
         public let provider: String
         public let repo_owner: String
         public let repo_slug: String
@@ -33,7 +33,7 @@ public struct MeApps: Decodable, Equatable {
         public let title: String
 
         public init(is_disabled: Bool,
-                    project_type: String,
+                    project_type: String?,
                     provider: String,
                     repo_owner: String,
                     repo_slug: String,
