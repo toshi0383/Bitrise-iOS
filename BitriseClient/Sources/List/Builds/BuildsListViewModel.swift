@@ -16,6 +16,7 @@ final class BuildsListViewModel {
 
     var lifecycle: ViewControllerLifecycle! {
         didSet {
+            // warning: viewDidLoad was too early so that tableView crashed.
             lifecycle.viewDidLayoutSubviews
                 .subscribe(onNext: { [weak self] _ in
                     guard let me = self else { return }
