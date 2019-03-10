@@ -40,7 +40,7 @@ public struct AppsBuilds: Equatable {
 
     public let data: [Build]
 
-    public struct Build: Hashable, AutoEquatable {
+    public struct Build: Hashable, Equatable {
 
         public typealias Slug = String
 
@@ -62,57 +62,18 @@ public struct AppsBuilds: Equatable {
         public let stack_identifier: String?
         public let started_on_worker_at: Date?
         public let status: Status
-
-        public enum Status: Int, Decodable {
-            case notFinished = 0
-            case finished = 1
-            case error = 2
-            case aborted = 3
-        }
-
         public let status_text: String
         public let tag: String?
         public let triggered_at: Date
         public let triggered_by: String?
         public let triggered_workflow: String
 
-        public init(from json: JSON) {
-            func decodeDate(from string: String?) -> Date? {
-                guard let string = string else { return nil }
-                let f = DateFormatter()
-                f.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-                f.timeZone = TimeZone(secondsFromGMT: 0)
-                return f.date(from: string)
-            }
-
-            self.abort_reason = json["abort_reason"] as? String
-            self.branch = json["branch"] as? String
-            self.commit_hash = json["commit_hash"] as? String
-            self.commit_message = json["commit_message"] as? String
-            self.commit_view_url = json["commit_view_url"] as? String
-            self.environment_prepare_finished_at = decodeDate(from: json["environment_prepare_finished_at"] as? String)
-            self.finished_at = decodeDate(from: json["finished_at"] as? String)
-            self.pull_request_id = json["pull_request_id"] as? Int
-            self.pull_request_target_branch = json["pull_request_target_branch"] as? String
-            self.pull_request_view_url = json["pull_request_view_url"] as? String
-            self.stack_config_type = json["stack_config_type"] as? String
-            self.stack_identifier = json["stack_identifier"] as? String
-            self.started_on_worker_at = decodeDate(from: json["started_on_worker_at"] as? String)
-            self.tag = json["tag"] as? String
-            self.triggered_by = json["triggered_by"] as? String
-            self.build_number = json["build_number"] as! Int
-            self.is_on_hold = json["is_on_hold"] as! Bool
-            self.original_build_params = json["original_build_params"] as! JSON
-            self.slug = json["slug"] as! Slug
-            self.status = Status(rawValue: json["status"] as! Int)!
-            self.status_text = json["status_text"] as! String
-            self.triggered_at = decodeDate(from: json["triggered_at"] as? String)!
-            self.triggered_workflow = json["triggered_workflow"] as! String
-        }
     }
 
     public let paging: Paging
+}
 
+extension AppsBuilds {
     public init(from json: JSON) {
         let dataJSONs = json["data"] as! [JSON]
         self.data = dataJSONs.map(Build.init)
@@ -122,7 +83,49 @@ public struct AppsBuilds: Equatable {
 }
 
 extension AppsBuilds.Build {
+    public static func ==(_ lhs: AppsBuilds.Build, _ rhs: AppsBuilds.Build) -> Bool {
+        return lhs.slug == rhs.slug
+    }
+
+    public enum Status: Int, Decodable {
+        case notFinished = 0
+        case finished = 1
+        case error = 2
+        case aborted = 3
+    }
+
     public var hashValue: Int {
         return build_number
+    }
+
+    public init(from json: JSON) {
+        func decodeDate(from string: String?) -> Date? {
+            guard let string = string else { return nil }
+            return dateFormatter.date(from: string)
+        }
+
+        self.abort_reason = json["abort_reason"] as? String
+        self.branch = json["branch"] as? String
+        self.commit_hash = json["commit_hash"] as? String
+        self.commit_message = json["commit_message"] as? String
+        self.commit_view_url = json["commit_view_url"] as? String
+        self.environment_prepare_finished_at = decodeDate(from: json["environment_prepare_finished_at"] as? String)
+        self.finished_at = decodeDate(from: json["finished_at"] as? String)
+        self.pull_request_id = json["pull_request_id"] as? Int
+        self.pull_request_target_branch = json["pull_request_target_branch"] as? String
+        self.pull_request_view_url = json["pull_request_view_url"] as? String
+        self.stack_config_type = json["stack_config_type"] as? String
+        self.stack_identifier = json["stack_identifier"] as? String
+        self.started_on_worker_at = decodeDate(from: json["started_on_worker_at"] as? String)
+        self.tag = json["tag"] as? String
+        self.triggered_by = json["triggered_by"] as? String
+        self.build_number = json["build_number"] as! Int
+        self.is_on_hold = json["is_on_hold"] as! Bool
+        self.original_build_params = json["original_build_params"] as! JSON
+        self.slug = json["slug"] as! Slug
+        self.status = Status(rawValue: json["status"] as! Int)!
+        self.status_text = json["status_text"] as! String
+        self.triggered_at = decodeDate(from: json["triggered_at"] as? String)!
+        self.triggered_workflow = json["triggered_workflow"] as! String
     }
 }
