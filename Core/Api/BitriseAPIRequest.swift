@@ -106,7 +106,7 @@ private class _DataParser: DataParser {
     }
 }
 
-public struct Paging: Decodable, Equatable {
+public struct Paging: Codable, Equatable {
     public let page_item_limit: Int
     public let total_item_count: Int
     public let next: String?

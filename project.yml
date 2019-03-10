@@ -50,9 +50,6 @@ targets:
       - Core/
     dependencies:
       - carthage: APIKit
-    prebuildScripts:
-      - name: sourcery
-        script: if [ -z $CI ];then sourcery;fi
     configFiles:
       Debug: configs/Core.xcconfig
       Release: configs/Core.xcconfig
