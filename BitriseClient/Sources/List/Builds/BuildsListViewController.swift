@@ -85,6 +85,14 @@ final class BuildsListViewController: UIViewController, Storyboardable {
             })
             .disposed(by: rx.disposeBag)
 
+        viewModel.showBuildLog
+            .observeOn(ConcurrentMainScheduler.instance)
+            .subscribe(onNext: { [weak self] in
+                let vc = LogViewController(build: $0)
+                self?.navigationController?.pushViewController(vc, animated: true)
+            })
+            .disposed(by: rx.disposeBag)
+
         viewModel.dataChanges.changed
             .observeOn(ConcurrentMainScheduler.instance)
             .subscribe(onNext: { [weak self] changes in
@@ -133,7 +141,16 @@ final class BuildsListViewController: UIViewController, Storyboardable {
 
         tableView.rx.itemSelected
             .subscribe(onNext: { [weak self] indexPath in
-                self?.tableView.deselectRow(at: indexPath, animated: true)
+                guard let me = self else { return }
+
+                let builds = me.viewModel.builds
+                if indexPath.row < builds.count {
+                    // TODO
+                    // let build = builds[indexPath.row]
+                    // let vc = BuildDetailViewController(build)
+                    // me.navigationController?.pushViewController(vc, animated: true)
+                }
+                me.tableView.deselectRow(at: indexPath, animated: true)
             })
             .disposed(by: rx.disposeBag)
 

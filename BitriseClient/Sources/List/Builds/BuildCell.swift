@@ -1,4 +1,5 @@
 import Core
+import RxCocoa
 import RxSwift
 import UIKit
 
@@ -8,6 +9,13 @@ final class BuildCell: UITableViewCell {
     @IBOutlet private weak var branchLabel: UILabel!
     @IBOutlet private weak var subtitleLabel: UILabel!
     @IBOutlet private weak var subtitleLabel2: UILabel!
+
+    @IBOutlet private weak var logDownloadSlider: UISlider! {
+        didSet {
+            logDownloadSlider.isHidden = true
+            logDownloadSlider.value = 0
+        }
+    }
 
     @IBOutlet private weak var smallSquareView: UIView! {
         didSet {
@@ -55,6 +63,7 @@ extension BuildCell {
         branchLabel.text = nil
         subtitleLabel.text = nil
         subtitleLabel2.text = nil
+        logDownloadSlider.isHidden = true
     }
 
     func configure(_ build: AppsBuilds.Build) {
@@ -119,6 +128,23 @@ extension BuildCell {
 
                 // happens when aborted before it starts.
                 // assertionFailure("finished_at should exist")
+            }
+        }
+    }
+
+    var logDownloadState: Binder<BuildLogDownloader.DownloadProgress.State> {
+        return Binder(self) { base, state in
+            switch state {
+            case .initial:
+                base.logDownloadSlider.isHidden = true
+                base.backgroundColor = .white
+            case .inProgress(let progress):
+                base.logDownloadSlider.isHidden = false
+                base.logDownloadSlider.setValue(Float(progress), animated: true)
+                base.backgroundColor = .white
+            case .completed(_):
+                base.logDownloadSlider.isHidden = true
+                base.backgroundColor = UIColor(hex: 0xB2ECDE)
             }
         }
     }

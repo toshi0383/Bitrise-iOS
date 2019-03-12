@@ -48,16 +48,16 @@ final class BuildsListViewModel {
         var alertActions = [AlertAction]()
 
         if build.status == .notFinished {
-            alertActions.append(AlertAction.init(title: "Abort", handler: { [weak self] _ in
+            alertActions.append(AlertAction(title: "Abort", handler: { [weak self] _ in
                 self?.sendAbortRequest(forBuild: build)
             }))
 
-            alertActions.append(AlertAction.init(title: "Set Notification", handler: { [weak self] _ in
+            alertActions.append(AlertAction(title: "Set Notification", handler: { [weak self] _ in
                 self?.reserveNotification(forBuild: build)
             }))
         } else {
 
-            alertActions.append(AlertAction.init(title: "Rebuild", handler: { [weak self] _ in
+            alertActions.append(AlertAction(title: "Rebuild", handler: { [weak self] _ in
                 guard let me = self else { return }
 
                 do {
@@ -67,6 +67,27 @@ final class BuildsListViewModel {
                 }
             }))
 
+            let downloader = BuildLogDownloader.shared
+
+            let isDownloaded = downloader.isDownloaded(build.slug)
+
+            alertActions.append(AlertAction(title: isDownloaded ? "Remove build log" : "Download build log", handler: { [weak self] _ in
+                guard let me = self else { return }
+
+                if isDownloaded {
+                    downloader.removeData(forBuildSlug: build.slug)
+                } else {
+                    me.startLogDownload(buildSlug: build.slug)
+                }
+            }))
+
+            if isDownloaded {
+                alertActions.append(AlertAction(title: "Show build log", handler: { [weak self] _ in
+                    guard let me = self else { return }
+
+                    me._showBuildLog.accept(build)
+                }))
+            }
         }
 
         alertActions.append(.init(title: "Cancel", style: .cancel, handler: nil))
@@ -78,6 +99,8 @@ final class BuildsListViewModel {
     private var initialResponse: AppsBuilds?
     let navigationBarTitle: String
     let alertMessage: Observable<String>
+
+    let showBuildLog: Observable<AppsBuilds.Build>
 
     /// alert from accessory button
     let alertActions: Observable<[AlertAction]>
@@ -99,6 +122,7 @@ final class BuildsListViewModel {
     private let _scrollRemainingRatio = BehaviorRelay<CGFloat>(value: 10000)
     private let _isMoreDataIndicatorHidden = BehaviorRelay<Bool>(value: true)
     private let _isLoading = BehaviorRelay<Bool>(value: false)
+    private let _showBuildLog = PublishRelay<AppsBuilds.Build>()
 
     private let nextTokenNew = BehaviorRelay<(next: String, offset: Int)?>(value: nil)
     private let nextTokenMore = BehaviorRelay<String?>(value: nil)
@@ -124,6 +148,7 @@ final class BuildsListViewModel {
         self.isNewDataIndicatorHidden = Property(_isNewDataIndicatorHidden)
         self.isBetweenDataIndicatorHidden = Property(_isBetweenDataIndicatorHidden)
         self.isMoreDataIndicatorHidden = Property(_isMoreDataIndicatorHidden)
+        self.showBuildLog = _showBuildLog.asObservable()
 
         buildPollingManager.updatedBuild
             .subscribe(onNext: { [weak self] build in
@@ -334,6 +359,24 @@ final class BuildsListViewModel {
         localNotificationAction.requestAuthorizationIfNeeded()
 
         buildPollingManager.addLocalNotification(buildSlug: build.slug)
+    }
+
+    private func startLogDownload(buildSlug: String) {
+
+        let downloader = BuildLogDownloader.shared
+
+        let req = AppsBuildsLogRequest(appSlug: appSlug, buildSlug: buildSlug)
+
+        session.rx.send(req)
+            .catchError {
+                print("[error] AppsBuildsLogRequest: \($0)")
+                return .empty()
+            }
+            .subscribe(onNext: { res in
+                downloader
+                    .enqueue(url: res.expiring_raw_log_url, buildSlug: buildSlug)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func sendAbortRequest(forBuild build: AppsBuilds.Build) {
