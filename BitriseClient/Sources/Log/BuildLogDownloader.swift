@@ -9,7 +9,6 @@ final class BuildLogDownloader {
     private var downloadTasks: [String: DownloadProgress] = [:]
     private var removeTasks: [String: RemoveProgress] = [:]
     private let fileRemoveScheduler = SerialDispatchQueueScheduler(qos: .background)
-    private let fileCopyScheduler = ConcurrentDispatchQueueScheduler(qos: .background)
     private let _newDownloadProgress = PublishRelay<DownloadProgress>()
     private let _newRemoveProgress = PublishRelay<RemoveProgress>()
 
@@ -78,7 +77,6 @@ extension BuildLogDownloader {
         progress.task = task
 
         progress.state.asObservable()
-            .observeOn(fileCopyScheduler)
             .subscribe(onNext: { [unowned self] state in
 
                 if case .completed = state {
@@ -278,7 +276,7 @@ extension BuildLogDownloader.DownloadProgress: URLSessionDownloadDelegate {
             mkdirIfNeeded(destFileURL.deletingLastPathComponent())
             try fm.moveItem(at: location, to: destFileURL)
         } catch {
-            print("[error] during copying downloaded log file. Error: \(error)")
+            print("[error] during moving downloaded log file. Error: \(error)")
         }
 
         _completed.accept(())
