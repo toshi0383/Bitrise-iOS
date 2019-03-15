@@ -142,7 +142,7 @@ extension BuildCell {
                 base.logDownloadSlider.isHidden = false
                 base.logDownloadSlider.setValue(Float(progress), animated: true)
                 base.backgroundColor = .white
-            case .completed(_):
+            case .completed:
                 base.logDownloadSlider.isHidden = true
                 base.backgroundColor = UIColor(hex: 0xB2ECDE)
             }

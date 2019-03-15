@@ -28,11 +28,19 @@ extension BuildLogDownloader {
     }
 
     func downloadProgress(forBuildSlug slug: String) -> Observable<DownloadProgress> {
+        var observables: [Observable<DownloadProgress>] = []
+
         if let progress = downloadTasks.first(where: { (_, progress) in progress.buildSlug == slug })?.value {
-            return .just(progress)
+            observables.append(Observable.just(progress))
         } else {
-            return _newDownloadProgress.filter { $0.buildSlug == slug }
+            observables.append(_newDownloadProgress.filter { $0.buildSlug == slug })
         }
+
+        if isDownloaded(slug) {
+            observables.append(Observable.just(DownloadProgress.completed(slug)))
+        }
+
+        return Observable.merge(observables)
     }
 
     func removeProgress(forBuildSlug slug: String) -> Observable<RemoveProgress> {
@@ -183,14 +191,15 @@ extension BuildLogDownloader {
 extension BuildLogDownloader {
 
     final class DownloadProgress: NSObject {
+        let buildSlug: String
+
         private let url: String
         private let destFileURL: URL
-        let buildSlug: String
         fileprivate var task: URLSessionDownloadTask?
         private let fm: FileManager
 
-        fileprivate let _progress = BehaviorRelay<Double>(value: 0)
-        fileprivate let _completed = PublishRelay<URL>()
+        fileprivate let _progress = BehaviorRelay<Double?>(value: nil)
+        fileprivate let _completed = BehaviorRelay<Void?>(value: nil)
 
         private let disposeBag = DisposeBag()
 
@@ -204,18 +213,28 @@ extension BuildLogDownloader {
             self.fm = fm
         }
 
+        static func completed(_ buildSlug: String) -> DownloadProgress {
+            let p = DownloadProgress(url: "",
+                                     buildSlug: buildSlug,
+                                     destFileURL: URL(string: "http://")!)
+            p._completed.accept(())
+            return p
+        }
+
         var state: Property<State> {
-            let completed = _completed.asObservable()
-                .map { State.completed($0) }
+            let completed: Observable<State> = _completed.asObservable()
+                .filterNil()
+                .map { State.completed }
                 .share()
 
             return Property(unsafeObservable:
                 Observable.merge(
-                    Observable.just(.initial),
+                    Observable.just(.initial)
+                        .concat(completed).debug("[state-0]"),
                     _progress.asObservable()
+                        .filterNil()
                         .map { State.inProgress($0) }
-                        .takeUntil(completed).debug("[state-0]"),
-                    completed.debug("[state-1]")
+                        .takeUntil(completed).debug("[state-1]")
                 )
             )
         }
@@ -223,7 +242,7 @@ extension BuildLogDownloader {
         enum State {
             case initial
             case inProgress(Double)
-            case completed(URL)
+            case completed
         }
     }
 
@@ -262,7 +281,7 @@ extension BuildLogDownloader.DownloadProgress: URLSessionDownloadDelegate {
             print("[error] during copying downloaded log file. Error: \(error)")
         }
 
-        _completed.accept(location)
+        _completed.accept(())
     }
 
     func urlSession(_ session: URLSession,
