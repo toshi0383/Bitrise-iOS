@@ -64,6 +64,7 @@ extension BuildCell {
         subtitleLabel.text = nil
         subtitleLabel2.text = nil
         logDownloadSlider.isHidden = true
+        backgroundColor = .white
     }
 
     func configure(_ build: AppsBuilds.Build) {
