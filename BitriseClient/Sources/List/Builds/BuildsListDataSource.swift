@@ -37,6 +37,24 @@ final class BuildsListDataSource: NSObject, UITableViewDataSource {
                 .disposed(by: cell.reuseDisposeBag)
         }
 
+        Observable
+            .merge(
+                BuildLogDownloader.shared
+                    .removeProgress(forBuildSlug: build.slug)
+                    .flatMapLatest { progress in
+                        progress.completed.asObservable()
+                    }
+                    .map { _ in BuildLogDownloader.DownloadProgress.State.initial },
+
+                BuildLogDownloader.shared
+                    .downloadProgress(forBuildSlug: build.slug)
+                    .flatMapLatest { progress in
+                        progress.state.asObservable()
+                }
+            )
+            .bind(to: cell.logDownloadState)
+            .disposed(by: cell.reuseDisposeBag)
+
         return cell
     }
 
