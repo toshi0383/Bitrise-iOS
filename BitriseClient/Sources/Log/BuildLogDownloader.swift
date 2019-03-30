@@ -2,19 +2,30 @@ import Foundation
 import RxCocoa
 import RxSwift
 
+/// - Note:
+///     BuildLogDownloader tries to create destination directory on initialization synchronously.
 final class BuildLogDownloader {
 
     private let destDir = URL(fileURLWithPath: NSHomeDirectory().appending("/Library/Caches/LogFiles/"))
+    private let expirationThreshold: TimeInterval = 60 * 60 * 24 * 7 // 7 days
     private let fm: FileManager = .default
     private var downloadTasks: [String: DownloadProgress] = [:]
     private var removeTasks: [String: RemoveProgress] = [:]
     private let fileRemoveScheduler = SerialDispatchQueueScheduler(qos: .background)
     private let _newDownloadProgress = PublishRelay<DownloadProgress>()
     private let _newRemoveProgress = PublishRelay<RemoveProgress>()
+    private let now: () -> Date
 
     static let shared = BuildLogDownloader()
 
-    private init() { }
+    // TODO:
+    // - add wrapper of FileManager
+    // - write test
+    private init(now: @escaping () -> Date = { Date() }) {
+        mkdirIfNeeded(destDir)
+
+        self.now = now
+    }
 
 }
 
@@ -128,6 +139,25 @@ extension BuildLogDownloader {
         startRemove(progress)
 
         return progress
+    }
+
+    func removeOutdatedBuildLogs() {
+        let resourceKeys: [URLResourceKey] = [.creationDateKey, .pathKey]
+
+        do {
+            let values = try destDir.resourceValues(forKeys: Set(resourceKeys))
+            if let date = values.creationDate,
+                now().timeIntervalSince(date) > expirationThreshold {
+
+                if let path = values.path {
+                    if fm.fileExists(atPath: path) {
+                        try fm.removeItem(atPath: path)
+                    }
+                }
+            }
+        } catch {
+            fatalError("\(error)")
+        }
     }
 }
 

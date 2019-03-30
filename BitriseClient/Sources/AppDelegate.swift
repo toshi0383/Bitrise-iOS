@@ -16,6 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return true
         }
 
+        DispatchQueue.global(qos: .background).async {
+            BuildLogDownloader.shared.removeOutdatedBuildLogs()
+        }
+
         Core.APIConfig.getToken = { Config.shared.personalAccessToken }
 
         // [ActionPopoverButton]

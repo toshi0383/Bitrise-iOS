@@ -96,7 +96,9 @@ final class BuildsListViewController: UIViewController, Storyboardable {
         viewModel.dataChanges.changed
             .observeOn(ConcurrentMainScheduler.instance)
             .subscribe(onNext: { [weak self] changes in
-                self?.tableView.reload(changes: changes, completion: { _ in })
+                // FIXME: crash on initial reload
+                // self?.tableView.reload(changes: changes, completion: { _ in })
+                self?.tableView.reloadData()
             })
             .disposed(by: rx.disposeBag)
 
