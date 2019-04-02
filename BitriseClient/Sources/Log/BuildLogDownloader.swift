@@ -62,28 +62,28 @@ extension BuildLogDownloader {
     }
 
     @discardableResult
-    func enqueue(url: String, buildSlug: String) -> DownloadProgress {
+    func enqueue(url: URL, buildSlug: String) -> DownloadProgress {
         print("start download for url: \(url), buildSlug: \(buildSlug)")
 
         let destFileURL = self.fileURL(forBuildSlug: buildSlug)
 
-        let progress = DownloadProgress(url: url,
+        let progress = DownloadProgress(url: url.absoluteString,
                                         buildSlug: buildSlug,
                                         destFileURL: destFileURL)
-        downloadTasks[url] = progress
+        downloadTasks[url.absoluteString] = progress
         _newDownloadProgress.accept(progress)
 
         let configuration = URLSessionConfiguration
             .background(withIdentifier:
                 "jp.toshi0383.Bitrise-iOS.BuildLogDownloader.\(buildSlug)")
 
-        configuration.allowsCellularAccess = false
+        configuration.allowsCellularAccess = true
 
         let session = URLSession(configuration: configuration,
                                  delegate: progress,
                                  delegateQueue: OperationQueue())
 
-        let task = session.downloadTask(with: URL(string: url)!)
+        let task = session.downloadTask(with: url)
 
         progress.task = task
 

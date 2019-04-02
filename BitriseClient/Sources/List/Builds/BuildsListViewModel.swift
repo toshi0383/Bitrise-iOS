@@ -367,14 +367,44 @@ final class BuildsListViewModel {
 
         let req = AppsBuildsLogRequest(appSlug: appSlug, buildSlug: buildSlug)
 
+        let didConfirmLargeLogFileDownload = PublishRelay<URL>()
+
         session.rx.send(req)
             .catchError {
                 print("[error] AppsBuildsLogRequest: \($0)")
                 return .empty()
             }
-            .subscribe(onNext: { res in
+            .flatMap {
+                Observable<URL>.justOrEmpty(URL(string: $0.expiring_raw_log_url))
+            }
+            .flatMap { [weak self] url -> Observable<URL> in
+
+                return sizeRequestUsingZeroRange(url)
+                    .flatMap { [weak self] size -> Observable<URL> in
+                        guard let me = self else { return .empty() }
+
+                        if size > 1_000_000 {
+                            let bf = ByteCountFormatter()
+                            bf.countStyle = .file
+
+                            let sizestr = bf.string(fromByteCount: size)
+
+                            var alertActions = [AlertAction]()
+                            alertActions.append(.init(title: "Download \(sizestr) ?", style: .default, handler: { _ in
+                                didConfirmLargeLogFileDownload.accept(url)
+                            }))
+                            alertActions.append(.init(title: "Cancel", style: .cancel, handler: nil))
+                            me._alertActions.accept(alertActions)
+
+                            return didConfirmLargeLogFileDownload.asObservable()
+                        } else {
+                            return .just(url)
+                        }
+                    }
+            }
+            .subscribe(onNext: { url in
                 downloader
-                    .enqueue(url: res.expiring_raw_log_url, buildSlug: buildSlug)
+                    .enqueue(url: url, buildSlug: buildSlug)
             })
             .disposed(by: disposeBag)
     }

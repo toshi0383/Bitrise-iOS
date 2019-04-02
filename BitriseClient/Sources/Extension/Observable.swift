@@ -47,3 +47,13 @@ extension BehaviorRelay {
 func void<E>(_ x: E) {
     return Void()
 }
+
+extension ObservableType {
+    static func justOrEmpty<E>(_ x: E?) -> Observable<E> {
+        if let x = x {
+            return .just(x)
+        } else {
+            return .empty()
+        }
+    }
+}
