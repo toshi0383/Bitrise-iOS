@@ -1,6 +1,6 @@
 name: BitriseClient
 options:
-  minimumXcodeGenVersion: 2.2.0
+  minimumXcodeGenVersion: 2.5.0
 configFiles:
   Debug: configs/Debug.xcconfig
   Release: configs/Release.xcconfig
@@ -20,10 +20,10 @@ targets:
       - carthage: APIKit
       - carthage: DeepDiff
       - carthage: Highlightr
-      - carthage: Result
       - carthage: Realm
       - carthage: RealmSwift
       - carthage: RxCocoa
+      - carthage: RxRelay
       - carthage: RxSwift
       - carthage: TKKeyboardControl
     scheme:
