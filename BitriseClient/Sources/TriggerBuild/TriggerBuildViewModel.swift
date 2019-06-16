@@ -222,7 +222,7 @@ final class TriggerBuildViewModel {
                 do {
                     try realm.write {
                         me.gitObjectCache.enqueue(gitObject)
-                        realm.add(me.gitObjectCache, update: true)
+                        realm.add(me.gitObjectCache, update: .all)
                     }
                 } catch {
                     assertionFailure("Failed to write realm object.")

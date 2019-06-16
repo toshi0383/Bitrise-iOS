@@ -26,7 +26,7 @@ final class Config: ConfigType {
             let settings = realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1") ?? SettingsRealm()
             try! realm.write {
                 settings.personalAccessToken = newValue
-                realm.add(settings, update: true)
+                realm.add(settings, update: .all)
             }
         }
     }
@@ -43,7 +43,7 @@ final class Config: ConfigType {
             let settings = realm.object(ofType: SettingsRealm.self, forPrimaryKey: "1") ?? SettingsRealm()
             try! realm.write {
                 settings.lastAppSlugVisited = newValue
-                realm.add(settings, update: true)
+                realm.add(settings, update: .all)
             }
         }
     }

@@ -2,7 +2,7 @@ public protocol Enumerable {
     associatedtype Element = Self
 }
 
-public extension Enumerable where Element: Hashable {
+extension Enumerable where Element: Hashable {
     private static var iterator: AnyIterator<Element> {
         var n = 0
         return AnyIterator {

@@ -13,7 +13,7 @@ extension Reactive where Base: AnyObject {
     }
 }
 
-public extension Reactive where Base: AnyObject {
+extension Reactive where Base: AnyObject {
 
     /// a unique DisposeBag that is related to the Reactive.Base instance only for Reference type
     public var disposeBag: DisposeBag {
