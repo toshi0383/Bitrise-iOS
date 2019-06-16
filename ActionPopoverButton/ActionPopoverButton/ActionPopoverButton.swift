@@ -236,7 +236,7 @@ open class ActionPopoverButton: UIView {
             if let actionView = actionView, let hit = actionView.hitTest(touch.location(in: actionView), with: event) {
                 var unhighlightTargets = actionView.arrangedSubviews
                 if actionView.arrangedSubviews.contains(hit) {
-                    if let idx = unhighlightTargets.index(of: hit) {
+                    if let idx = unhighlightTargets.firstIndex(of: hit) {
                         unhighlightTargets.remove(at: idx)
                     }
                     if hit.alpha != 0.5 {
