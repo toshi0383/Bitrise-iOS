@@ -105,7 +105,7 @@ extension AppsBuilds.Build {
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self)
+        hasher.combine(build_number)
         _ = hasher.finalize()
     }
 
