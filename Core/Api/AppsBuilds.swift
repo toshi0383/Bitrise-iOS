@@ -1,5 +1,6 @@
 import os.signpost
 import APIKit
+import DeepDiff
 import Foundation
 
 public struct AppsBuildsRequest: BitriseAPIRequest {
@@ -40,7 +41,16 @@ public struct AppsBuilds: Equatable {
 
     public let data: [Build]
 
-    public struct Build: Hashable, Equatable {
+    public struct Build: Hashable, Equatable, DiffAware {
+        public var diffId: Int {
+            return hashValue
+        }
+
+        public static func compareContent(_ a: AppsBuilds.Build, _ b: AppsBuilds.Build) -> Bool {
+            return a == b
+        }
+
+        public typealias DiffId = Int
 
         public typealias Slug = String
 
@@ -94,8 +104,9 @@ extension AppsBuilds.Build {
         case aborted = 3
     }
 
-    public var hashValue: Int {
-        return build_number
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self)
+        _ = hasher.finalize()
     }
 
     public init(from json: JSON) {
