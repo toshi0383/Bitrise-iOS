@@ -19,6 +19,7 @@ targets:
       - target: Core
       - carthage: APIKit
       - carthage: DeepDiff
+      - carthage: DifferenceKit
       - carthage: Highlightr
       - carthage: Realm
       - carthage: RealmSwift

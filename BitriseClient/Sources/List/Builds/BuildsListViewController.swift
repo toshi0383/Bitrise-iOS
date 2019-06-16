@@ -88,7 +88,9 @@ final class BuildsListViewController: UIViewController, Storyboardable {
         viewModel.showBuildLog
             .observeOn(ConcurrentMainScheduler.instance)
             .subscribe(onNext: { [weak self] in
-                let vc = LogViewController(build: $0)
+                guard let me = self else { return }
+
+                let vc = LogViewController(appSlug: me.viewModel.appSlug, build: $0)
                 self?.navigationController?.pushViewController(vc, animated: true)
             })
             .disposed(by: rx.disposeBag)
