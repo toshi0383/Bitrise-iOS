@@ -126,7 +126,7 @@ final class BuildsListViewController: UIViewController, Storyboardable {
                     .concat(
                         didEndDragging
                             .map { _ in CGFloat(1.0) }
-                            .delay(0.5, scheduler: ConcurrentMainScheduler.instance)
+                            .delay(DispatchTimeInterval.milliseconds(500), scheduler: ConcurrentMainScheduler.instance)
                     )
             }
             .observeOn(ConcurrentMainScheduler.instance)

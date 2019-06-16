@@ -19,10 +19,10 @@ extension Optional: OptionalType {
     var value: Wrapped? { return self }
 }
 
-extension ObservableType where E: OptionalType {
+extension ObservableType where Element: OptionalType {
 
-    func filterNil() -> Observable<E.Wrapped> {
-        return flatMap { item -> Observable<E.Wrapped> in
+    func filterNil() -> Observable<Element.Wrapped> {
+        return flatMap { item -> Observable<Element.Wrapped> in
             if let value = item.value {
                 return Observable.just(value)
             } else {
@@ -32,14 +32,14 @@ extension ObservableType where E: OptionalType {
     }
 }
 
-extension ObservableType where E: Emptyable {
-    func filterEmpty() -> Observable<E> {
+extension ObservableType where Element: Emptyable {
+    func filterEmpty() -> Observable<Element> {
         return filter { !$0.isEmpty }
     }
 }
 
 extension BehaviorRelay {
-    var changed: Observable<E> {
+    var changed: Observable<Element> {
         return asObservable().skip(1)
     }
 }
