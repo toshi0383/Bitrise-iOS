@@ -52,6 +52,10 @@ final class BuildsListViewModel {
                 self?.sendAbortRequest(forBuild: build)
             }))
 
+            alertActions.append(AlertAction(title: "In-progress log", handler: { [weak self] _ in
+                self?._showBuildLog.accept(build)
+            }))
+
             alertActions.append(AlertAction(title: "Set Notification", handler: { [weak self] _ in
                 self?.reserveNotification(forBuild: build)
             }))
@@ -374,8 +378,11 @@ final class BuildsListViewModel {
                 print("[error] AppsBuildsLogRequest: \($0)")
                 return .empty()
             }
-            .flatMap {
-                Observable<URL>.justOrEmpty(URL(string: $0.expiring_raw_log_url))
+            .flatMap { appsBuildsLog -> Observable<URL> in
+                guard let rawLogUrl = appsBuildsLog.expiring_raw_log_url else {
+                    return Observable<URL>.empty()
+                }
+                return Observable<URL>.justOrEmpty(URL(string: rawLogUrl))
             }
             .flatMap { [weak self] url -> Observable<URL> in
 
