@@ -30,7 +30,7 @@ final class LogViewController: UIViewController {
                 .takeUntil(.exclusive, predicate: { $0.expiring_raw_log_url != nil })
                 .map { $0.log_chunks.sorted(by: { (f, s) in f.position < s.position }) }
                 .map { chunks -> [AppsBuildsLog.Chunk] in
-                    chunks.count > 9 ? [AppsBuildsLog.Chunk](chunks[0...9]) : chunks
+                    chunks.count > 9 ? [AppsBuildsLog.Chunk](chunks[chunks.count-10..<chunks.count]) : chunks
                 }
                 .flatMapFirst { next -> Observable<[AppsBuildsLog.Chunk]> in
                     let c = StagedChangeset(source: previous, target: next)
