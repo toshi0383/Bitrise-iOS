@@ -40,6 +40,8 @@ targets:
     dependencies:
       - target: BitriseClient
       - target: Core
+      - carthage: RxSwift
+      - carthage: RxTest
     scheme:
       testTargets:
         - BitriseClientTests
