@@ -8,10 +8,18 @@ import UIKit
 
 final class LogViewController: UIViewController {
 
-    private let build: AppsBuilds.Build
+    private let build: BuildForLog
 
-    init(appSlug: AppSlug, build: AppsBuilds.Build, session: Session = .shared) {
+    private let textView: UITextView
+
+    init(appSlug: AppSlug,
+         build: BuildForLog,
+         textView: UITextView = textView(),
+         scheduler: Environment = Environment.shared,
+         sendBuildLogRequest: @escaping (AppsBuildsLogRequest) -> Observable<AppsBuildsLog> = Session.shared.rx.send) {
+
         self.build = build
+        self.textView = textView
 
         super.init(nibName: nil, bundle: nil)
 
@@ -23,7 +31,7 @@ final class LogViewController: UIViewController {
                 .flatMapFirst { _ -> Observable<AppsBuildsLog> in
                     let req = AppsBuildsLogRequest(appSlug: appSlug, buildSlug: build.slug)
 
-                    return session.rx.send(req)
+                    return sendBuildLogRequest(req)
                         .timeout(.seconds(10), scheduler: ConcurrentMainScheduler.instance)
                 }
                 .distinctUntilChanged()
@@ -55,8 +63,10 @@ final class LogViewController: UIViewController {
     }
 
     required init?(coder aDecoder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+}
 
-    private let textView: UITextView = {
+extension LogViewController {
+    static func textView() -> UITextView {
 
         let textStorage = CodeAttributedString()
         textStorage.language = "console"
@@ -72,8 +82,18 @@ final class LogViewController: UIViewController {
         tv.backgroundColor = textStorage.highlightr.theme.themeBackgroundColor
         tv.contentInset = .zero
         return tv
-    }()
+    }
 }
+
+// MARK: Model
+
+protocol BuildForLog {
+    var build_number: Int { get }
+    var status: AppsBuilds.Build.Status { get }
+    var slug: String { get }
+}
+
+extension AppsBuilds.Build: BuildForLog { }
 
 // MARK: Lifecycle
 

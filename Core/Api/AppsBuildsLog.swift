@@ -43,11 +43,24 @@ public struct AppsBuildsLogRequest: BitriseAPIRequest {
 
 public struct AppsBuildsLog: Decodable, Equatable {
 
-    public let expiring_raw_log_url: String?
-    public let generated_log_chunks_num: Int?
-    public let is_archived: Bool
-    public let log_chunks: [Chunk]
-    public let timestamp: Date?
+    public var expiring_raw_log_url: String?
+    public var generated_log_chunks_num: Int?
+    public var is_archived: Bool
+    public var log_chunks: [Chunk]
+    public var timestamp: Date?
+
+    public init(expiring_raw_log_url: String?,
+                generated_log_chunks_num: Int?,
+                is_archived: Bool,
+                log_chunks: [Chunk],
+                timestamp: Date?
+        ) {
+        self.expiring_raw_log_url = expiring_raw_log_url
+        self.generated_log_chunks_num = generated_log_chunks_num
+        self.is_archived = is_archived
+        self.log_chunks = log_chunks
+        self.timestamp = timestamp
+    }
 
 }
 
