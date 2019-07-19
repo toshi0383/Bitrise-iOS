@@ -23,7 +23,14 @@ Bitrise iOS Client app 🚀
 
 # Building Project
 
+## Init submodule
+
+```console
+git submodule update --init -f
+```
+
 ## Setup Carthage
+
 Install the latest version of Carthage.
 ```console
 brew install carthage
