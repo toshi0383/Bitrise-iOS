@@ -9,11 +9,9 @@ struct StartBuildView : View {
             VStack {
                 HStack {
                     VStack {
-                        TextField($store.tokenText,
-                                  placeholder: Text("API Token for \(self.store.app.title)"))
+                        TextField("API Token for \(self.store.app.title)", text: $store.tokenText)
                             .textContentType(.password)
-                        TextField($store.branchName,
-                                  placeholder: Text("Branch name"))
+                        TextField("Branch name", text: $store.branchName)
                     }
 
                     Button("Go!") {
