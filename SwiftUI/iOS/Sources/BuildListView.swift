@@ -5,13 +5,13 @@ struct BuildListView : View {
 
     @ObjectBinding var store: BuildsStore
 
-    @State var isPresented = false
+    @State var isStartBuildViewPresented = false
 
     var body: some View {
         NavigationView {
             List {
                 Section(header: Text("Menu")) {
-                    PresentationLink(destination: StartBuildView(app: self.store.app)) {
+                    Button(action: { self.isStartBuildViewPresented.toggle() }) {
                         Text("Start Build")
                     }
                     NavigationLink(destination: BitriseYmlView(store: .init(app: self.store.app))) {
@@ -30,6 +30,9 @@ struct BuildListView : View {
                 }
             }
             .navigationBarTitle(Text(store.app.title))
+            .sheet(isPresented: $isStartBuildViewPresented, onDismiss: nil, content: {
+                StartBuildView(app: self.store.app)
+            })
         }
     }
 }
