@@ -1,6 +1,5 @@
 import Combine
 import SwiftUI
-import RxSwift
 
 struct ContentView : View {
     @ObjectBinding var store = AppStore()
@@ -14,7 +13,7 @@ struct ContentView : View {
                     }
                 }
             }
-            .navigationBarTitle(Text("Apps"))
+//            .navigationBarTitle(Text("Apps"))
         }
     }
 }

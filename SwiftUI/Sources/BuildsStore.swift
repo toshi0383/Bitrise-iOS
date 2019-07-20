@@ -2,7 +2,6 @@ import APIKit
 import Combine
 import Core
 import Foundation
-import RxSwift
 import SwiftUI
 
 final class BuildsStore: BindableObject {
@@ -14,18 +13,19 @@ final class BuildsStore: BindableObject {
         }
     }
 
-    private let disposeBag = DisposeBag()
-
     init(app: App, builds: [Build] = []) {
         self.app = app
         self.builds = builds
 
         let req = AppsBuildsRequest(appSlug: app.slug)
-        Session.shared.rx.send(req)
-            .subscribe(onNext: { [weak self] res in
+        Session.shared.send(req) { [weak self] r in
+            switch r {
+            case .success(let res):
                 self?.builds = AppsBuilds(from: res).data
-            })
-            .disposed(by: disposeBag)
+            case .failure(let error):
+                print("\(error)")
+            }
+        }
     }
 
     var willChange = PassthroughSubject<BuildsStore, Never>()

@@ -3,19 +3,31 @@ Bitrise-iOS SwiftUI
 
 work in progress
 
+## Platforms
+
+- iOS13+
+- macOS10.15+
+
 ## Development
 
 Xcode11beta4
 
 ## Build
 
+Following steps are required to build project.
+
 ### Carthage
 
 ```console
 carthage checkout
-open Carthage/Checkouts/RxSwift/Rx.xcworkspace and manually build frameworks
-open Carthage/Checkouts/APIKit/APIKit.xcworkspace and manually build framework
-copy them under Carthage/Build/iOS/
+```
+
+We directly import source code of APIKit via XcodeGen.
+
+### XcodeGen
+
+```console
+xcodegen
 ```
 
 ### API_TOKEN
@@ -24,12 +36,6 @@ Put this as `Config/xcconfig/user.xcconfig`.
 
 ```user.xcconfig
 API_TOKEN=your-bitrise-api-token-xxxxxxxxxxxxxxxx
-```
-
-### XcodeGen
-
-```console
-xcodegen
 ```
 
 ## License

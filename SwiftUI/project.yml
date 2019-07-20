@@ -9,18 +9,24 @@ targets:
       - Sources
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.BitriseClient-SwiftUI
+      SUPPORTS_MACCATALYST: YES
+      DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER: YES
     configFiles:
       Debug: Config/xcconfig/Base.xcconfig
       Release: Config/xcconfig/Base.xcconfig
     dependencies:
-      - carthage: APIKit
-      - carthage: RxCocoa
-      - carthage: RxRelay
-      - carthage: RxSwift
       - target: Core
+      - target: APIKit
     scheme:
       environmentVariables:
         API_TOKEN: ${API_TOKEN}
+  APIKit:
+    platform: iOS
+    type: framework
+    sources:
+      - Carthage/Checkouts/APIKit/Sources
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.APIKit
   Core:
     platform: iOS
     type: framework
@@ -29,4 +35,4 @@ targets:
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.BitriseKit
     dependencies:
-      - carthage: APIKit
+      - target: APIKit
