@@ -51,7 +51,7 @@ struct BuildListView_Previews : PreviewProvider {
 }
 
 private let testStore: BuildsStore = BuildsStore(app: testApp, builds: (0..<100).map { i in
-    Build(abort_reason: nil, branch: "master", build_number: i, commit_hash: "afawagaew", commit_message: "hello", commit_view_url: nil, environment_prepare_finished_at: nil, finished_at: nil, is_on_hold: false, original_build_params: [:], pull_request_id: 1234, pull_request_target_branch: "develop", pull_request_view_url: nil, slug: "afwfwgrexxx", stack_config_type: nil, stack_identifier: nil, started_on_worker_at: Date(), status: .notFinished, status_text: "in-progress", tag: nil, triggered_at: Date(), triggered_by: nil, triggered_workflow: "primary")
+    Build(abort_reason: nil, branch: "master", build_number: i, commit_hash: "afawagaew", commit_message: "hello", commit_view_url: nil, environment_prepare_finished_at: nil, finished_at: nil, is_on_hold: false, original_build_params: [:], pull_request_id: 1234, pull_request_target_branch: "develop", pull_request_view_url: nil, slug: "afwfwgrexxx\(i)", stack_config_type: nil, stack_identifier: nil, started_on_worker_at: Date(), status: .notFinished, status_text: "in-progress", tag: nil, triggered_at: Date(), triggered_by: nil, triggered_workflow: "primary")
     }
 )
 #endif

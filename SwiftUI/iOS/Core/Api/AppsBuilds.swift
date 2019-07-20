@@ -1,7 +1,6 @@
 import os.signpost
 import APIKit
 import Foundation
-import SwiftUI
 
 public struct AppsBuildsRequest: BitriseAPIRequest {
 
@@ -133,12 +132,6 @@ extension AppsBuilds {
         self.data = dataJSONs.map(Build.init)
         let pagingJSON = json["paging"] as! JSON
         self.paging = Paging(from: pagingJSON)
-    }
-}
-
-extension AppsBuilds.Build: Identifiable {
-    public var id: Int {
-        return build_number
     }
 }
 
