@@ -1,0 +1,32 @@
+name: BitriseClient-SwiftUI
+options:
+  minimumXcodeGenVersion: 2.6.0
+targets:
+  BitriseClient:
+    platform: iOS
+    type: application
+    sources:
+      - Sources
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.BitriseClient-SwiftUI
+    configFiles:
+      Debug: Config/xcconfig/Base.xcconfig
+      Release: Config/xcconfig/Base.xcconfig
+    dependencies:
+      - carthage: APIKit
+      - carthage: RxCocoa
+      - carthage: RxRelay
+      - carthage: RxSwift
+      - target: Core
+    scheme:
+      environmentVariables:
+        API_TOKEN: ${API_TOKEN}
+  Core:
+    platform: iOS
+    type: framework
+    sources:
+      - Core/
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.BitriseKit
+    dependencies:
+      - carthage: APIKit
