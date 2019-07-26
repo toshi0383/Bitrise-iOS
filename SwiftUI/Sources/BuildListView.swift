@@ -29,10 +29,10 @@ struct BuildListView : View {
                     }
                 }
             }
-//            .navigationBarTitle(Text(store.app.title))
-//            .sheet(isPresented: $isStartBuildViewPresented, onDismiss: nil, content: {
-//                StartBuildView(app: self.store.app)
-//            })
+            .navigationBarTitle(Text(store.app.title))
+            .sheet(isPresented: $isStartBuildViewPresented, onDismiss: nil, content: {
+                StartBuildView(app: self.store.app)
+            })
         }
     }
 }

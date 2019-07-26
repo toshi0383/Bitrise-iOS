@@ -13,7 +13,7 @@ struct ContentView : View {
                     }
                 }
             }
-//            .navigationBarTitle(Text("Apps"))
+            .navigationBarTitle(Text("Apps"))
         }
     }
 }

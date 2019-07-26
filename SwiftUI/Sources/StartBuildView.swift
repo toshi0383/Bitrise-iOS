@@ -25,7 +25,7 @@ struct StartBuildView : View {
                     }
                 }
             }
-//            .navigationBarTitle(Text("Start Build"))
+            .navigationBarTitle(Text("Start Build"))
         }
 
     }
