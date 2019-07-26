@@ -1,6 +1,6 @@
 name: BitriseClient-SwiftUI
 options:
-  minimumXcodeGenVersion: 2.6.0
+  minimumXcodeGenVersion: 2.7.0
 targets:
   BitriseClient:
     platform: iOS
@@ -16,23 +16,19 @@ targets:
       Release: Config/xcconfig/Base.xcconfig
     dependencies:
       - target: Core
-      - target: APIKit
     scheme:
       environmentVariables:
         API_TOKEN: ${API_TOKEN}
-  APIKit:
-    platform: iOS
-    type: framework
-    sources:
-      - Carthage/Checkouts/APIKit/Sources
-    settings:
-      PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.APIKit
   Core:
     platform: iOS
     type: framework
     sources:
       - Core/
+    dependencies:
+      - swiftpm:
+        repositoryURL: "https://github.com/ishkawa/APIKit"
+        versionRequirement:
+          kind: upToNextMajorVersion
+          minimumVersion: 5.0.0
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.BitriseKit
-    dependencies:
-      - target: APIKit
