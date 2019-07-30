@@ -1,3 +1,5 @@
+[🎨SwiftUI version](./SwiftUI/) is available as beta👶
+
 Bitrise iOS Client app 🚀
 ---
 ![screen-shots.png](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/screen-shots.png)
