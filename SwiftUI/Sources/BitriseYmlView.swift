@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 
 struct BitriseYmlView : View {
-    @ObjectBinding var store: BitriseYmlStore
+    @ObservedObject var store: BitriseYmlStore
 
     var body: some View {
         List {
@@ -25,12 +25,12 @@ struct BitriseYmlView_Previews : PreviewProvider {
 }
 #endif
 
-final class BitriseYmlStore: BindableObject {
+final class BitriseYmlStore: ObservableObject {
     let app: App
 
     var lines: [Line] = [] {
         didSet {
-            willChange.send(self)
+            objectWillChange.send(self)
         }
     }
 
@@ -39,7 +39,7 @@ final class BitriseYmlStore: BindableObject {
         self.lines = lines
     }
 
-    var willChange = PassthroughSubject<BitriseYmlStore, Never>()
+    var objectWillChange = PassthroughSubject<BitriseYmlStore, Never>()
 }
 
 struct Line: Equatable, Hashable, Identifiable {

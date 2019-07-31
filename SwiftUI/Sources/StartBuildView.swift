@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 
 struct StartBuildView : View {
-    @ObjectBinding var store: StartBuildStore
+    @ObservedObject var store: StartBuildStore
 
     var body: some View {
         NavigationView {
@@ -53,24 +53,24 @@ struct StartBuildView_Previews : PreviewProvider {
 }
 #endif
 
-final class StartBuildStore: BindableObject {
+final class StartBuildStore: ObservableObject {
     let app: App
 
     var tokenText: String = "" {
         didSet {
-            willChange.send(self)
+            objectWillChange.send(self)
         }
     }
 
     var branchName: String = "" {
         didSet {
-            willChange.send(self)
+            objectWillChange.send(self)
         }
     }
 
     var workflows: [Workflow] = [] {
         didSet {
-            willChange.send(self)
+            objectWillChange.send(self)
         }
     }
 
@@ -79,7 +79,7 @@ final class StartBuildStore: BindableObject {
         self.workflows = workflows
     }
 
-    var willChange = PassthroughSubject<StartBuildStore, Never>()
+    var objectWillChange = PassthroughSubject<StartBuildStore, Never>()
 }
 
 struct Workflow: Equatable, Hashable, Identifiable {

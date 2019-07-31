@@ -4,12 +4,12 @@ import Core
 import Foundation
 import SwiftUI
 
-final class BuildsStore: BindableObject {
+final class BuildsStore: ObservableObject {
     let app: App
 
     var builds: [Build] = [] {
         didSet {
-            willChange.send(self)
+            objectWillChange.send(self)
         }
     }
 
@@ -28,7 +28,7 @@ final class BuildsStore: BindableObject {
         }
     }
 
-    var willChange = PassthroughSubject<BuildsStore, Never>()
+    var objectWillChange = PassthroughSubject<BuildsStore, Never>()
 }
 
 typealias Build = AppsBuilds.Build

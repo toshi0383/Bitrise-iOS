@@ -4,12 +4,12 @@ import Core
 import Foundation
 import SwiftUI
 
-final class AppStore: BindableObject {
-    var willChange = PassthroughSubject<AppStore, Never>()
+final class AppStore: ObservableObject {
+    var objectWillChange = PassthroughSubject<AppStore, Never>()
 
     var apps: [App] = [] {
         didSet {
-            willChange.send(self)
+            objectWillChange.send(self)
         }
     }
 

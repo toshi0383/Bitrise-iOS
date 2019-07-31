@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 
 struct ContentView : View {
-    @ObjectBinding var store = AppStore()
+    @ObservedObject var store = AppStore()
 
     var body: some View {
         NavigationView {
