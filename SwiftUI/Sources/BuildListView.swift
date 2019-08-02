@@ -3,7 +3,7 @@ import SwiftUI
 
 struct BuildListView : View {
 
-    @ObjectBinding var store: BuildsStore
+    @ObservedObject var store: BuildsStore
 
     @State var isStartBuildViewPresented = false
 

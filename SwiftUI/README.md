@@ -10,7 +10,7 @@ work in progress
 
 ## Development
 
-Xcode11beta4
+Xcode11beta5
 
 ## Build
 
