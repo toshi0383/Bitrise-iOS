@@ -27,9 +27,6 @@ public struct BuildTriggerResponse: Decodable {
     let triggered_workflow: String
 }
 
-/// `build_params` is params from previous build, so it could be typed, but isn't on purpose.
-/// This way we can ignore potential future breaking changes in `bulid_params` fields.
-/// That's why we can't use Encodable here.
 public struct BuildTriggerRequest: BitriseAPIRequest {
     public var path: String {
         return "/apps/\(appSlug)/builds"
