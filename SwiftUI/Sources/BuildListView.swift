@@ -31,7 +31,17 @@ struct BuildListView : View {
             }
             .navigationBarTitle(Text(store.app.title))
             .sheet(isPresented: $isStartBuildViewPresented, onDismiss: nil, content: {
-                StartBuildView(app: self.store.app)
+                StartBuildView(
+                    isStartBuildViewPresented: self.$isStartBuildViewPresented,
+                    store: .init(
+                        app: self.store.app,
+                        workflows: [
+                            Workflow(id: "primary"),
+                            Workflow(id: "test"),
+                        ]
+                    )
+                )
+
             })
         }
     }

@@ -19,6 +19,7 @@ targets:
     scheme:
       environmentVariables:
         API_TOKEN: ${API_TOKEN}
+        OS_ACTIVITY_MODE: disable
   Core:
     platform: iOS
     type: framework

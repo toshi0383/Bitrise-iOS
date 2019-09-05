@@ -1,7 +1,7 @@
 import Combine
 import SwiftUI
 
-struct ContentView : View {
+struct AppListView : View {
     @ObservedObject var store = AppStore()
 
     var body: some View {
@@ -19,9 +19,9 @@ struct ContentView : View {
 }
 
 #if DEBUG
-struct ContentView_Previews : PreviewProvider {
+struct AppListView_Previews : PreviewProvider {
     static var previews: some View {
-        ContentView(store: testStore)
+        AppListView(store: testStore)
     }
 }
 
