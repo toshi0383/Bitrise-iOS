@@ -1,45 +1,83 @@
 import Foundation
+import APIKit
 
-/// `build_params` is params from previous build, so it could be typed, but isn't on purpose.
-/// This way we can ignore potential future breaking changes in `bulid_params` fields.
-/// That's why we can't use Encodable here.
-public struct BuildTriggerRequest {
+public struct BuildParams: Codable {
+    public var branch: String?
+    public var workflow_id: String?
+    public var tag: String?
+    public var commit_hash: String?
+    public var commit_message: String?
+//    public var environments: [BuildTriggerEnvironment]
 
-    public let hook_info: HookInfo
-    public let build_params: JSON
-    public let triggered_by: String
+    public init(branch: String? = nil, tag: String? = nil, commit_hash: String? = nil, workflow_id: String? = nil, environments: [BuildTriggerEnvironment] = []) {
+        self.branch = branch
+        self.tag = tag
+        self.commit_hash = commit_hash
+        self.workflow_id = workflow_id
+//        self.environments = environments
+    }
+}
 
-    public init(hook_info: HookInfo,
-                build_params: JSON,
-                triggered_by: String = "BitriseClient iOS App") {
-        self.hook_info = hook_info
-        self.build_params = build_params
-        self.triggered_by = triggered_by
+public struct BuildTriggerResponse: Decodable {
+    public let status, message, slug, service: String
+    public let build_slug: String
+    public let build_number: Int
+    public let build_url: String
+    public let triggered_workflow: String
+}
+
+public struct BuildTriggerRequest: BitriseAPIRequest {
+    public var path: String {
+        return "/apps/\(appSlug)/builds"
     }
 
-    public func encode() throws -> Data {
-        let json: [String: Any] = [
-            "hook_info": hook_info.json(),
-            "build_params": build_params,
-            "triggered_by": triggered_by
-        ]
-        return try JSONSerialization.data(withJSONObject: json, options: [])
+    public let method: HTTPMethod = .post
+
+    public var spid: Any? = nil
+
+    public typealias Response = BuildTriggerResponse
+
+    public var bodyParameters: BodyParameters? {
+        let data: Data = try! JSONEncoder().encode(body)
+        let o = try! JSONSerialization.jsonObject(with: data, options: [])
+        return JSONBodyParameters(JSONObject: o)
+    }
+
+    private let appSlug: String
+    private let body: BuildTriggerRequest.Body
+
+    public init(appSlug: String,
+                hook_info: Body.HookInfo = .init(),
+                build_params: BuildParams,
+                triggered_by: String = "BitriseClient iOS App") {
+        self.appSlug = appSlug
+        self.body = Body(hook_info: hook_info, build_params: build_params, triggered_by: triggered_by)
+    }
+
+    public init(appSlug: String,
+                branch: String,
+                workflow_id: String?,
+                hook_info: Body.HookInfo = .init()) {
+
+        self.init(appSlug: appSlug,
+                  build_params: BuildParams(branch: branch, workflow_id: workflow_id))
     }
 }
 
 extension BuildTriggerRequest {
 
-    public struct HookInfo {
-        public let type: String
-        public let api_token: String
+    public struct Body: Encodable {
+        public let hook_info: HookInfo
+        public let build_params: BuildParams
+        public let triggered_by: String
 
-        public init(type: String = "bitrise", api_token: String) {
-            self.type = type
-            self.api_token = api_token
-        }
+        public struct HookInfo: Encodable {
+            public let type: String
 
-        public func json() -> [String: Any] {
-            return ["type": type, "api_token": api_token]
+            public init(type: String = "bitrise") {
+                self.type = type
+            }
+
         }
     }
 }

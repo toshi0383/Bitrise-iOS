@@ -1,7 +1,21 @@
+import Core
 import UIKit
 
 enum GitObject {
     case branch(String), tag(String), commitHash(String)
+}
+
+extension BuildParams {
+    init(gitObject: GitObject, workflowID: String, environments: [BuildTriggerEnvironment] = []) {
+        switch gitObject {
+        case .branch(let value):
+            self.init(branch: value, workflow_id: workflowID, environments: environments)
+        case .tag(let value):
+            self.init(tag: value, workflow_id: workflowID, environments: environments)
+        case .commitHash(let value):
+            self.init(commit_hash: value, workflow_id: workflowID, environments: environments)
+        }
+    }
 }
 
 // MARK: Initializer

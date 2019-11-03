@@ -16,7 +16,7 @@ extension Realm {
             let config = Configuration(
                 fileURL: fileURL,
                 encryptionKey: key,
-                schemaVersion: 1,
+                schemaVersion: 2,
                 migrationBlock: { migration, oldSchemaVersion in
 
                     switch oldSchemaVersion {
@@ -25,6 +25,9 @@ extension Realm {
                         migration.renameProperty(onType: SettingsRealm.className(),
                                                  from:  "lastAppNameVisited",
                                                  to:    "lastAppSlugVisited")
+                    case 1:
+                        // BuildTriggerRealm.apiToken is removed
+                        break
                     default:
                         break
                     }

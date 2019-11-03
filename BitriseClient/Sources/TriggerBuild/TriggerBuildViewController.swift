@@ -76,18 +76,6 @@ final class TriggerBuildViewController: UIViewController {
 
     }()
 
-    @IBOutlet private weak var apiTokenTextfield: UITextField! {
-        didSet {
-            apiTokenTextfield.rx.text
-                .filterNil()
-                .filterEmpty()
-                .subscribe(onNext: { [weak self] apiToken in
-                    self?.viewModel?.apiToken = apiToken
-                })
-                .disposed(by: disposeBag)
-        }
-    }
-
     @IBOutlet private weak var tableView: UITableView! {
         didSet {
             tableView.dataSource = self
@@ -112,10 +100,6 @@ extension TriggerBuildViewController {
 
         tableView.register(EnvCell.self, forCellReuseIdentifier: "EnvCell")
         tableView.reloadData()
-
-        // No need to perform reactive update for apiTokenTextField.
-        // Currently apiToken is not changed outside this view.
-        apiTokenTextfield.text = viewModel.apiToken
 
         gitObjectInputView.newInput.changed
             .subscribe(onNext: { [weak viewModel] gitObject in
@@ -250,15 +234,8 @@ extension TriggerBuildViewController {
         }
 
         gitObjectInputView.resignFirstResponder()
-        apiTokenTextfield.resignFirstResponder()
 
         viewModel.triggerBuild()
-    }
-
-    @IBAction private func tokenInfoButton() {
-        let url = URL(string: "https://github.com/toshi0383/Bitrise-iOS/blob/master/README.md#build-trigger-token")!
-        let vc = SFSafariViewController(url: url)
-        self.present(vc, animated: true, completion: nil)
     }
 
 }

@@ -69,13 +69,6 @@ Required to access Bitrise v0.1 API. Generate one in the setting page.
 
 SeeAlso: http://devcenter.bitrise.io/api/v0.1/#authentication
 
-## Build Trigger Token
-This is different for each app. Get one from dashboard.
-
-![Build Trigger Token](https://github.com/toshi0383/assets/raw/master/Bitrise-iOS/build-trigger-token.png)
-
-SeeAlso: http://devcenter.bitrise.io/api/build-trigger
-
 # Donate
 If you think it's a useful tool, consider donation to maintain project.
 

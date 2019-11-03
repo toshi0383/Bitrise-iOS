@@ -1,3 +1,4 @@
+import Core
 import RxCocoa
 import RxSwift
 import UIKit
@@ -118,7 +119,7 @@ extension EnvCell {
     func configure(_ env: BuildTriggerEnvironment, switchHandler: @escaping (BuildTriggerEnvironment) -> ()) {
 
         pkey = env.pkey
-        key.text = env.key
+        key.text = env.mapped_to
         value.text = env.value
         enabledSwitch.isOn = env.enabled
 
