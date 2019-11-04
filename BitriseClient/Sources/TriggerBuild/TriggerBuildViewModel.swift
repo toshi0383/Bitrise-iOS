@@ -1,3 +1,4 @@
+import APIKit
 import Core
 import Foundation
 import RealmSwift
@@ -75,17 +76,6 @@ final class TriggerBuildViewModel {
         }
     }
 
-    var apiToken: String? {
-        get {
-            return realmObject.apiToken
-        }
-        set {
-            try! Realm.getRealm().write {
-                realmObject.apiToken = newValue
-            }
-        }
-    }
-
     var gitObject: GitObject! {
         get {
             return GitObject(realmObject: realmObject)
@@ -139,7 +129,7 @@ final class TriggerBuildViewModel {
         if let o = realm.object(ofType: BuildTriggerEnvironmentRealm.self, forPrimaryKey: env.pkey) {
             try! realm.write {
                 o.enabled = env.enabled
-                o.key = env.key
+                o.key = env.mapped_to
                 o.value = env.value
             }
         }
@@ -151,87 +141,46 @@ final class TriggerBuildViewModel {
         }
     }
 
-    private func urlRequest() -> URLRequest? {
-
-        guard let token = apiToken else { return nil }
-        guard let workflowID = workflowID else { return nil }
-
-        guard let url = URL(string: "https://app.bitrise.io/app/\(realmObject.appSlug)/build/start.json") else {
-            return nil
-        }
-
-        var req = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 5.0)
-
-        let environments: [JSON] = self.environments.compactMap { $0.enabled ? $0.json : nil }
-        let body = BuildTriggerRequest(hook_info: .init(api_token: token),
-                                       build_params: gitObject.json
-                                        |+| ["workflow_id": workflowID]
-                                        |+| ["environments": environments])
-        req.httpBody = try! body.encode()
-        req.httpMethod = "POST"
-
-        return req
-    }
-
     func triggerBuild() {
 
-        guard let req = urlRequest() else {
-            alert("ERROR: Could not build request.")
-            return
-        }
+        guard let workflowID = workflowID else { return }
+
+        let environments: [BuildTriggerEnvironment] = self.environments.compactMap { $0.enabled ? $0 : nil }
+        let req = BuildTriggerRequest(appSlug: realmObject.appSlug,
+                                      build_params: BuildParams(gitObject: gitObject,
+                                                                workflowID: workflowID,
+                                                                environments: environments))
 
         let gitObject = self.gitObject!
 
-        let task = URLSession.shared.dataTask(with: req) { [weak self] (data, res, err) in
-
+        Session.shared.send(req) { [weak self] (result) in
             guard let me = self else { return }
 
-            #if DEBUG
-                if let res = res as? HTTPURLResponse {
-                    print(res.statusCode)
-                    print(res.allHeaderFields)
-                }
-            #endif
+            switch result {
+            case .success(let res):
 
-            if let err = err {
-                me.alert(err.localizedDescription)
-                return
-            }
+                me._buildDidTrigger.accept(())
 
-            let str: String = {
-                if let data = data {
-                    return String(data: data, encoding: .utf8) ?? ""
-                } else {
-                    return ""
-                }
-            }()
+                me.alert("Success\n\(res)")
 
-            guard (res as? HTTPURLResponse)?.statusCode == 201 else {
-                me.alert("Fail str: \(str)")
-                return
-            }
+                DispatchQueue.main.async { [weak me] in
+                    guard let me = me else { return }
+                    let realm = Realm.getRealm()
 
-            me._buildDidTrigger.accept(())
-
-            me.alert("Success\n\(str)")
-
-            DispatchQueue.main.async { [weak me] in
-                guard let me = me else { return }
-                let realm = Realm.getRealm()
-
-                do {
-                    try realm.write {
-                        me.gitObjectCache.enqueue(gitObject)
-                        realm.add(me.gitObjectCache, update: .all)
+                    do {
+                        try realm.write {
+                            me.gitObjectCache.enqueue(gitObject)
+                            realm.add(me.gitObjectCache, update: .all)
+                        }
+                    } catch {
+                        assertionFailure("Failed to write realm object.")
                     }
-                } catch {
-                    assertionFailure("Failed to write realm object.")
                 }
+            case .failure(let error):
+                me.alert(error.localizedDescription)
             }
-
         }
 
-        task.resume()
     }
 
     func getSuggestions(forType type: String) -> [String] {

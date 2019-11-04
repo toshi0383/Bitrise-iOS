@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KGZ-dF-ioA">
-    <device id="retina6_1" orientation="landscape">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15504" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KGZ-dF-ioA">
+    <device id="retina6_1" orientation="landscape" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15508"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -27,27 +26,10 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="374" height="200"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="Yrv-Oa-J4D">
-                                                        <rect key="frame" x="0.0" y="55" width="294" height="90"/>
+                                                        <rect key="frame" x="0.0" y="75" width="294" height="50"/>
                                                         <subviews>
-                                                            <stackView opaque="NO" contentMode="scaleToFill" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="fTE-bd-Utb">
-                                                                <rect key="frame" x="0.0" y="0.0" width="294" height="30"/>
-                                                                <subviews>
-                                                                    <textField opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="249" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Build Trigger Token" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="1oX-LG-GSH">
-                                                                        <rect key="frame" x="0.0" y="0.0" width="263" height="30"/>
-                                                                        <nil key="textColor"/>
-                                                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                                        <textInputTraits key="textInputTraits" secureTextEntry="YES" textContentType="password"/>
-                                                                    </textField>
-                                                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="infoLight" showsTouchWhenHighlighted="YES" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Y4w-Z8-7la">
-                                                                        <rect key="frame" x="272" y="0.0" width="22" height="30"/>
-                                                                        <connections>
-                                                                            <action selector="tokenInfoButton" destination="KGZ-dF-ioA" eventType="touchUpInside" id="5Uf-JL-EAw"/>
-                                                                        </connections>
-                                                                    </button>
-                                                                </subviews>
-                                                            </stackView>
                                                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mUe-vD-YbD" customClass="GitObjectInputView" customModule="BitriseClient" customModuleProvider="target">
-                                                                <rect key="frame" x="0.0" y="40" width="294" height="50"/>
+                                                                <rect key="frame" x="0.0" y="0.0" width="294" height="50"/>
                                                                 <subviews>
                                                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="4" translatesAutoresizingMaskIntoConstraints="NO" id="bPj-x8-7ea">
                                                                         <rect key="frame" x="4" y="5" width="282" height="40"/>
@@ -55,7 +37,6 @@
                                                                             <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="master" borderStyle="roundedRect" placeholder="branch" textAlignment="natural" adjustsFontForContentSizeCategory="YES" adjustsFontSizeToFit="NO" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="I45-LS-dad">
                                                                                 <rect key="frame" x="0.0" y="0.0" width="282" height="40"/>
                                                                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.0" colorSpace="custom" customColorSpace="sRGB"/>
-                                                                                <nil key="textColor"/>
                                                                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                                                                             </textField>
@@ -80,7 +61,7 @@
                                                         </subviews>
                                                     </stackView>
                                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="w1H-9x-NqI">
-                                                        <rect key="frame" x="304" y="55" width="70" height="90"/>
+                                                        <rect key="frame" x="304" y="75" width="70" height="50"/>
                                                         <constraints>
                                                             <constraint firstAttribute="width" constant="70" id="Wfh-hO-QVZ"/>
                                                         </constraints>
@@ -106,14 +87,14 @@
                                         <color key="backgroundColor" red="0.29411764705882354" green="0.74901960784313726" blue="0.6588235294117647" alpha="1" colorSpace="deviceRGB"/>
                                         <prototypes>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="Cell" textLabel="VtU-Fr-Czf" style="IBUITableViewCellStyleDefault" id="BQV-JW-WTd">
-                                                <rect key="frame" x="0.0" y="1" width="468" height="44"/>
+                                                <rect key="frame" x="0.0" y="28" width="468" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="BQV-JW-WTd" id="Jjk-oj-5Ol">
-                                                    <rect key="frame" x="0.0" y="0.0" width="468" height="43.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="468" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="VtU-Fr-Czf">
-                                                            <rect key="frame" x="20" y="0.0" width="396" height="43.5"/>
+                                                            <rect key="frame" x="20" y="0.0" width="396" height="44"/>
                                                             <autoresizingMask key="autoresizingMask"/>
                                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
                                                             <nil key="textColor"/>
@@ -124,15 +105,14 @@
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             </tableViewCell>
                                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="default" indentationWidth="10" reuseIdentifier="AddNewCell" id="jEU-5X-XBC" customClass="AnyAddNewCell" customModule="BitriseClient" customModuleProvider="target">
-                                                <rect key="frame" x="0.0" y="45" width="468" height="44"/>
+                                                <rect key="frame" x="0.0" y="72" width="468" height="44"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="jEU-5X-XBC" id="OHl-Cb-TbA">
-                                                    <rect key="frame" x="0.0" y="0.0" width="468" height="43.5"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="468" height="44"/>
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
                                                         <textField opaque="NO" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Add new workflowID" textAlignment="natural" clearsOnBeginEditing="YES" minimumFontSize="17" background="git-branch" translatesAutoresizingMaskIntoConstraints="NO" id="SAp-tQ-4zM">
-                                                            <rect key="frame" x="0.0" y="0.0" width="468" height="43.5"/>
-                                                            <nil key="textColor"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="468" height="44"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                             <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no" returnKeyType="done"/>
                                                         </textField>
@@ -187,9 +167,9 @@
                                 <variation key="heightClass=compact" constant="0.0"/>
                             </constraint>
                         </constraints>
+                        <viewLayoutGuide key="safeArea" id="pv2-9N-sIc"/>
                     </view>
                     <connections>
-                        <outlet property="apiTokenTextfield" destination="1oX-LG-GSH" id="zwl-aZ-kLU"/>
                         <outlet property="firstStackView" destination="bLt-zh-8Sn" id="MqM-xx-pAj"/>
                         <outlet property="gitObjectInputView" destination="mUe-vD-YbD" id="YKp-mv-aIM"/>
                         <outlet property="rootStackView" destination="gc6-aJ-0IL" id="jsy-Bj-TIf"/>

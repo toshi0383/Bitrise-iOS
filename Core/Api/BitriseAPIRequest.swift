@@ -25,7 +25,7 @@ extension BitriseAPIRequest {
         var fields: [String: String] = [:]
 
         if let token = personalAccessToken {
-            fields["Authorization"] = "token \(token)"
+            fields["Authorization"] = "\(token)"
         }
 
         return fields

@@ -1,3 +1,4 @@
+import Core
 import Foundation
 import XCTest
 
@@ -76,7 +77,7 @@ final class EnvCellTests: XCTestCase {
 
         wait(for: [ex], timeout: 0.5)
 
-        XCTAssertEqual(result.map { $0.key }, ["PLATFORM", "b", "c", "c", "c"])
+        XCTAssertEqual(result.map { $0.mapped_to }, ["PLATFORM", "b", "c", "c", "c"])
         XCTAssertEqual(result.map { $0.value }, ["tvOS", "tvOS", "tvOS", "d", "e"])
     }
 }
