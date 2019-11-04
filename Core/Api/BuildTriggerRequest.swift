@@ -1,5 +1,6 @@
-import Foundation
 import APIKit
+import Core
+import Foundation
 
 public struct BuildParams: Codable {
     public var branch: String?
