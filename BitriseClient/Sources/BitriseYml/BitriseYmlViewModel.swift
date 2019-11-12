@@ -1,5 +1,5 @@
 import os.log
-import APIKit
+import BitriseSwift
 import Core
 import Foundation
 import RxCocoa
@@ -16,7 +16,6 @@ final class BitriseYmlViewModel {
     // MARK: Output
 
     let ymlPayload: Property<String>
-    private let _ymlPayload = BehaviorRelay<String>(value: "")
 
     let editState: Property<EditState>
     private let _editState = BehaviorRelay<EditState>(value: .initial)
@@ -37,16 +36,18 @@ final class BitriseYmlViewModel {
     // MARK: Initialize
 
     init(appSlug: AppSlug, appName: String) {
+        let _ymlPayload = BehaviorRelay<String>(value: "")
+
         self.appSlug = appSlug
         self.appName = appName
         self.ymlPayload = Property(_ymlPayload)
         self.editState = Property(_editState)
         self.alertMessage = _alertMessage.asObservable()
 
-        let req = GetBitriseYmlRequest(appSlug: appSlug)
+        let req = API.Application.AppConfigDatastoreShow.Request(appSlug: appSlug)
 
-        Session.shared.rx.send(req)
-            .map {$0.ymlPayload }
+        APIClient.default.rx.makeRequest(req)
+            .catchErrorJustReturn("Couldn't retrieve data.")
             .bind(to: _ymlPayload)
             .disposed(by: disposeBag)
     }
@@ -66,10 +67,10 @@ final class BitriseYmlViewModel {
 
             _editState.accept(.saving)
 
-            // TODO: fetch, compare and check for any conflicts?
-            let req = PostBitriseYmlRequest(appSlug: appSlug, ymlString: ymlPayload.value)
+            let req = API.AppSetup.AppConfigCreate.Request(appSlug: appSlug,
+                                                           body: .init(appConfigDatastoreYaml: ymlPayload.value))
 
-            Session.shared.rx.send(req)
+            APIClient.default.rx.makeRequest(req)
                 .take(1)
                 .catchError({ [weak self] error in
                     self?._alertMessage.accept("Yml Upload Error: \(error)")

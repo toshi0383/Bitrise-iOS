@@ -1,4 +1,5 @@
 import ActionPopoverButton
+import BitriseSwift
 import Core
 import RxSwift
 import UIKit
@@ -20,7 +21,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             BuildLogDownloader.shared.removeOutdatedBuildLogs()
         }
 
-        Core.APIConfig.getToken = { Config.shared.personalAccessToken }
+        do {
+            // old
+            Core.APIConfig.getToken = { Config.shared.personalAccessToken }
+
+            // new
+            APIClient.default.defaultHeaders = ["Authorization": "\(Config.shared.personalAccessToken!)"]
+        }
 
         // [ActionPopoverButton]
         UIView.hth.exchangeMethods()

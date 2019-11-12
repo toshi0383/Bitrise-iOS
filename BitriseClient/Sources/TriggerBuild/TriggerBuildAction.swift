@@ -1,4 +1,5 @@
 import Core
+import BitriseSwift
 import Foundation
 import RealmSwift
 
@@ -6,23 +7,15 @@ final class TriggerBuildAction {
 
     static let shared = TriggerBuildAction()
 
-    func sendRebuildRequest(appSlug: AppSlug, _ build: AppsBuilds.Build) throws {
+    func sendRebuildRequest(appSlug: AppSlug, _ buildParams: JSON) throws {
 
-        let token = Config.shared.personalAccessToken!
+        let decoder = JSONDecoder()
+        let data = try! JSONSerialization.data(withJSONObject: buildParams, options: [])
+        let params = try! decoder.decode(V0BuildTriggerParamsBuildParams.self, from: data)
 
-        guard let url = URL(string: "https://api.bitrise.io/v0.1/apps/\(appSlug)/builds") else {
-            return
-        }
+        let req = API.Builds.BuildTrigger.Request(appSlug: appSlug,
+                                                  body: .init(buildParams: params, hookInfo: .init(type: "bitrise")))
 
-        var req = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData, timeoutInterval: 5.0)
-
-        req.setValue(token, forHTTPHeaderField: "Authorization")
-
-        let body = RebuildTriggerRequest(build_params: build.original_build_params)
-
-        req.httpBody = try! body.encode()
-        req.httpMethod = "POST"
-
-        URLSession.shared.dataTask(with: req).resume()
+        _ = APIClient.default.rx.makeRequest(req).subscribe()
     }
 }

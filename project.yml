@@ -4,6 +4,10 @@ options:
 configFiles:
   Debug: configs/Debug.xcconfig
   Release: configs/Release.xcconfig
+packages:
+  BitriseSwift:
+    url: https://github.com/noppefoxwolf/Bitrise-Swift
+    from: 0.0.5
 targets:
   BitriseClient:
     platform: iOS
@@ -17,6 +21,7 @@ targets:
     dependencies:
       - target: ActionPopoverButton
       - target: Core
+      - package: BitriseSwift
       - carthage: APIKit
       - carthage: DeepDiff
       - carthage: DifferenceKit
@@ -53,6 +58,8 @@ targets:
       - Core/
     dependencies:
       - carthage: APIKit
+      - carthage: RxSwift
+      - package: BitriseSwift
     configFiles:
       Debug: configs/Core.xcconfig
       Release: configs/Core.xcconfig
