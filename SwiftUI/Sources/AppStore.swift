@@ -1,4 +1,4 @@
-import APIKit
+import BitriseSwift
 import Combine
 import Core
 import Foundation
@@ -16,22 +16,25 @@ final class AppStore: ObservableObject {
     init(apps: [App] = []) {
         self.apps = apps
 
-        let req = MeAppsRequest()
-        Session.shared.send(req) { [weak self] r in
-            switch r {
-            case .success(let res):
-                self?.apps = res.data
-            case .failure(let error):
-                print("\(error)")
+        let req = API.Application.AppList.Request(options: .init(sortBy: .lastBuildAt))
+
+        APIClient.default.makeRequest(req) { [weak self] res in
+            switch res.result {
+            case .success(let value):
+                if let data = value.success?.data {
+                    self?.apps = data
+                }
+            case .failure(let apiError):
+                print("\(apiError)")
             }
         }
     }
 }
 
-typealias App = MeApps.App
+typealias App = V0AppResponseItemModel
 
 extension App: Identifiable {
     public var id: String {
-        return slug
+        return slug!
     }
 }

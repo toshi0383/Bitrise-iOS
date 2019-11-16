@@ -1,3 +1,4 @@
+import BitriseSwift
 import Core
 import UIKit
 
@@ -7,11 +8,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
 
-        Core.APIConfig.getToken = {
-            ProcessInfo.processInfo.environment["API_TOKEN"]!
-        }
+        let token = ProcessInfo.processInfo.environment["API_TOKEN"]!
+        APIClient.default.defaultHeaders = ["Authorization": token]
 
         return true
     }

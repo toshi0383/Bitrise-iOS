@@ -24,12 +24,12 @@ struct BuildListView : View {
                             RoundedRectangle(cornerRadius: 6)
                                 .fill(Color.buildSuccess)
                                 .frame(width: 30, height: 30, alignment: .center)
-                            Text("#\(b.build_number.description) \(b.status_text) [\(b.triggered_workflow)]")
+                            Text("#\(b.buildNumber!) \(b.statusText!) [\(b.triggeredWorkflow!)]")
                         }
                     }
                 }
             }
-            .navigationBarTitle(Text(store.app.title))
+            .navigationBarTitle(Text(store.app.title!))
             .sheet(isPresented: $isStartBuildViewPresented, onDismiss: nil, content: {
                 StartBuildView(
                     isStartBuildViewPresented: self.$isStartBuildViewPresented,
@@ -61,7 +61,7 @@ struct BuildListView_Previews : PreviewProvider {
 }
 
 private let testStore: BuildsStore = BuildsStore(app: testApp, builds: (0..<100).map { i in
-    Build(abort_reason: nil, branch: "master", build_number: i * 1000, commit_hash: "afawagaew", commit_message: "hello", commit_view_url: nil, environment_prepare_finished_at: nil, finished_at: nil, is_on_hold: false, original_build_params: [:], pull_request_id: 1234, pull_request_target_branch: "develop", pull_request_view_url: nil, slug: "afwfwgrexxx\(i)", stack_config_type: nil, stack_identifier: nil, started_on_worker_at: Date(), status: .notFinished, status_text: "in-progress", tag: nil, triggered_at: Date(), triggered_by: nil, triggered_workflow: "primary")
+    Build(abortReason: nil, branch: "master", buildNumber: i * 1000, commitHash: "fawefawefa", commitMessage: "hello", commitViewURL: nil, environmentPrepareFinishedAt: nil, finishedAt: nil, isOnHold: false, originalBuildParams: [:], pullRequestId: 1234, pullRequestTargetBranch: "develop", pullRequestViewURL: nil, slug: "faweafawef\(i)", stackConfigType: nil, stackIdentifier: nil, startedOnWorkerAt: "2019-11-16T12:24:56Z", status: 0, statusText: "in-progress", tag: nil, triggeredAt: "2019-11-16T12:24:53Z", triggeredBy: "webhook", triggeredWorkflow: "primary")
     }
 )
 #endif

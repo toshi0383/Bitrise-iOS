@@ -1,4 +1,4 @@
-import APIKit
+import BitriseSwift
 import Combine
 import Core
 import SwiftUI
@@ -83,14 +83,19 @@ final class StartBuildStore: ObservableObject {
 
     func trigger() {
         if let workflow = selectedWorkflow {
-            let req = BuildTriggerRequest(appSlug: app.slug,
-                                          branch: branchName,
-                                          workflow_id: workflow.id)
+            let decoder = JSONDecoder()
+            let data = try! JSONSerialization.data(withJSONObject: ["workflowId": workflow], options: [])
+            let params = try! decoder.decode(V0BuildTriggerParamsBuildParams.self, from: data)
 
-            Session.shared.send(req) { result in
-                switch result {
-                case .success(let res):
-                    print("\(res)")
+            let req = API.Builds.BuildTrigger.Request(
+                appSlug: app.slug!,
+                body: .init(buildParams: params, hookInfo: .init(type: "bitrise"))
+            )
+
+            APIClient.default.makeRequest(req) { res in
+                switch res.result {
+                case .success(let value):
+                    print("\(value)")
                 case .failure(let error):
                     print("\(error)")
                 }
