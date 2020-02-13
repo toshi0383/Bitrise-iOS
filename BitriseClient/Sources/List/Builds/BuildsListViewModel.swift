@@ -65,7 +65,7 @@ final class BuildsListViewModel {
                 guard let me = self else { return }
 
                 do {
-                    try TriggerBuildAction.shared.sendRebuildRequest(appSlug: me.appSlug, build)
+                    try TriggerBuildAction.shared.sendRebuildRequest(appSlug: me.appSlug, build.original_build_params)
                 } catch {
                     me._alertMessage.accept("\(error)")
                 }

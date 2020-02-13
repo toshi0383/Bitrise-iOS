@@ -1,6 +1,10 @@
 name: BitriseClient-SwiftUI
 options:
   minimumXcodeGenVersion: 2.7.0
+packages:
+  BitriseSwift:
+    url: https://github.com/noppefoxwolf/Bitrise-Swift
+    from: 0.0.5
 targets:
   BitriseClient:
     platform: iOS
@@ -26,10 +30,6 @@ targets:
     sources:
       - Core/
     dependencies:
-      - swiftpm:
-        repositoryURL: "https://github.com/ishkawa/APIKit"
-        versionRequirement:
-          kind: upToNextMajorVersion
-          minimumVersion: 5.0.0
+      - package: BitriseSwift
     settings:
       PRODUCT_BUNDLE_IDENTIFIER: jp.toshi0383.BitriseKit

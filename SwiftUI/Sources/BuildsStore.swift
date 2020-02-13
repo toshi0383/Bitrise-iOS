@@ -1,4 +1,4 @@
-import APIKit
+import BitriseSwift
 import Combine
 import Core
 import Foundation
@@ -17,11 +17,14 @@ final class BuildsStore: ObservableObject {
         self.app = app
         self.builds = builds
 
-        let req = AppsBuildsRequest(appSlug: app.slug)
-        Session.shared.send(req) { [weak self] r in
-            switch r {
-            case .success(let res):
-                self?.builds = AppsBuilds(from: res).data
+        let req = API.Builds.BuildList.Request(appSlug: app.slug!)
+
+        APIClient.default.makeRequest(req) { [weak self] r in
+            switch r.result {
+            case .success(let value):
+                if let data = value.success?.data {
+                    self?.builds = data
+                }
             case .failure(let error):
                 print("\(error)")
             }
@@ -31,9 +34,9 @@ final class BuildsStore: ObservableObject {
     var objectWillChange = PassthroughSubject<BuildsStore, Never>()
 }
 
-typealias Build = AppsBuilds.Build
+typealias Build = V0BuildResponseItemModel
 extension Build: Identifiable {
     public var id: String {
-        return slug
+        return slug!
     }
 }
